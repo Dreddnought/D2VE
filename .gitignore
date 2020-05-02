@@ -1,1 +1,6 @@
-.dll
+*.dll
+.vs
+bin
+obj
+packages
+*.user
