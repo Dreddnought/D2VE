@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29418.71
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "D2VE", "D2VE.csproj", "{3F70221D-382F-4E81-9B11-7CC2855601D1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3F70221D-382F-4E81-9B11-7CC2855601D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F70221D-382F-4E81-9B11-7CC2855601D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F70221D-382F-4E81-9B11-7CC2855601D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F70221D-382F-4E81-9B11-7CC2855601D1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {114E0EE7-580E-4616-8152-12EA26A36179}
+	EndGlobalSection
+EndGlobal
