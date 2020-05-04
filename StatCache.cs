@@ -1,33 +1,56 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace D2VE
 {
-    public class StatInfo
-    {
-        public StatInfo(string name) { Name = name; }
-        public string Name { get; }
-    }
     public class StatCache
     {
+        private bool _dirty;
         public StatCache() { }
-        public StatInfo GetStatInfo(string hash)
+        public string GetStatName(long statHash)
         {
-            StatInfo statInfo;
-            if (!_cache.TryGetValue(hash, out statInfo))
+            string name;
+            if (!_cache.TryGetValue(statHash, out name))  // Look it up
             {
-                // Look it up.
-                dynamic item = D2VE.Request("Destiny2/Manifest/DestinyInventoryItemDefinition/" + hash);
+                _cache[statHash] = name = D2VE.Request("Destiny2/Manifest/DestinyStatDefinition/"
+                    + statHash.ToString()).displayProperties.name.Value;
+                _dirty = true;
             }
-            return statInfo;
+            return name;
         }
-        private StatInfo Convert(dynamic item)
+        public void Save()
         {
-            return new StatInfo(item.Name);
+            if (!_dirty)  // No changes
+                return;
+            try
+            {
+                string cache = JsonConvert.SerializeObject(_cache, Formatting.Indented);
+                Persister.Save("StatCache", cache);
+            }
+            catch (Exception x)
+            {
+                Console.WriteLine("Failed to load stat cache: " + x.Message);
+            }
         }
-        private Dictionary<string, StatInfo> _cache = new Dictionary<string, StatInfo>();
+        public void Load()
+        {
+            try
+            {
+                string cache = Persister.Load("StatCache");
+                if (!string.IsNullOrWhiteSpace(cache))
+                    _cache = JsonConvert.DeserializeObject<Dictionary<long, string>>(cache);
+            }
+            catch (Exception x)
+            {
+                Console.WriteLine("Failed to load stat cache: " + x.Message);
+            }
+            _dirty = false;
+        }
+        private string Convert(dynamic item)
+        {
+            return item.displayProperties.name.Value;
+        }
+        private Dictionary<long, string> _cache = new Dictionary<long, string>();
     }
 }

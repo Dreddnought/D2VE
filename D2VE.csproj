@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="D2VE.cs" />
+    <Compile Include="ItemInstance.cs" />
     <Compile Include="Membership.cs" />
     <Compile Include="Persister.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

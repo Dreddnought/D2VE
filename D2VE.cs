@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -79,6 +80,7 @@ namespace D2VE
             }
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
             _itemCache.Load();
+            _statCache.Load();
             // Get membership type and id for the current user.  We may have already got this earlier when testing the
             // cached access token.
             if (membershipsForCurrentUser == null)
@@ -90,9 +92,7 @@ namespace D2VE
                     destinyMembership["displayName"].Value,
                     destinyMembership["membershipType"].Value.ToString(),
                     destinyMembership["membershipId"].Value);
-                // Get all bucket slots in their vault and character.
-
-
+                // Get all inventories in their vault and characters.
                 dynamic inventories =
                     Request("Destiny2/" + membership.Type + "/Profile/" + membership.Id + "/?components=102,201,205");
                 // Items equipped on the character.
@@ -110,26 +110,36 @@ namespace D2VE
                     ProcessItem(membership, item);
 
                 _itemCache.Save();
+                _statCache.Save();
                 // Create an output spreadsheet.
 
             }
             Console.ReadKey();
         }
+        public static StatCache StatCache { get { return _statCache; } }
         private static void ProcessItem(Membership membership, dynamic item)
         {
             try
             {
-                string itemHash = item.itemHash.Value.ToString();
+                long itemHash = item.itemHash.Value;
                 // Get the definition of the item.
                 ItemInfo itemInfo = _itemCache.GetItemInfo(itemHash);
                 if (itemInfo == null)  // Not a weapon or armor
                     return;
-
+                SortedDictionary<string, long> stats = new SortedDictionary<string, long>(itemInfo.Stats);
+                // Now get the specific stats and perks for the item.
                 string itemInstanceId = item.itemInstanceId.Value;
-                //dynamic instance = Request("Destiny2/" + membership.Type + "/Profile/" + membership.Id + "/Item/"
-                //      + itemInstanceId + "?components=302,304");
-
-                Console.WriteLine(itemInfo.ToString() + " " + itemHash + " " + itemInstanceId);
+                dynamic instance = Request("Destiny2/" + membership.Type + "/Profile/" + membership.Id + "/Item/"
+                    + itemInstanceId + "?components=302,304");
+                foreach (var stat in instance["stats"]["data"]["stats"])    
+                {
+                    long statHash = stat.Value["statHash"].Value;
+                    long value = stat.Value["value"].Value;
+                    string statName = _statCache.GetStatName(statHash);
+                    stats[statName] = value;  // May override item level stats
+                }
+                ItemInstance itemInstance = new ItemInstance(itemInfo.Name, itemInfo.ItemType, itemInfo.Season, stats);
+                Console.WriteLine(itemInstance.ToString());
             }
             catch (Exception x)
             {
