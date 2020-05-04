@@ -6,10 +6,11 @@ namespace D2VE
 {
     public class ItemInfo
     {
-        public ItemInfo(string name, string itemCategory, string itemType, string slot, string energyType, string season,
-            string classType, Dictionary<string, long> stats)
+        public ItemInfo(string name, string tierType, string itemCategory, string itemType, string slot, string energyType,
+            string season, string classType, Dictionary<string, long> stats)
         {
             Name = name;
+            TierType = tierType;
             ItemCategory = itemCategory;
             ItemType = itemType;
             Slot = slot;
@@ -19,6 +20,7 @@ namespace D2VE
             Stats = stats;
         }
         public string Name { get; }
+        public string TierType { get; }
         public string ItemCategory { get; }
         public string ItemType { get; }
         public string Slot { get; }
@@ -26,10 +28,6 @@ namespace D2VE
         public string Season { get; }
         public string ClassType { get; }
         public Dictionary<string, long> Stats { get; }
-        public override string ToString()
-        {
-            return Name + " (" + ItemType + ") " + Slot + " " + EnergyType + " " + Season + " " + ClassType;
-        }
     }
     public class ItemCache
     {
@@ -94,6 +92,7 @@ namespace D2VE
                     string statName = D2VE.StatCache.GetStatName(statHash);
                     stats[statName] = value;
                 }
+                string tierType = definition.inventory.tierTypeName.Value;
                 string slot = "";
                 string energyType = "";
                 if (itemType == 2L)  // Armor, energyType is at instance level
@@ -104,9 +103,10 @@ namespace D2VE
                     slot = D2VE.SlotCache.GetSlotName(definition.equippingBlock.equipmentSlotTypeHash.Value);
                 }
                 itemInfo = new ItemInfo(
-                   definition.itemTypeDisplayName.Value,
-                   itemCategory,
                    definition.displayProperties.name.Value,
+                   tierType,
+                   itemCategory,
+                   definition.itemTypeDisplayName.Value,
                    slot,
                    energyType,
                    ConvertValue.Season(definition.seasonHash?.Value ?? 0L),

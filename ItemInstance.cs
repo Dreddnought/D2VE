@@ -8,6 +8,7 @@ namespace D2VE
         public ItemInstance(ItemInfo itemInfo, long power, string energyType, SortedDictionary<string, long> stats)
         {
             Name = itemInfo.Name;
+            TierType = itemInfo.TierType;
             ItemType = itemInfo.ItemType;
             Slot = itemInfo.Slot;
             Season = itemInfo.Season;
@@ -18,6 +19,7 @@ namespace D2VE
         }
         public string Name { get; }
         public long Power { get; }
+        public string TierType { get; }
         public string ItemType { get; }
         public string Slot { get; }
         public string EnergyType { get; }
@@ -26,7 +28,7 @@ namespace D2VE
         public SortedDictionary<string, long> Stats { get; }
         public override string ToString()
         {
-            return Name + " " + Power.ToString() + " (" + ItemType + ") " + Slot + " " + EnergyType
+            return Name + " " + Power.ToString() + " (" + ItemType + ") " + Slot + " " + EnergyType + " " + TierType
                 + (string.IsNullOrWhiteSpace(ClassType) ? "" : " [" + ClassType + "]")
                 + (string.IsNullOrWhiteSpace(Season) ? "" : " [" + Season + "]")
                 + "\r\n  " + string.Join("\r\n  ",
