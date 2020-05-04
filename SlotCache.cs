@@ -4,17 +4,17 @@ using Newtonsoft.Json;
 
 namespace D2VE
 {
-    public class StatCache
+    public class SlotCache
     {
         private bool _dirty;
-        public StatCache() { }
-        public string GetStatName(long statHash)
+        public SlotCache() { }
+        public string GetSlotName(long slotHash)
         {
             string name;
-            if (!_cache.TryGetValue(statHash, out name))  // Look it up
+            if (!_cache.TryGetValue(slotHash, out name))  // Look it up
             {
-                _cache[statHash] = name = D2VE.Request("Destiny2/Manifest/DestinyStatDefinition/"
-                    + statHash.ToString()).displayProperties.name.Value;
+                _cache[slotHash] = name = D2VE.Request("Destiny2/Manifest/DestinyEquipmentSlotDefinition/"
+                    + slotHash.ToString()).displayProperties.name.Value.Replace(" Weapons", "");
                 _dirty = true;
             }
             return name;
@@ -26,24 +26,24 @@ namespace D2VE
             try
             {
                 string cache = JsonConvert.SerializeObject(_cache, Formatting.Indented);
-                Persister.Save("StatCache", cache);
+                Persister.Save("SlotCache", cache);
             }
             catch (Exception x)
             {
-                Console.WriteLine("Failed to load stat cache: " + x.Message);
+                Console.WriteLine("Failed to load slot cache: " + x.Message);
             }
         }
         public void Load()
         {
             try
             {
-                string cache = Persister.Load("StatCache");
+                string cache = Persister.Load("SlotCache");
                 if (!string.IsNullOrWhiteSpace(cache))
                     _cache = JsonConvert.DeserializeObject<Dictionary<long, string>>(cache);
             }
             catch (Exception x)
             {
-                Console.WriteLine("Failed to load stat cache: " + x.Message);
+                Console.WriteLine("Failed to load slot cache: " + x.Message);
             }
             _dirty = false;
         }

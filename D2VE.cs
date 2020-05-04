@@ -21,6 +21,7 @@ namespace D2VE
         private static MediaTypeWithQualityHeaderValue _jsonAcceptHeader
             = new MediaTypeWithQualityHeaderValue(_jsonMediaType);
         private static TimeSpan _timeout = new TimeSpan(0, 1, 0);  // 1 minute
+        private static SlotCache _slotCache = new SlotCache();
         private static StatCache _statCache = new StatCache();
         private static ItemCache _itemCache = new ItemCache();
         private static string _apiKey;
@@ -81,6 +82,7 @@ namespace D2VE
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
             _itemCache.Load();
             _statCache.Load();
+            _slotCache.Save();
             // Get membership type and id for the current user.  We may have already got this earlier when testing the
             // cached access token.
             if (membershipsForCurrentUser == null)
@@ -111,12 +113,14 @@ namespace D2VE
 
                 _itemCache.Save();
                 _statCache.Save();
+                _slotCache.Save();
                 // Create an output spreadsheet.
 
             }
             Console.ReadKey();
         }
         public static StatCache StatCache { get { return _statCache; } }
+        public static SlotCache SlotCache { get { return _slotCache; } }
         private static void ProcessItem(Membership membership, dynamic item)
         {
             try
@@ -138,7 +142,7 @@ namespace D2VE
                     string statName = _statCache.GetStatName(statHash);
                     stats[statName] = value;  // May override item level stats
                 }
-                ItemInstance itemInstance = new ItemInstance(itemInfo.Name, itemInfo.ItemType, itemInfo.Season, stats);
+                ItemInstance itemInstance = new ItemInstance(itemInfo, stats);
                 Console.WriteLine(itemInstance.ToString());
             }
             catch (Exception x)
