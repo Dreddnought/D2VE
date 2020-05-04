@@ -6,10 +6,11 @@ namespace D2VE
 {
     public class ItemInfo
     {
-        public ItemInfo(string name, string itemType, string slot, string energyType, string season, string classType,
-            Dictionary<string, long> stats)
+        public ItemInfo(string name, string itemCategory, string itemType, string slot, string energyType, string season,
+            string classType, Dictionary<string, long> stats)
         {
             Name = name;
+            ItemCategory = itemCategory;
             ItemType = itemType;
             Slot = slot;
             EnergyType = energyType;
@@ -18,6 +19,7 @@ namespace D2VE
             Stats = stats;
         }
         public string Name { get; }
+        public string ItemCategory { get; }
         public string ItemType { get; }
         public string Slot { get; }
         public string EnergyType { get; }
@@ -80,6 +82,7 @@ namespace D2VE
                 itemInfo = null;
             else
             {
+                string itemCategory = itemType == 2L ? "Armor" : "Weapon";
                 // Items have some base stats (some hidden).  These may be overridden at the instance level.
                 Dictionary<string, long> stats = new Dictionary<string, long>();
                 foreach (var stat in definition.stats.stats)
@@ -93,98 +96,24 @@ namespace D2VE
                 }
                 string slot = "";
                 string energyType = "";
-                if (itemType == 2L)  // Armor
-                {
-                    energyType = ConvertWeaponSlot(definition.defaultDamageType?.Value);
+                if (itemType == 2L)  // Armor, energyType is at instance level
                     slot = D2VE.SlotCache.GetSlotName(definition.equippingBlock.equipmentSlotTypeHash.Value);
-                }
                 else  // Weapon
                 {
-                    energyType = ConvertWeaponSlot(definition.defaultDamageType?.Value);
+                    energyType = ConvertValue.DamageType(definition.defaultDamageType?.Value);
                     slot = D2VE.SlotCache.GetSlotName(definition.equippingBlock.equipmentSlotTypeHash.Value);
                 }
                 itemInfo = new ItemInfo(
                    definition.itemTypeDisplayName.Value,
+                   itemCategory,
                    definition.displayProperties.name.Value,
                    slot,
                    energyType,
-                   ConvertSeason(definition.seasonHash?.Value ?? 0L),
-                   ConvertClassType(definition.classType?.Value ?? 0L),
+                   ConvertValue.Season(definition.seasonHash?.Value ?? 0L),
+                   ConvertValue.ClassType(definition.classType?.Value ?? 0L),
                    stats);
             }
             return itemInfo;
-        }
-        private string ConvertSeason(long value)
-        {
-            switch (value)
-            {
-                case 0L:
-                    return "";
-                case 7L:
-                    return "Undying";
-                case 8L:
-                    return "Dawn";
-                case 9L:
-                    return "Worthy";
-                default:
-                    return value.ToString();
-            }
-        }
-        private string ConvertClassType(long value)
-        {
-            switch (value)
-            {
-                case 0L:
-                    return "Titan";
-                case 1L:
-                    return "Hunter";
-                case 2L:
-                    return "Warlock";
-                case 3L:
-                    return "";
-                default:
-                    return value.ToString();
-            }
-        }
-        private string ConvertWeaponSlot(long value)
-        {
-            switch (value)
-            {
-                case 0L:
-                    return "";
-                case 1L:
-                    return "Kinetic";
-                case 2L:
-                    return "Arc";
-                case 3L:
-                    return "Solar";
-                case 4L:
-                    return "Void";
-                case 5L:
-                    return "Raid";
-                default:
-                    return value.ToString();
-            }
-        }
-        private string ConvertArmorSlot(long value)
-        {
-            switch (value)
-            {
-                case 0L:
-                    return "";
-                case 1L:
-                    return "Head";
-                case 2L:
-                    return "Arms";
-                case 3L:
-                    return "Chest";
-                case 4L:
-                    return "Legs";
-                case 5L:
-                    return "Class";
-                default:
-                    return value.ToString();
-            }
         }
         private Dictionary<long, ItemInfo> _cache = new Dictionary<long, ItemInfo>();
     }

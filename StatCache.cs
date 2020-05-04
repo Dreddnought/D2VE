@@ -13,8 +13,8 @@ namespace D2VE
             string name;
             if (!_cache.TryGetValue(statHash, out name))  // Look it up
             {
-                _cache[statHash] = name = D2VE.Request("Destiny2/Manifest/DestinyStatDefinition/"
-                    + statHash.ToString()).displayProperties.name.Value;
+                _cache[statHash] = name = ConvertValue.StatName(D2VE.Request("Destiny2/Manifest/DestinyStatDefinition/"
+                    + statHash.ToString()).displayProperties.name.Value);
                 _dirty = true;
             }
             return name;

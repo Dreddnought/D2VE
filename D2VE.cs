@@ -134,7 +134,11 @@ namespace D2VE
                 // Now get the specific stats and perks for the item.
                 string itemInstanceId = item.itemInstanceId.Value;
                 dynamic instance = Request("Destiny2/" + membership.Type + "/Profile/" + membership.Id + "/Item/"
-                    + itemInstanceId + "?components=302,304");
+                    + itemInstanceId + "?components=300,302,304");
+                long power = instance.instance.data.primaryStat.value.Value;
+                string energyType = itemInfo.EnergyType;
+                if (itemInfo.ItemCategory == "Armor")  // Armor, energyType is at instance level
+                    energyType = ConvertValue.EnergyType(instance.instance.data.energy.energyType.Value);
                 foreach (var stat in instance["stats"]["data"]["stats"])    
                 {
                     long statHash = stat.Value["statHash"].Value;
@@ -142,7 +146,7 @@ namespace D2VE
                     string statName = _statCache.GetStatName(statHash);
                     stats[statName] = value;  // May override item level stats
                 }
-                ItemInstance itemInstance = new ItemInstance(itemInfo, stats);
+                ItemInstance itemInstance = new ItemInstance(itemInfo, power, energyType, stats);
                 Console.WriteLine(itemInstance.ToString());
             }
             catch (Exception x)

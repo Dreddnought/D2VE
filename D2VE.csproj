@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConvertValue.cs" />
     <Compile Include="D2VE.cs" />
     <Compile Include="ItemInstance.cs" />
     <Compile Include="Membership.cs" />

@@ -14,7 +14,7 @@ namespace D2VE
             if (!_cache.TryGetValue(slotHash, out name))  // Look it up
             {
                 _cache[slotHash] = name = D2VE.Request("Destiny2/Manifest/DestinyEquipmentSlotDefinition/"
-                    + slotHash.ToString()).displayProperties.name.Value.Replace(" Weapons", "");
+                    + slotHash.ToString()).displayProperties.name.Value.Replace(" Weapons", "").Replace(" Armor", "");
                 _dirty = true;
             }
             return name;
