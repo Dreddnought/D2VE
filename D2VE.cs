@@ -90,6 +90,7 @@ namespace D2VE
             dynamic destinyMemberships = membershipsForCurrentUser["destinyMemberships"];
             foreach (var destinyMembership in destinyMemberships)
             {
+                List<ItemInstance> instances =  new List<ItemInstance>();
                 Membership membership = new Membership(
                     destinyMembership["displayName"].Value,
                     destinyMembership["membershipType"].Value.ToString(),
@@ -101,27 +102,28 @@ namespace D2VE
                 foreach (var characters in inventories["characterEquipment"]["data"])
                     foreach (var character in characters)
                         foreach (var item in character["items"])
-                            ProcessItem(membership, item);
+                            ProcessItem(membership, instances, item);
                 // Items on the character but not equipped.  Includes postmaster items.
                 foreach (var characters in inventories["characterInventories"]["data"])
                     foreach (var character in characters)
                         foreach (var item in character["items"])
-                            ProcessItem(membership, item);
+                            ProcessItem(membership, instances, item);
                 // Items in the vault.
                 foreach (var item in inventories["profileInventory"]["data"]["items"])
-                    ProcessItem(membership, item);
+                    ProcessItem(membership, instances, item);
 
                 _itemCache.Save();
                 _statCache.Save();
                 _slotCache.Save();
                 // Create an output spreadsheet.
+                string fileName = membership.DisplayName + ".xlsx";
 
             }
             Console.ReadKey();
         }
         public static StatCache StatCache { get { return _statCache; } }
         public static SlotCache SlotCache { get { return _slotCache; } }
-        private static void ProcessItem(Membership membership, dynamic item)
+        private static void ProcessItem(Membership membership, List<ItemInstance> instances, dynamic item)
         {
             try
             {
@@ -147,6 +149,7 @@ namespace D2VE
                     stats[statName] = value;  // May override item level stats
                 }
                 ItemInstance itemInstance = new ItemInstance(itemInfo, power, energyType, stats);
+                instances.Add(itemInstance);
                 Console.WriteLine(itemInstance.ToString());
             }
             catch (Exception x)
