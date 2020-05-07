@@ -10,8 +10,7 @@ namespace D2VE
 {
     class D2VE
     {
-        private const string OAuthUrl =
-            "https://www.bungie.net/en/OAuth/Authorize?client_id=32695&response_type=code";
+        private const string OAuthUrl = "https://www.bungie.net/en/OAuth/Authorize?client_id=32695&response_type=code";
         private const string AccessTokenUrl = "https://www.bungie.net/Platform/App/OAuth/token/";
         private const string PlatformUrl = "https://www.bungie.net/Platform/";
         private const string ApplicationRegistrationUrl = "https://www.bungie.net/en/Application";
@@ -21,8 +20,6 @@ namespace D2VE
         private static MediaTypeWithQualityHeaderValue _jsonAcceptHeader
             = new MediaTypeWithQualityHeaderValue(_jsonMediaType);
         private static TimeSpan _timeout = new TimeSpan(0, 1, 0);  // 1 minute
-        private static SlotCache _slotCache = new SlotCache();
-        private static StatCache _statCache = new StatCache();
         private static ItemCache _itemCache = new ItemCache();
         private static string _apiKey;
         static void Main(string[] args)
@@ -81,8 +78,10 @@ namespace D2VE
             }
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
             _itemCache.Load();
-            _statCache.Load();
-            _slotCache.Save();
+            PerkCache.Load();
+            PlugCache.Load();
+            StatCache.Load();
+            SlotCache.Save();
             // Get membership type and id for the current user.  We may have already got this earlier when testing the
             // cached access token.
             if (membershipsForCurrentUser == null)
@@ -113,16 +112,20 @@ namespace D2VE
                     ProcessItem(membership, instances, item);
 
                 _itemCache.Save();
-                _statCache.Save();
-                _slotCache.Save();
+                PerkCache.Save();
+                PlugCache.Save();
+                StatCache.Save();
+                SlotCache.Save();
                 // Create an output spreadsheet.
                 string fileName = membership.DisplayName + ".xlsx";
 
             }
             Console.ReadKey();
         }
-        public static StatCache StatCache { get { return _statCache; } }
-        public static SlotCache SlotCache { get { return _slotCache; } }
+        public static PerkCache PerkCache { get; } = new PerkCache();
+        public static PlugCache PlugCache { get; } = new PlugCache();
+        public static StatCache StatCache { get; } = new StatCache();
+        public static SlotCache SlotCache { get; } = new SlotCache();
         private static void ProcessItem(Membership membership, List<ItemInstance> instances, dynamic item)
         {
             try
@@ -133,22 +136,54 @@ namespace D2VE
                 if (itemInfo == null)  // Not a weapon or armor
                     return;
                 SortedDictionary<string, long> stats = new SortedDictionary<string, long>(itemInfo.Stats);
+                SortedDictionary<string, Perk> perks = new SortedDictionary<string, Perk>();
                 // Now get the specific stats and perks for the item.
                 string itemInstanceId = item.itemInstanceId.Value;
                 dynamic instance = Request("Destiny2/" + membership.Type + "/Profile/" + membership.Id + "/Item/"
-                    + itemInstanceId + "?components=300,302,304");
+                    + itemInstanceId + "?components=300,302,304,305,306,308,309,310");
                 long power = instance.instance.data.primaryStat.value.Value;
                 string energyType = itemInfo.EnergyType;
                 if (itemInfo.ItemCategory == "Armor")  // Armor, energyType is at instance level
+                {
+                    if (instance.instance.data.energy == null)  // Armor 1.0 ignore
+                        return;
                     energyType = ConvertValue.EnergyType(instance.instance.data.energy.energyType.Value);
+                }
                 foreach (var stat in instance["stats"]["data"]["stats"])    
                 {
                     long statHash = stat.Value["statHash"].Value;
                     long value = stat.Value["value"].Value;
-                    string statName = _statCache.GetStatName(statHash);
+                    string statName = StatCache.GetStatName(statHash);
                     stats[statName] = value;  // May override item level stats
                 }
-                ItemInstance itemInstance = new ItemInstance(itemInfo, power, energyType, stats);
+                dynamic perkData = instance["perks"]["data"];
+                if (perkData != null)
+                    foreach (var perkInstance in perkData["perks"])
+                    {
+                        long perkHash = perkInstance.perkHash.Value;
+                        bool isActive = perkInstance.isActive.Value;
+
+                        Perk perk = PerkCache.GetPerk(perkHash);
+                        if (perk != null)
+                            perks[perk.Name] = perk;
+
+                    }
+                dynamic socketData = instance["sockets"]["data"];
+                if (socketData != null)
+                    foreach (var socketInstance in socketData["sockets"])
+                    {
+                        long plugHash = socketInstance.plugHash?.Value ?? 0L;
+                        if (plugHash == 0L)  // No info on it so can ignore
+                            continue;
+                        bool isEnabled = socketInstance.isEnabled.Value;
+                        bool isVisible = socketInstance.isVisible.Value;
+                        Plug plug = PlugCache.GetPlug(plugHash);
+                        if (plug == null)
+                            continue;
+                    }
+
+
+                ItemInstance itemInstance = new ItemInstance(itemInfo, power, energyType, stats, perks);
                 instances.Add(itemInstance);
                 Console.WriteLine(itemInstance.ToString());
             }

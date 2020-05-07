@@ -51,10 +51,12 @@
     <Compile Include="D2VE.cs" />
     <Compile Include="ItemInstance.cs" />
     <Compile Include="Membership.cs" />
+    <Compile Include="PlugCache.cs" />
     <Compile Include="Persister.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ItemCache.cs" />
     <Compile Include="SlotCache.cs" />
+    <Compile Include="PerkCache.cs" />
     <Compile Include="StatCache.cs" />
   </ItemGroup>
   <ItemGroup>
