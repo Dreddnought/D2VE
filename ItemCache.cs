@@ -55,7 +55,7 @@ namespace D2VE
             }
             catch (Exception x)
             {
-                Console.WriteLine("Failed to load item cache: " + x.Message);
+                Console.WriteLine("Failed to save item cache: " + x.Message);
             }
         }
         public void Load()

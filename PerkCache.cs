@@ -38,7 +38,7 @@ namespace D2VE
             }
             catch (Exception x)
             {
-                Console.WriteLine("Failed to load perk cache: " + x.Message);
+                Console.WriteLine("Failed to save perk cache: " + x.Message);
             }
         }
         public void Load()

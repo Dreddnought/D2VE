@@ -30,7 +30,7 @@ namespace D2VE
             }
             catch (Exception x)
             {
-                Console.WriteLine("Failed to load slot cache: " + x.Message);
+                Console.WriteLine("Failed to save slot cache: " + x.Message);
             }
         }
         public void Load()

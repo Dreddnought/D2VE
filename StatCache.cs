@@ -30,7 +30,7 @@ namespace D2VE
             }
             catch (Exception x)
             {
-                Console.WriteLine("Failed to load stat cache: " + x.Message);
+                Console.WriteLine("Failed to save stat cache: " + x.Message);
             }
         }
         public void Load()

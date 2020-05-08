@@ -1,4 +1,5 @@
-﻿using System;
+﻿//#define TEST_OUTPUT
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
@@ -89,11 +90,15 @@ namespace D2VE
             dynamic destinyMemberships = membershipsForCurrentUser["destinyMemberships"];
             foreach (var destinyMembership in destinyMemberships)
             {
-                List<ItemInstance> instances =  new List<ItemInstance>();
                 Membership membership = new Membership(
-                    destinyMembership["displayName"].Value,
-                    destinyMembership["membershipType"].Value.ToString(),
-                    destinyMembership["membershipId"].Value);
+                    destinyMembership.displayName.Value,
+                    destinyMembership.membershipType.Value.ToString(),
+                    destinyMembership.membershipId.Value);
+                List<ItemInstance> instances = null;
+#if TEST_OUTPUT
+                instances = Load(membership.DisplayName);
+#else
+                instances = new List<ItemInstance>();
                 // Get all inventories in their vault and characters.
                 dynamic inventories =
                     Request("Destiny2/" + membership.Type + "/Profile/" + membership.Id + "/?components=102,201,205");
@@ -110,16 +115,22 @@ namespace D2VE
                 // Items in the vault.
                 foreach (var item in inventories["profileInventory"]["data"]["items"])
                     ProcessItem(membership, instances, item);
-
-                _itemCache.Save();
-                PerkCache.Save();
-                PlugCache.Save();
-                StatCache.Save();
-                SlotCache.Save();
+                Save(membership.DisplayName, instances);  // Save result for dev purposes (testing output)
+#endif
                 // Create an output spreadsheet.
-                string fileName = membership.DisplayName + ".xlsx";
-
+                OutputContext outputContext = new OutputContext()
+                {
+                    SpreadsheetName = membership.DisplayName + "-" + DateTime.Now.ToString("yyyyMMdd-HHmmss"),
+                    Folder = @"C:\Temp\Destiny"
+                };
+                IOutput output = new ExcelOutput();
+                output.Create(outputContext, instances);
             }
+            _itemCache.Save();
+            PerkCache.Save();
+            PlugCache.Save();
+            StatCache.Save();
+            SlotCache.Save();
             Console.ReadKey();
         }
         public static PerkCache PerkCache { get; } = new PerkCache();
@@ -149,7 +160,7 @@ namespace D2VE
                         return;
                     energyType = ConvertValue.EnergyType(instance.instance.data.energy.energyType.Value);
                 }
-                foreach (var stat in instance["stats"]["data"]["stats"])    
+                foreach (var stat in instance["stats"]["data"]["stats"])
                 {
                     long statHash = stat.Value["statHash"].Value;
                     long value = stat.Value["value"].Value;
@@ -229,6 +240,32 @@ namespace D2VE
                 }
                 return _httpClient;
             }
+        }
+        private static void Save(string membershipDisplayName, List<ItemInstance> items)
+        {
+            try
+            {
+                string result = JsonConvert.SerializeObject(items, Formatting.Indented);
+                Persister.Save("Result-" + membershipDisplayName, result);
+            }
+            catch (Exception x)
+            {
+                Console.WriteLine("Failed to save result: " + x.Message);
+            }
+        }
+        private static List<ItemInstance> Load(string membershipDisplayName)
+        {
+            try
+            {
+                string result = Persister.Load("Result-" + membershipDisplayName);
+                if (!string.IsNullOrWhiteSpace(result))
+                    return JsonConvert.DeserializeObject<List<ItemInstance>>(result);
+            }
+            catch (Exception x)
+            {
+                Console.WriteLine("Failed to load result: " + x.Message);
+            }
+            return null;
         }
     }
 }

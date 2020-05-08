@@ -4,7 +4,7 @@
     {
         public Membership(string displayName, string membershipType, string membershipId)
         {
-            DisplayName = DisplayName;
+            DisplayName = displayName;
             Type = membershipType;
             Id = membershipId;
         }

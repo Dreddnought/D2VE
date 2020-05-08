@@ -8,25 +8,21 @@ namespace D2VE
         public ItemInstance(ItemInfo itemInfo, long power, string energyType, SortedDictionary<string, long> stats,
                SortedDictionary<string, Perk> perks)
         {
-            Name = itemInfo.Name;
-            TierType = itemInfo.TierType;
-            ItemType = itemInfo.ItemType;
-            Slot = itemInfo.Slot;
-            Season = itemInfo.Season;
-            ClassType = itemInfo.ClassType;
+            ItemInfo = itemInfo;
             Power = power;
             EnergyType = energyType;
             Stats = stats;
             Perks = perks;
         }
-        public string Name { get; }
+        public ItemInfo ItemInfo { get; }
+        public string Name { get { return ItemInfo.Name; } }
         public long Power { get; }
-        public string TierType { get; }
-        public string ItemType { get; }
-        public string Slot { get; }
+        public string TierType { get { return ItemInfo.TierType; } }
+        public string ItemType { get { return ItemInfo.ItemType; } }
+        public string Slot { get { return ItemInfo.Slot; } }
+        public string Season { get { return ItemInfo.Season; } }
+        public string ClassType { get { return ItemInfo.ClassType; } }
         public string EnergyType { get; }
-        public string Season { get; }
-        public string ClassType { get; }
         public SortedDictionary<string, long> Stats { get; }
         public SortedDictionary<string, Perk> Perks { get; }
         public override string ToString()

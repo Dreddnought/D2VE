@@ -49,6 +49,8 @@
   <ItemGroup>
     <Compile Include="ConvertValue.cs" />
     <Compile Include="D2VE.cs" />
+    <Compile Include="ExcelOutput.cs" />
+    <Compile Include="IOutput.cs" />
     <Compile Include="ItemInstance.cs" />
     <Compile Include="Membership.cs" />
     <Compile Include="PlugCache.cs" />

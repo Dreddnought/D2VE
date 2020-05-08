@@ -12,6 +12,8 @@ namespace D2VE
         public SortedDictionary<string, long> Stats { get; }
         public override string ToString()
         {
+            if (Stats.Count == 0)
+                return Name;
             return Name + " ("
                 + string.Join(", ", Stats.Keys.Zip(Stats.Values, (k, v) =>
                 ConvertValue.StatSortedName(k) + (v > 0L ? " +" : " ") + v.ToString())) + ")";
@@ -30,20 +32,24 @@ namespace D2VE
                 string plugName = item?.displayProperties?.name;
                 if (!string.IsNullOrWhiteSpace(plugName))
                 {
-                    SortedDictionary<string, long> stats = new SortedDictionary<string, long>();
-                    dynamic investmentStats = item["investmentStats"];
-                    if (investmentStats != null)
-                        foreach (var investmentStat in investmentStats)
-                        {
-                            long statHash = investmentStat.statTypeHash.Value;
-                            string statName = D2VE.StatCache.GetStatName(statHash);
-                            if (statName.Contains(" Cost"))
-                                continue;  // Not one we're interested in
-                            long value = investmentStat.value.Value;
-                            stats[statName] = value;
-                        }
-                    plug = new Plug(plugName, stats);
-                    Console.WriteLine(plug.ToString());
+                    string type = ConvertValue.ItemSubType(item.itemSubType.Value);
+                    if (type== "None")  // We expect None or Mask, Shader or Ornament which we ignore
+                    {
+                        SortedDictionary<string, long> stats = new SortedDictionary<string, long>();
+                        dynamic investmentStats = item["investmentStats"];
+                        if (investmentStats != null)
+                            foreach (var investmentStat in investmentStats)
+                            {
+                                long statHash = investmentStat.statTypeHash.Value;
+                                string statName = D2VE.StatCache.GetStatName(statHash);
+                                if (statName.Contains(" Cost"))
+                                    continue;  // Not one we're interested in
+                                long value = investmentStat.value.Value;
+                                stats[statName] = value;
+                            }
+                        plug = new Plug(plugName, stats);
+                        Console.WriteLine(plug.ToString());
+                    }
                 }
                 _cache[plugHash] = plug;
                 _dirty = true;
@@ -61,7 +67,7 @@ namespace D2VE
             }
             catch (Exception x)
             {
-                Console.WriteLine("Failed to load plug cache: " + x.Message);
+                Console.WriteLine("Failed to save plug cache: " + x.Message);
             }
         }
         public void Load()
