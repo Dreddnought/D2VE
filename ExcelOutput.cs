@@ -9,7 +9,7 @@ namespace D2VE
     public class ExcelOutput : IOutput
     {
         public ExcelOutput() { }
-        public void Create(OutputContext outputContext, List<ItemInstance> items)
+        public void Create(OutputContext outputContext, Dictionary<string, Category> data)
         {
             if (!Directory.Exists(outputContext.Folder))
                 Directory.CreateDirectory(outputContext.Folder);

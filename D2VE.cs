@@ -1,4 +1,4 @@
-﻿//#define TEST_OUTPUT
+﻿#define TEST_OUTPUT
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -117,14 +117,53 @@ namespace D2VE
                     ProcessItem(membership, instances, item);
                 Save(membership.DisplayName, instances);  // Save result for dev purposes (testing output)
 #endif
-                // Create an output spreadsheet.
+                // Convert the data to spreadsheet form.
+                Dictionary<string, Category> data = new Dictionary<string, Category>();
+                // First pass.  Determine all column names.
+                foreach (ItemInstance itemInstance in instances)
+                {
+                    Category category = null;
+                    if (!data.TryGetValue(itemInstance.ItemType, out category))
+                    {
+                        data[itemInstance.ItemType] = category = new Category(itemInstance.ItemType);
+                        category.ColumnIndex("Name");
+                        category.ColumnIndex("Power");
+                        category.ColumnIndex("TierType");
+                        category.ColumnIndex("Slot");
+                        category.ColumnIndex("Season");
+                        category.ColumnIndex("ClassType");
+                        category.ColumnIndex("EnergyType");
+                    }
+                    foreach (string statName in itemInstance.Stats.Keys)
+                        category.ColumnIndex(statName);
+                }
+                // Second pass.  Add rows.
+                foreach (ItemInstance itemInstance in instances)
+                {
+                    Category category = data[itemInstance.ItemType];
+                    object[] row = new object[category.ColumnNames.Count];
+                    row[category.ColumnIndex("Name")] = itemInstance.Name;
+                    row[category.ColumnIndex("Power")] = itemInstance.Power;
+                    row[category.ColumnIndex("TierType")] = itemInstance.TierType;
+                    row[category.ColumnIndex("Slot")] = itemInstance.Slot;
+                    row[category.ColumnIndex("Season")] = itemInstance.Season;
+                    row[category.ColumnIndex("ClassType")] = itemInstance.ClassType;
+                    row[category.ColumnIndex("EnergyType")] = itemInstance.EnergyType;
+                    foreach (var kvp in itemInstance.Stats)
+                    {
+                        int index = category.ColumnIndex(kvp.Key);
+                        row[index] = kvp.Value;
+                    }
+                    category.Rows.Add(row);
+                }
+                // Create an output spreadsheet. 
                 OutputContext outputContext = new OutputContext()
                 {
-                    SpreadsheetName = membership.DisplayName + "-" + DateTime.Now.ToString("yyyyMMdd-HHmmss"),
+                    SpreadsheetName = membership.DisplayName + "_" + DateTime.Now.ToString("yyyyMMdd_HHmmss"),
                     Folder = @"C:\Temp\Destiny"
                 };
-                IOutput output = new ExcelOutput();
-                output.Create(outputContext, instances);
+                IOutput output = new CsvOutput();
+                output.Create(outputContext, data);
             }
             _itemCache.Save();
             PerkCache.Save();
