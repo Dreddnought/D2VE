@@ -27,14 +27,14 @@ namespace D2VE
                     season.Remove(season.Length - 1, 1);  // Remove trailing slash   
                 name = season.ToString();
                 int firstSlash = name.IndexOf('/');
-                if (firstSlash != -1)
-                {
-                    int lastSlash = name.LastIndexOf('/');
-                    if (firstSlash == lastSlash)  // Outlaw/Forge => Outlaw
-                        name = name.Substring(0, firstSlash);
-                    else  // Three seasons mods can be applied.  Take the middle one.
-                        name = name.Substring(firstSlash + 1, lastSlash - firstSlash - 1);
-                }
+                //if (firstSlash != -1)
+                //{
+                //    int lastSlash = name.LastIndexOf('/');
+                //    if (firstSlash == lastSlash)  // Outlaw/Forge => Outlaw
+                //        name = name.Substring(0, firstSlash);
+                //    else  // Three seasons mods can be applied.  Take the middle one.
+                //        name = name.Substring(firstSlash + 1, lastSlash - firstSlash - 1);
+                //}
                 _cache[socketTypeHash] = name;
                 _dirty = true;
             }

@@ -1,10 +1,11 @@
-﻿#define TEST_OUTPUT
+﻿//#define TEST_OUTPUT
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using Newtonsoft.Json;
 
 namespace D2VE
@@ -172,7 +173,10 @@ namespace D2VE
                     .Select(i => new Armor(i.Name, i.TierType, i.ItemType, i.Season,
                         i.Stats["1"], i.Stats["2"], i.Stats["3"], i.Stats["4"], i.Stats["5"], i.Stats["6"])).ToList();
                 AddArmorCalculation(data, armor, new ArmorCalculator("PVP", "Ophidian Aspect", "", 25));
-                AddArmorCalculation(data, armor, new ArmorCalculator("PVE - Worthy", "Karnstein Armlets", "Worthy", 25));
+                AddArmorCalculation(data, armor, new ArmorCalculator("PVE - Next", "Karnstein Armlets", "Next", 25));
+                AddArmorCalculation(data, armor, new ArmorCalculator("PVE - Dawn", "Karnstein Armlets", "Dawn", 25));
+                AddArmorCalculation(data, armor, new ArmorCalculator("PVE - Garden", "Karnstein Armlets", "Undying", 25));
+                AddArmorCalculation(data, armor, new ArmorCalculator("PVE - Leviathan", "Karnstein Armlets", "Opulence", 25));
                 AddArmorCalculation(data, armor, new ArmorCalculator("PVE - All Seasons", "Karnstein Armlets", "", 25));
                 // Create an output spreadsheet. 
                 OutputContext outputContext = new OutputContext()

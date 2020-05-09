@@ -79,21 +79,22 @@ namespace D2VE
             category.ColumnIndex("Strength");
             category.ColumnIndex("Usage");
             category.ColumnIndex("Wastage");
+            category.ColumnIndex("TotalExcludingStrength");
             // First find the exotic.
             List<Armor> exotic = armorItems.Where(a => a.Name == Exotic).ToList();
             string exoticType = exotic[0].ItemType;
             List<Armor> helmets = exoticType == "Helmet" ? exotic :
                 armorItems.Where(a => a.ItemType == "Helmet" && a.TierType != "Exotic" &&
-                (string.IsNullOrWhiteSpace(Season) || a.Season == Season)).ToList();
+                (string.IsNullOrWhiteSpace(Season) || a.Season.Contains(Season))).ToList();
             List<Armor> gauntlets = exoticType == "Gauntlets" ? exotic :
                 armorItems.Where(a => a.ItemType == "Gauntlets" && a.TierType != "Exotic" &&
-                (string.IsNullOrWhiteSpace(Season) || a.Season == Season)).ToList();
+                (string.IsNullOrWhiteSpace(Season) || a.Season.Contains(Season))).ToList();
             List<Armor> chestArmor = exoticType == "Chest Armor" ? exotic :
                 armorItems.Where(a => a.ItemType == "Chest Armor" && a.TierType != "Exotic" &&
-                (string.IsNullOrWhiteSpace(Season) || a.Season == Season)).ToList();
+                (string.IsNullOrWhiteSpace(Season) || a.Season.Contains(Season))).ToList();
             List<Armor> legArmor = exoticType == "Leg Armor" ? exotic :
                 armorItems.Where(a => a.ItemType == "Leg Armor" && a.TierType != "Exotic" &&
-                (string.IsNullOrWhiteSpace(Season) || a.Season == Season)).ToList();
+                (string.IsNullOrWhiteSpace(Season) || a.Season.Contains(Season))).ToList();
             foreach (Armor head in helmets)
                 foreach (Armor arm in gauntlets)
                     foreach (Armor chest in chestArmor)
@@ -119,6 +120,7 @@ namespace D2VE
             long stre = Math.Min(10L, strength / 10);
             long usage = (mobi + resi + reco + disc + inte + stre) * 10;
             long wastage = mobility + resilience + recovery + discipline + intellect + strength - usage;
+            long totalExcludingStrength = mobi + resi + reco + disc + inte;
             object[] row = new object[category.ColumnNames.Count];
             row[category.ColumnIndex("Name")] = head.Id + "/" + arm.Id + "/" + chest.Id + "/" + leg.Id;
             row[category.ColumnIndex("Mobility")] = mobi;
@@ -129,6 +131,7 @@ namespace D2VE
             row[category.ColumnIndex("Strength")] = stre;
             row[category.ColumnIndex("Usage")] = usage;
             row[category.ColumnIndex("Wastage")] = wastage;
+            row[category.ColumnIndex("TotalExcludingStrength")] = totalExcludingStrength;
             return row;
         }
     }
