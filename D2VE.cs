@@ -167,16 +167,13 @@ namespace D2VE
                     category.Rows.Add(row);
                 }
                 // Armor calculation.
-                ArmorCalculator pvpArmorCalculator = new ArmorCalculator("PVP", "Ophidian Aspect", "", 25);
-                ArmorCalculator pveArmorCalculator = new ArmorCalculator("PVE", "Karnstein Armlets", "Worthy", 25);
                 List<Armor> armor = instances.Where(i => i.ItemCategory == "Armor" && i.TierType != "Rare" &&
                     !i.ItemType.StartsWith("Warlock") && !i.ItemType.StartsWith("Hunter") && !i.ItemType.StartsWith("Titan"))
                     .Select(i => new Armor(i.Name, i.TierType, i.ItemType, i.Season,
                         i.Stats["1"], i.Stats["2"], i.Stats["3"], i.Stats["4"], i.Stats["5"], i.Stats["6"])).ToList();
-                Category pvpArmorCalculation = pvpArmorCalculator.Calculate(armor);
-                Category pveArmorCalculation = pveArmorCalculator.Calculate(armor);
-                data[pvpArmorCalculation.Name] = pvpArmorCalculation;
-                data[pveArmorCalculation.Name] = pveArmorCalculation;
+                AddArmorCalculation(data, armor, new ArmorCalculator("PVP", "Ophidian Aspect", "", 25));
+                AddArmorCalculation(data, armor, new ArmorCalculator("PVE - Worthy", "Karnstein Armlets", "Worthy", 25));
+                AddArmorCalculation(data, armor, new ArmorCalculator("PVE - All Seasons", "Karnstein Armlets", "", 25));
                 // Create an output spreadsheet. 
                 OutputContext outputContext = new OutputContext()
                 {
@@ -192,6 +189,11 @@ namespace D2VE
             StatCache.Save();
             SlotCache.Save();
             SeasonCache.Save();
+        }
+        private static void AddArmorCalculation(Dictionary<string, Category> data, List<Armor> armor, ArmorCalculator armorCalculator)
+        {
+            Category category = armorCalculator.Calculate(armor);
+            data[category.Name] = category;
         }
         private static List<ItemInstance> GetItemInstances(Membership membership)
         {
