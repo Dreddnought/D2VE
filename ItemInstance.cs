@@ -17,6 +17,7 @@ namespace D2VE
         public ItemInfo ItemInfo { get; }
         public string Name { get { return ItemInfo.Name; } }
         public long Power { get; }
+        public string ItemCategory { get { return ItemInfo.ItemCategory; } }
         public string TierType { get { return ItemInfo.TierType; } }
         public string ItemType { get { return ItemInfo.ItemType; } }
         public string Slot { get { return ItemInfo.Slot; } }

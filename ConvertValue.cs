@@ -68,18 +68,28 @@
                     return value.ToString();
             }
         }
-        public static string Season(long value)
+        public static string Season(string value)
         {
             switch (value)
             {
-                case 0L:
+                case "penumbra":  // Year 1
                     return "";
-                case 7L:
+                case "outlaw":
+                    return "Outlaw";
+                case "forge":
+                    return "Forge";
+                case "drifter":
+                    return "Drifter";
+                case "opulence":
+                    return "Opulence";
+                case "maverick":
                     return "Undying";
-                case 8L:
+                case "v470":
                     return "Dawn";
-                case 9L:
+                case "v480":
                     return "Worthy";
+                case "v490":
+                    return "Next";
                 default:
                     return value.ToString();
             }

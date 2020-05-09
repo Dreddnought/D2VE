@@ -1,4 +1,4 @@
-﻿#define TEST_OUTPUT
+﻿//#define TEST_OUTPUT
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -23,6 +23,11 @@ namespace D2VE
         private static TimeSpan _timeout = new TimeSpan(0, 1, 0);  // 1 minute
         private static ItemCache _itemCache = new ItemCache();
         private static string _apiKey;
+        public static PerkCache PerkCache { get; } = new PerkCache();
+        public static PlugCache PlugCache { get; } = new PlugCache();
+        public static StatCache StatCache { get; } = new StatCache();
+        public static SlotCache SlotCache { get; } = new SlotCache();
+        public static SocketTypeCache SocketTypeCache { get; } = new SocketTypeCache();
         static void Main(string[] args)
         {
             _apiKey = Persister.Load("ApiKey");
@@ -82,7 +87,8 @@ namespace D2VE
             PerkCache.Load();
             PlugCache.Load();
             StatCache.Load();
-            SlotCache.Save();
+            SlotCache.Load();
+            SocketTypeCache.Load();
             // Get membership type and id for the current user.  We may have already got this earlier when testing the
             // cached access token.
             if (membershipsForCurrentUser == null)
@@ -123,10 +129,11 @@ namespace D2VE
                 foreach (ItemInstance itemInstance in instances)
                 {
                     Category category = null;
-                    if (!data.TryGetValue(itemInstance.ItemType, out category))
+                    if (!data.TryGetValue(itemInstance.ItemCategory, out category))
                     {
-                        data[itemInstance.ItemType] = category = new Category(itemInstance.ItemType);
+                        data[itemInstance.ItemCategory] = category = new Category(itemInstance.ItemCategory);
                         category.ColumnIndex("Name");
+                        category.ColumnIndex("ItemType");
                         category.ColumnIndex("Power");
                         category.ColumnIndex("TierType");
                         category.ColumnIndex("Slot");
@@ -135,14 +142,17 @@ namespace D2VE
                         category.ColumnIndex("EnergyType");
                     }
                     foreach (string statName in itemInstance.Stats.Keys)
-                        category.ColumnIndex(statName);
+                        category.ColumnIndex(ConvertValue.StatSortedName(statName));
+                    foreach (string statName in itemInstance.ItemInfo.Stats.Keys)
+                        category.ColumnIndex("Original" + ConvertValue.StatSortedName(statName));
                 }
                 // Second pass.  Add rows.
                 foreach (ItemInstance itemInstance in instances)
                 {
-                    Category category = data[itemInstance.ItemType];
+                    Category category = data[itemInstance.ItemCategory];
                     object[] row = new object[category.ColumnNames.Count];
                     row[category.ColumnIndex("Name")] = itemInstance.Name;
+                    row[category.ColumnIndex("ItemType")] = itemInstance.ItemType;
                     row[category.ColumnIndex("Power")] = itemInstance.Power;
                     row[category.ColumnIndex("TierType")] = itemInstance.TierType;
                     row[category.ColumnIndex("Slot")] = itemInstance.Slot;
@@ -151,7 +161,12 @@ namespace D2VE
                     row[category.ColumnIndex("EnergyType")] = itemInstance.EnergyType;
                     foreach (var kvp in itemInstance.Stats)
                     {
-                        int index = category.ColumnIndex(kvp.Key);
+                        int index = category.ColumnIndex(ConvertValue.StatSortedName(kvp.Key));
+                        row[index] = kvp.Value;
+                    }
+                    foreach (var kvp in itemInstance.ItemInfo.Stats)
+                    {
+                        int index = category.ColumnIndex("Original" + ConvertValue.StatSortedName(kvp.Key));
                         row[index] = kvp.Value;
                     }
                     category.Rows.Add(row);
@@ -170,12 +185,8 @@ namespace D2VE
             PlugCache.Save();
             StatCache.Save();
             SlotCache.Save();
-            Console.ReadKey();
+            SocketTypeCache.Save();
         }
-        public static PerkCache PerkCache { get; } = new PerkCache();
-        public static PlugCache PlugCache { get; } = new PlugCache();
-        public static StatCache StatCache { get; } = new StatCache();
-        public static SlotCache SlotCache { get; } = new SlotCache();
         private static void ProcessItem(Membership membership, List<ItemInstance> instances, dynamic item)
         {
             try
@@ -184,6 +195,8 @@ namespace D2VE
                 // Get the definition of the item.
                 ItemInfo itemInfo = _itemCache.GetItemInfo(itemHash);
                 if (itemInfo == null)  // Not a weapon or armor
+                    return;
+                if (itemInfo.ItemCategory == "Weapon")  // TODO Remove
                     return;
                 SortedDictionary<string, long> stats = new SortedDictionary<string, long>(itemInfo.Stats);
                 SortedDictionary<string, Perk> perks = new SortedDictionary<string, Perk>();
@@ -231,6 +244,8 @@ namespace D2VE
                         if (plug == null)
                             continue;
                     }
+
+
 
 
                 ItemInstance itemInstance = new ItemInstance(itemInfo, power, energyType, stats, perks);

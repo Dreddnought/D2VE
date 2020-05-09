@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 
 namespace D2VE
@@ -76,7 +77,7 @@ namespace D2VE
         {
             ItemInfo itemInfo;
             long itemType = definition.itemType.Value;
-            if (itemType != 2L && itemType != 3L)  // 2 = armor, 3 = weapon
+            if (itemType != 2L)// TODO && itemType != 3L)  // 2 = armor, 3 = weapon
                 itemInfo = null;
             else
             {
@@ -95,8 +96,25 @@ namespace D2VE
                 string tierType = definition.inventory.tierTypeName.Value;
                 string slot = "";
                 string energyType = "";
+                string season = "";
                 if (itemType == 2L)  // Armor, energyType is at instance level
+                {
                     slot = D2VE.SlotCache.GetSlotName(definition.equippingBlock.equipmentSlotTypeHash.Value);
+                    // Get the season.
+                    // First find the socket indexes for the ARMOR MODS category, 590099826.
+                    int lastIndex = -1;
+                    foreach (dynamic socketCategory in definition.sockets.socketCategories)
+                        if (socketCategory.socketCategoryHash == 590099826L)
+                        {
+                            lastIndex = (int)socketCategory.socketIndexes.Last.Value;
+                            break;
+                        }
+                    if (lastIndex != -1)
+                    {
+                        long socketTypeHash = definition.sockets.socketEntries[lastIndex].socketTypeHash.Value;
+                        season = D2VE.SocketTypeCache.GetSocketTypeName(socketTypeHash);
+                    }
+                }
                 else  // Weapon
                 {
                     energyType = ConvertValue.DamageType(definition.defaultDamageType?.Value);
@@ -109,7 +127,7 @@ namespace D2VE
                    definition.itemTypeDisplayName.Value,
                    slot,
                    energyType,
-                   ConvertValue.Season(definition.seasonHash?.Value ?? 0L),
+                   season,
                    ConvertValue.ClassType(definition.classType?.Value ?? 0L),
                    stats);
             }
