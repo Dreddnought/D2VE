@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArmorCalculator.cs" />
     <Compile Include="ConvertValue.cs" />
     <Compile Include="CsvOutput.cs" />
     <Compile Include="D2VE.cs" />

@@ -26,5 +26,6 @@ namespace D2VE
             return ColumnNames.IndexOf(name);
         }
         public List<object[]> Rows { get; } = new List<object[]>();
+        public override string ToString() { return Name; }
     }
 }
