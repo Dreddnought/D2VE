@@ -5,12 +5,12 @@ using Newtonsoft.Json;
 
 namespace D2VE
 {
-    public class SocketTypeCache
+    public class SeasonCache
     {
         private bool _dirty;
-        public SocketTypeCache() { }
+        public SeasonCache() { }
         private const string SeasonPrefix = "enhancements.season_";
-        public string GetSocketTypeName(long socketTypeHash)
+        public string GetSeasonName(long socketTypeHash)
         {
             string name;
             if (!_cache.TryGetValue(socketTypeHash, out name))  // Look it up
@@ -47,24 +47,24 @@ namespace D2VE
             try
             {
                 string cache = JsonConvert.SerializeObject(_cache, Formatting.Indented);
-                Persister.Save("SocketTypeCache", cache);
+                Persister.Save("SeasonCache", cache);
             }
             catch (Exception x)
             {
-                Console.WriteLine("Failed to save socketType cache: " + x.Message);
+                Console.WriteLine("Failed to save season cache: " + x.Message);
             }
         }
         public void Load()
         {
             try
             {
-                string cache = Persister.Load("SocketTypeCache");
+                string cache = Persister.Load("SeasonCache");
                 if (!string.IsNullOrWhiteSpace(cache))
                     _cache = JsonConvert.DeserializeObject<Dictionary<long, string>>(cache);
             }
             catch (Exception x)
             {
-                Console.WriteLine("Failed to load socketType cache: " + x.Message);
+                Console.WriteLine("Failed to load season cache: " + x.Message);
             }
             _dirty = false;
         }

@@ -42,13 +42,12 @@ namespace D2VE
                             {
                                 long statHash = investmentStat.statTypeHash.Value;
                                 string statName = D2VE.StatCache.GetStatName(statHash);
-                                if (statName.Contains(" Cost"))
+                                if (statName.Contains(" Cost") || statName.Contains(" Energy Capacity"))
                                     continue;  // Not one we're interested in
                                 long value = investmentStat.value.Value;
                                 stats[statName] = value;
                             }
                         plug = new Plug(plugName, stats);
-                        Console.WriteLine(plug.ToString());
                     }
                 }
                 _cache[plugHash] = plug;

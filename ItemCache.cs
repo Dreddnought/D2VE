@@ -77,7 +77,7 @@ namespace D2VE
         {
             ItemInfo itemInfo;
             long itemType = definition.itemType.Value;
-            if (itemType != 2L)// TODO && itemType != 3L)  // 2 = armor, 3 = weapon
+            if (itemType != 2L && itemType != 3L)  // 2 = armor, 3 = weapon
                 itemInfo = null;
             else
             {
@@ -112,7 +112,7 @@ namespace D2VE
                     if (lastIndex != -1)
                     {
                         long socketTypeHash = definition.sockets.socketEntries[lastIndex].socketTypeHash.Value;
-                        season = D2VE.SocketTypeCache.GetSocketTypeName(socketTypeHash);
+                        season = D2VE.SeasonCache.GetSeasonName(socketTypeHash);
                     }
                 }
                 else  // Weapon

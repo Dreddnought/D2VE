@@ -21,13 +21,13 @@ namespace D2VE
         private static MediaTypeWithQualityHeaderValue _jsonAcceptHeader
             = new MediaTypeWithQualityHeaderValue(_jsonMediaType);
         private static TimeSpan _timeout = new TimeSpan(0, 1, 0);  // 1 minute
-        private static ItemCache _itemCache = new ItemCache();
         private static string _apiKey;
+        public static ItemCache ItemCache { get; } = new ItemCache();
         public static PerkCache PerkCache { get; } = new PerkCache();
         public static PlugCache PlugCache { get; } = new PlugCache();
         public static StatCache StatCache { get; } = new StatCache();
         public static SlotCache SlotCache { get; } = new SlotCache();
-        public static SocketTypeCache SocketTypeCache { get; } = new SocketTypeCache();
+        public static SeasonCache SeasonCache { get; } = new SeasonCache();
         static void Main(string[] args)
         {
             _apiKey = Persister.Load("ApiKey");
@@ -36,6 +36,9 @@ namespace D2VE
                 Console.WriteLine("ApiKey not defined");
                 return;
             }
+#if TEST_OUTPUT
+            Console.WriteLine("Using cached result");
+#else
             // For now we have a manual step to get the code.  Go to OAuthUrl in a browser and copy the returned code
             // from the redirect address (to automate this I would need a proper website).  Once you have the code,
             // pass it on the command line.  We can query for the access token using this code, but only once.  So
@@ -83,45 +86,35 @@ namespace D2VE
                 return;
             }
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-            _itemCache.Load();
+#endif
+            ItemCache.Load();
             PerkCache.Load();
             PlugCache.Load();
             StatCache.Load();
             SlotCache.Load();
-            SocketTypeCache.Load();
+            SeasonCache.Load();
+            List<Membership> memberships = new List<Membership>();          
+#if TEST_OUTPUT
+            memberships.Add(new Membership("DrEdd_Nought", "2", "4611686018434882493"));
+#else
             // Get membership type and id for the current user.  We may have already got this earlier when testing the
             // cached access token.
             if (membershipsForCurrentUser == null)
                 membershipsForCurrentUser = Request("User/GetMembershipsForCurrentUser/");
             dynamic destinyMemberships = membershipsForCurrentUser["destinyMemberships"];
             foreach (var destinyMembership in destinyMemberships)
-            {
-                Membership membership = new Membership(
+                memberships.Add(new Membership(
                     destinyMembership.displayName.Value,
                     destinyMembership.membershipType.Value.ToString(),
-                    destinyMembership.membershipId.Value);
+                    destinyMembership.membershipId.Value));
+#endif
+            foreach (Membership membership in memberships)
+            {
                 List<ItemInstance> instances = null;
 #if TEST_OUTPUT
                 instances = Load(membership.DisplayName);
 #else
-                instances = new List<ItemInstance>();
-                // Get all inventories in their vault and characters.
-                dynamic inventories =
-                    Request("Destiny2/" + membership.Type + "/Profile/" + membership.Id + "/?components=102,201,205");
-                // Items equipped on the character.
-                foreach (var characters in inventories["characterEquipment"]["data"])
-                    foreach (var character in characters)
-                        foreach (var item in character["items"])
-                            ProcessItem(membership, instances, item);
-                // Items on the character but not equipped.  Includes postmaster items.
-                foreach (var characters in inventories["characterInventories"]["data"])
-                    foreach (var character in characters)
-                        foreach (var item in character["items"])
-                            ProcessItem(membership, instances, item);
-                // Items in the vault.
-                foreach (var item in inventories["profileInventory"]["data"]["items"])
-                    ProcessItem(membership, instances, item);
-                Save(membership.DisplayName, instances);  // Save result for dev purposes (testing output)
+                instances = GetItemInstances(membership);
 #endif
                 // Convert the data to spreadsheet form.
                 Dictionary<string, Category> data = new Dictionary<string, Category>();
@@ -143,8 +136,9 @@ namespace D2VE
                     }
                     foreach (string statName in itemInstance.Stats.Keys)
                         category.ColumnIndex(ConvertValue.StatSortedName(statName));
-                    foreach (string statName in itemInstance.ItemInfo.Stats.Keys)
-                        category.ColumnIndex("Original" + ConvertValue.StatSortedName(statName));
+                    if (itemInstance.ItemCategory == "Weapon")
+                        foreach (string statName in itemInstance.ItemInfo.Stats.Keys)
+                            category.ColumnIndex("Original" + ConvertValue.StatSortedName(statName));
                 }
                 // Second pass.  Add rows.
                 foreach (ItemInstance itemInstance in instances)
@@ -164,11 +158,12 @@ namespace D2VE
                         int index = category.ColumnIndex(ConvertValue.StatSortedName(kvp.Key));
                         row[index] = kvp.Value;
                     }
-                    foreach (var kvp in itemInstance.ItemInfo.Stats)
-                    {
-                        int index = category.ColumnIndex("Original" + ConvertValue.StatSortedName(kvp.Key));
-                        row[index] = kvp.Value;
-                    }
+                    if (itemInstance.ItemCategory == "Weapon")
+                        foreach (var kvp in itemInstance.ItemInfo.Stats)
+                        {
+                            int index = category.ColumnIndex("Original" + ConvertValue.StatSortedName(kvp.Key));
+                            row[index] = kvp.Value;
+                        }
                     category.Rows.Add(row);
                 }
                 // Create an output spreadsheet. 
@@ -180,12 +175,34 @@ namespace D2VE
                 IOutput output = new CsvOutput();
                 output.Create(outputContext, data);
             }
-            _itemCache.Save();
+            ItemCache.Save();
             PerkCache.Save();
             PlugCache.Save();
             StatCache.Save();
             SlotCache.Save();
-            SocketTypeCache.Save();
+            SeasonCache.Save();
+        }
+        private static List<ItemInstance> GetItemInstances(Membership membership)
+        {
+            List<ItemInstance> instances = new List<ItemInstance>();
+            // Get all inventories in their vault and characters.
+            dynamic inventories =
+                Request("Destiny2/" + membership.Type + "/Profile/" + membership.Id + "/?components=102,201,205");
+            // Items equipped on the character.
+            foreach (var characters in inventories["characterEquipment"]["data"])
+                foreach (var character in characters)
+                    foreach (var item in character["items"])
+                        ProcessItem(membership, instances, item);
+            // Items on the character but not equipped.  Includes postmaster items.
+            foreach (var characters in inventories["characterInventories"]["data"])
+                foreach (var character in characters)
+                    foreach (var item in character["items"])
+                        ProcessItem(membership, instances, item);
+            // Items in the vault.
+            foreach (var item in inventories["profileInventory"]["data"]["items"])
+                ProcessItem(membership, instances, item);
+            Save(membership.DisplayName, instances);  // Save result for dev purposes (testing output)
+            return instances;
         }
         private static void ProcessItem(Membership membership, List<ItemInstance> instances, dynamic item)
         {
@@ -193,10 +210,8 @@ namespace D2VE
             {
                 long itemHash = item.itemHash.Value;
                 // Get the definition of the item.
-                ItemInfo itemInfo = _itemCache.GetItemInfo(itemHash);
+                ItemInfo itemInfo = ItemCache.GetItemInfo(itemHash);
                 if (itemInfo == null)  // Not a weapon or armor
-                    return;
-                if (itemInfo.ItemCategory == "Weapon")  // TODO Remove
                     return;
                 SortedDictionary<string, long> stats = new SortedDictionary<string, long>(itemInfo.Stats);
                 SortedDictionary<string, Perk> perks = new SortedDictionary<string, Perk>();
@@ -225,11 +240,9 @@ namespace D2VE
                     {
                         long perkHash = perkInstance.perkHash.Value;
                         bool isActive = perkInstance.isActive.Value;
-
                         Perk perk = PerkCache.GetPerk(perkHash);
                         if (perk != null)
                             perks[perk.Name] = perk;
-
                     }
                 dynamic socketData = instance["sockets"]["data"];
                 if (socketData != null)
@@ -238,16 +251,20 @@ namespace D2VE
                         long plugHash = socketInstance.plugHash?.Value ?? 0L;
                         if (plugHash == 0L)  // No info on it so can ignore
                             continue;
-                        bool isEnabled = socketInstance.isEnabled.Value;
-                        bool isVisible = socketInstance.isVisible.Value;
+                        if (!socketInstance.isEnabled.Value)  // Not enabled
+                            continue;
                         Plug plug = PlugCache.GetPlug(plugHash);
                         if (plug == null)
                             continue;
+                        Console.WriteLine(plug.ToString());
+                        if (itemInfo.ItemCategory == "Armor")  // Remove stat values from plugs
+                            foreach (var stat in plug.Stats)
+                            {
+                                long value;
+                                if (stats.TryGetValue(stat.Key, out value))
+                                    stats[stat.Key] = value - stat.Value;
+                            }
                     }
-
-
-
-
                 ItemInstance itemInstance = new ItemInstance(itemInfo, power, energyType, stats, perks);
                 instances.Add(itemInstance);
                 Console.WriteLine(itemInstance.ToString());

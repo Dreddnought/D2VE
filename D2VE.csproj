@@ -60,7 +60,7 @@
     <Compile Include="ItemCache.cs" />
     <Compile Include="SlotCache.cs" />
     <Compile Include="PerkCache.cs" />
-    <Compile Include="SocketTypeCache.cs" />
+    <Compile Include="SeasonCache.cs" />
     <Compile Include="StatCache.cs" />
   </ItemGroup>
   <ItemGroup>
