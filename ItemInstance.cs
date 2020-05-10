@@ -5,12 +5,13 @@ namespace D2VE
 {
     public class ItemInstance
     {
-        public ItemInstance(ItemInfo itemInfo, long power, string energyType, SortedDictionary<string, long> stats,
-               SortedDictionary<string, Perk> perks)
+        public ItemInstance(ItemInfo itemInfo, long power, string energyType, string masterwork,
+            SortedDictionary<string, long> stats, SortedDictionary<string, Perk> perks)
         {
             ItemInfo = itemInfo;
             Power = power;
             EnergyType = energyType;
+            Masterwork = masterwork;
             Stats = stats;
             Perks = perks;
         }
@@ -24,6 +25,7 @@ namespace D2VE
         public string Season { get { return ItemInfo.Season; } }
         public string ClassType { get { return ItemInfo.ClassType; } }
         public string EnergyType { get; }
+        public string Masterwork { get; }
         public SortedDictionary<string, long> Stats { get; }
         public SortedDictionary<string, Perk> Perks { get; }
         public override string ToString()

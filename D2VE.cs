@@ -138,8 +138,7 @@ namespace D2VE
                     foreach (string statName in itemInstance.Stats.Keys)
                         category.ColumnIndex(ConvertValue.StatSortedName(statName));
                     if (itemInstance.ItemCategory == "Weapon")
-                        foreach (string statName in itemInstance.ItemInfo.Stats.Keys)
-                            category.ColumnIndex("Original" + ConvertValue.StatSortedName(statName));
+                        category.ColumnIndex("Masterwork");
                 }
                 // Second pass.  Add rows.
                 foreach (ItemInstance itemInstance in instances)
@@ -160,24 +159,10 @@ namespace D2VE
                         row[index] = kvp.Value;
                     }
                     if (itemInstance.ItemCategory == "Weapon")
-                        foreach (var kvp in itemInstance.ItemInfo.Stats)
-                        {
-                            int index = category.ColumnIndex("Original" + ConvertValue.StatSortedName(kvp.Key));
-                            row[index] = kvp.Value;
-                        }
+                        row[category.ColumnIndex("Masterwork")] = itemInstance.Masterwork;
                     category.Rows.Add(row);
                 }
-                // Armor calculation.
-                List<Armor> armor = instances.Where(i => i.ItemCategory == "Armor" && i.TierType != "Rare" &&
-                    !i.ItemType.StartsWith("Warlock") && !i.ItemType.StartsWith("Hunter") && !i.ItemType.StartsWith("Titan"))
-                    .Select(i => new Armor(i.Name, i.TierType, i.ItemType, i.Season,
-                        i.Stats["1"], i.Stats["2"], i.Stats["3"], i.Stats["4"], i.Stats["5"], i.Stats["6"])).ToList();
-                AddArmorCalculation(data, armor, new ArmorCalculator("PVP", "Ophidian Aspect", "", 25));
-                AddArmorCalculation(data, armor, new ArmorCalculator("PVE - Next", "Karnstein Armlets", "Next", 25));
-                AddArmorCalculation(data, armor, new ArmorCalculator("PVE - Dawn", "Karnstein Armlets", "Dawn", 25));
-                AddArmorCalculation(data, armor, new ArmorCalculator("PVE - Garden", "Karnstein Armlets", "Undying", 25));
-                AddArmorCalculation(data, armor, new ArmorCalculator("PVE - Leviathan", "Karnstein Armlets", "Opulence", 25));
-                AddArmorCalculation(data, armor, new ArmorCalculator("PVE - All Seasons", "Karnstein Armlets", "", 25));
+                ArmorCalculations(instances, data);
                 // Create an output spreadsheet. 
                 OutputContext outputContext = new OutputContext()
                 {
@@ -193,6 +178,20 @@ namespace D2VE
             StatCache.Save();
             SlotCache.Save();
             SeasonCache.Save();
+        }
+        private static void ArmorCalculations(List<ItemInstance> instances, Dictionary<string, Category> data)
+        {
+            // Armor calculation.
+            List<Armor> armor = instances.Where(i => i.ItemCategory == "Armor" && i.TierType != "Rare" &&
+                !i.ItemType.StartsWith("Warlock") && !i.ItemType.StartsWith("Hunter") && !i.ItemType.StartsWith("Titan"))
+                .Select(i => new Armor(i.Name, i.TierType, i.ItemType, i.Season,
+                    i.Stats["1"], i.Stats["2"], i.Stats["3"], i.Stats["4"], i.Stats["5"], i.Stats["6"])).ToList();
+            AddArmorCalculation(data, armor, new ArmorCalculator("PVP", "Ophidian Aspect", "", 25));
+            AddArmorCalculation(data, armor, new ArmorCalculator("PVE - Next", "Karnstein Armlets", "Next", 25));
+            AddArmorCalculation(data, armor, new ArmorCalculator("PVE - Dawn", "Karnstein Armlets", "Dawn", 25));
+            AddArmorCalculation(data, armor, new ArmorCalculator("PVE - Garden", "Karnstein Armlets", "Undying", 25));
+            AddArmorCalculation(data, armor, new ArmorCalculator("PVE - Leviathan", "Karnstein Armlets", "Opulence", 25));
+            AddArmorCalculation(data, armor, new ArmorCalculator("PVE - All Seasons", "Karnstein Armlets", "", 25));
         }
         private static void AddArmorCalculation(Dictionary<string, Category> data, List<Armor> armor, ArmorCalculator armorCalculator)
         {
@@ -237,6 +236,7 @@ namespace D2VE
                 dynamic instance = Request("Destiny2/" + membership.Type + "/Profile/" + membership.Id + "/Item/"
                     + itemInstanceId + "?components=300,302,304,305,306,308,309,310");
                 long power = instance.instance.data.primaryStat.value.Value;
+                string masterwork = "";
                 string energyType = itemInfo.EnergyType;
                 if (itemInfo.ItemCategory == "Armor")  // Armor, energyType is at instance level
                 {
@@ -281,8 +281,20 @@ namespace D2VE
                                 if (stats.TryGetValue(stat.Key, out value))
                                     stats[stat.Key] = value - stat.Value;
                             }
+                        else if (masterwork == "")  // Some have additional but usually make them worse so just take the first
+                            foreach (var stat in plug.Stats)  // We'll leave equipped plugs except we want to max out the masterwork
+                                if (plug.Name == "Masterwork")  // Full stats are already applied so we just need the name
+                                    masterwork = stat.Key;
+                                else if (plug.Name.StartsWith("Tier "))  // Stat value is one more than has actually been applied
+                                {
+                                    System.Diagnostics.Debug.Assert(plug.Stats.Count == 1);
+                                    masterwork = stat.Key;
+                                    long value;
+                                    if (stats.TryGetValue(stat.Key, out value))
+                                        stats[stat.Key] = value - stat.Value + 11;
+                                }
                     }
-                ItemInstance itemInstance = new ItemInstance(itemInfo, power, energyType, stats, perks);
+                ItemInstance itemInstance = new ItemInstance(itemInfo, power, energyType, masterwork, stats, perks);
                 instances.Add(itemInstance);
                 Console.WriteLine(itemInstance.ToString());
             }
