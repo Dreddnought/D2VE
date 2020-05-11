@@ -15,8 +15,7 @@ namespace D2VE
         {
             if (Stats.Count == 0)
                 return Name;
-            return Name + " ("
-                + string.Join("; ", Stats.Keys.Zip(Stats.Values, (k, v) =>
+            return Name + " (" + string.Join("; ", Stats.Keys.Zip(Stats.Values, (k, v) =>
                 ConvertValue.StatSortedName(k) + (v > 0L ? " +" : " ") + v.ToString())) + ")";
         }
     }

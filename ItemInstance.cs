@@ -35,7 +35,7 @@ namespace D2VE
                 + (string.IsNullOrWhiteSpace(Season) ? "" : " [" + Season + "]")
                 + "\r\n  " + string.Join("\r\n  ",
                 Stats.Keys.Zip(Stats.Values, (k, v) => ConvertValue.StatSortedName(k) + " = " + v))
-                + "\r\n    " + string.Join("\r\n    ",
+                + "\r\n  " + string.Join("\r\n  ",
                 Plugs.Keys.Zip(Plugs.Values, (k, v) => k + " = " + v));
         }
     }

@@ -309,7 +309,6 @@ namespace D2VE
                                     if (stats.TryGetValue(stat.Key, out value))
                                         stats[stat.Key] = value - stat.Value + (stat.Value > 0 ? 11 : -11);
                                 }
-                            Console.WriteLine(plug.ToString());
                             string plugType = plug.PlugType;
                             if (string.IsNullOrWhiteSpace(plugType) || plugType == "Weapon Mod")
                                 continue;
