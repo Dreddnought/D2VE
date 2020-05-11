@@ -29,6 +29,7 @@ namespace D2VE
         public string Season { get; }
         public string ClassType { get; }
         public Dictionary<string, long> Stats { get; }
+        public override string ToString() { return Name; }
     }
     public class ItemCache
     {

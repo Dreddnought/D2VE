@@ -6,14 +6,14 @@ namespace D2VE
     public class ItemInstance
     {
         public ItemInstance(ItemInfo itemInfo, long power, string energyType, string masterwork,
-            SortedDictionary<string, long> stats, SortedDictionary<string, Perk> perks)
+            SortedDictionary<string, long> stats, SortedDictionary<string, Plug> plugs)
         {
             ItemInfo = itemInfo;
             Power = power;
             EnergyType = energyType;
             Masterwork = masterwork;
             Stats = stats;
-            Perks = perks;
+            Plugs = plugs;
         }
         public ItemInfo ItemInfo { get; }
         public string Name { get { return ItemInfo.Name; } }
@@ -27,7 +27,7 @@ namespace D2VE
         public string EnergyType { get; }
         public string Masterwork { get; }
         public SortedDictionary<string, long> Stats { get; }
-        public SortedDictionary<string, Perk> Perks { get; }
+        public SortedDictionary<string, Plug> Plugs { get; }
         public override string ToString()
         {
             return Name + " " + Power.ToString() + " (" + ItemType + ") " + Slot + " " + EnergyType + " " + TierType
@@ -36,7 +36,7 @@ namespace D2VE
                 + "\r\n  " + string.Join("\r\n  ",
                 Stats.Keys.Zip(Stats.Values, (k, v) => ConvertValue.StatSortedName(k) + " = " + v))
                 + "\r\n    " + string.Join("\r\n    ",
-                Perks.Keys.Zip(Perks.Values, (k, v) => k + " = " + v));
+                Plugs.Keys.Zip(Plugs.Values, (k, v) => k + " = " + v));
         }
     }
 }

@@ -24,7 +24,6 @@ namespace D2VE
         private static TimeSpan _timeout = new TimeSpan(0, 1, 0);  // 1 minute
         private static string _apiKey;
         public static ItemCache ItemCache { get; } = new ItemCache();
-        public static PerkCache PerkCache { get; } = new PerkCache();
         public static PlugCache PlugCache { get; } = new PlugCache();
         public static StatCache StatCache { get; } = new StatCache();
         public static SlotCache SlotCache { get; } = new SlotCache();
@@ -89,7 +88,6 @@ namespace D2VE
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 #endif
             ItemCache.Load();
-            PerkCache.Load();
             PlugCache.Load();
             StatCache.Load();
             SlotCache.Load();
@@ -119,7 +117,7 @@ namespace D2VE
 #endif
                 // Convert the data to spreadsheet form.
                 Dictionary<string, Category> data = new Dictionary<string, Category>();
-                // First pass.  Determine all column names.
+                // First pass.  Determine all column names except stats which we want on the end.
                 foreach (ItemInstance itemInstance in instances)
                 {
                     Category category = null;
@@ -131,16 +129,32 @@ namespace D2VE
                         category.ColumnIndex("Power");
                         category.ColumnIndex("TierType");
                         category.ColumnIndex("Slot");
-                        category.ColumnIndex("Season");
                         category.ColumnIndex("ClassType");
                         category.ColumnIndex("EnergyType");
+                        if (itemInstance.ItemCategory == "Armor")
+                            category.ColumnIndex("Season");
+                        else
+                        {
+                            category.ColumnIndex("Intrinsic");
+                            category.ColumnIndex("Barrel/Sight");
+                            category.ColumnIndex("Magazine/Battery");
+                            category.ColumnIndex("Perk1");
+                            category.ColumnIndex("Perk2");
+                            category.ColumnIndex("Masterwork");
+                        }
                     }
+                    if (itemInstance.ItemCategory == "Weapon")  // In case we missed any
+                        foreach (string plugTypeName in itemInstance.Plugs.Keys)
+                            category.ColumnIndex(plugTypeName);
+                }
+                // Second pass.  Add all column names for stats.
+                foreach (ItemInstance itemInstance in instances)
+                {
+                    Category category = data[itemInstance.ItemCategory];
                     foreach (string statName in itemInstance.Stats.Keys)
                         category.ColumnIndex(ConvertValue.StatSortedName(statName));
-                    if (itemInstance.ItemCategory == "Weapon")
-                        category.ColumnIndex("Masterwork");
                 }
-                // Second pass.  Add rows.
+                // Third pass.  Add rows.
                 foreach (ItemInstance itemInstance in instances)
                 {
                     Category category = data[itemInstance.ItemCategory];
@@ -150,16 +164,20 @@ namespace D2VE
                     row[category.ColumnIndex("Power")] = itemInstance.Power;
                     row[category.ColumnIndex("TierType")] = itemInstance.TierType;
                     row[category.ColumnIndex("Slot")] = itemInstance.Slot;
-                    row[category.ColumnIndex("Season")] = itemInstance.Season;
-                    row[category.ColumnIndex("ClassType")] = itemInstance.ClassType;
                     row[category.ColumnIndex("EnergyType")] = itemInstance.EnergyType;
+                    row[category.ColumnIndex("ClassType")] = itemInstance.ClassType;
+                    if (itemInstance.ItemCategory == "Armor")
+                        row[category.ColumnIndex("Season")] = itemInstance.Season;
+                    else
+                        row[category.ColumnIndex("Masterwork")] = itemInstance.Masterwork;
+                    if (itemInstance.ItemCategory == "Weapon")
+                        foreach (var kvp in itemInstance.Plugs)
+                            row[category.ColumnIndex(kvp.Key)] = kvp.Value;
                     foreach (var kvp in itemInstance.Stats)
                     {
                         int index = category.ColumnIndex(ConvertValue.StatSortedName(kvp.Key));
                         row[index] = kvp.Value;
                     }
-                    if (itemInstance.ItemCategory == "Weapon")
-                        row[category.ColumnIndex("Masterwork")] = itemInstance.Masterwork;
                     category.Rows.Add(row);
                 }
                 ArmorCalculations(instances, data);
@@ -173,11 +191,11 @@ namespace D2VE
                 output.Create(outputContext, data);
             }
             ItemCache.Save();
-            PerkCache.Save();
             PlugCache.Save();
             StatCache.Save();
             SlotCache.Save();
             SeasonCache.Save();
+            Console.Read();
         }
         private static void ArmorCalculations(List<ItemInstance> instances, Dictionary<string, Category> data)
         {
@@ -224,17 +242,18 @@ namespace D2VE
         {
             try
             {
+                int traitNumber = 0;
                 long itemHash = item.itemHash.Value;
                 // Get the definition of the item.
                 ItemInfo itemInfo = ItemCache.GetItemInfo(itemHash);
                 if (itemInfo == null)  // Not a weapon or armor
                     return;
                 SortedDictionary<string, long> stats = new SortedDictionary<string, long>(itemInfo.Stats);
-                SortedDictionary<string, Perk> perks = new SortedDictionary<string, Perk>();
+                SortedDictionary<string, Plug> plugs = new SortedDictionary<string, Plug>();
                 // Now get the specific stats and perks for the item.
                 string itemInstanceId = item.itemInstanceId.Value;
                 dynamic instance = Request("Destiny2/" + membership.Type + "/Profile/" + membership.Id + "/Item/"
-                    + itemInstanceId + "?components=300,302,304,305,306,308,309,310");
+                    + itemInstanceId + "?components=300,304,305,306,308,309,310");
                 long power = instance.instance.data.primaryStat.value.Value;
                 string masterwork = "";
                 string energyType = itemInfo.EnergyType;
@@ -251,16 +270,6 @@ namespace D2VE
                     string statName = StatCache.GetStatName(statHash);
                     stats[statName] = value;  // May override item level stats
                 }
-                dynamic perkData = instance["perks"]["data"];
-                if (perkData != null)
-                    foreach (var perkInstance in perkData["perks"])
-                    {
-                        long perkHash = perkInstance.perkHash.Value;
-                        bool isActive = perkInstance.isActive.Value;
-                        Perk perk = PerkCache.GetPerk(perkHash);
-                        if (perk != null)
-                            perks[perk.Name] = perk;
-                    }
                 dynamic socketData = instance["sockets"]["data"];
                 if (socketData != null)
                     foreach (var socketInstance in socketData["sockets"])
@@ -273,7 +282,6 @@ namespace D2VE
                         Plug plug = PlugCache.GetPlug(plugHash);
                         if (plug == null)
                             continue;
-                        Console.WriteLine(plug.ToString());
                         if (itemInfo.ItemCategory == "Armor")  // Remove stat values from plugs
                             foreach (var stat in plug.Stats)
                             {
@@ -281,20 +289,40 @@ namespace D2VE
                                 if (stats.TryGetValue(stat.Key, out value))
                                     stats[stat.Key] = value - stat.Value;
                             }
-                        else if (masterwork == "")  // Some have additional but usually make them worse so just take the first
+                        else
+                        {
                             foreach (var stat in plug.Stats)  // We'll leave equipped plugs except we want to max out the masterwork
                                 if (plug.Name == "Masterwork")  // Full stats are already applied so we just need the name
-                                    masterwork = stat.Key;
+                                {
+                                    if (masterwork == "")  // Some have additional but usually make them worse so just take the first
+                                        masterwork = stat.Key;
+                                }
                                 else if (plug.Name.StartsWith("Tier "))  // Stat value is one more than has actually been applied
                                 {
-                                    System.Diagnostics.Debug.Assert(plug.Stats.Count == 1);
-                                    masterwork = stat.Key;
+                                    if (masterwork == "")  // Some have additional but usually make them worse so just take the first
+                                        masterwork = stat.Key;
+                                    // These are awkward because the mapping to milliseconds is not linear.  For now I'm going to ignore
+                                    // it.
+                                    if (stat.Key == "Charge Time" || stat.Key == "Draw Time")
+                                        break;
                                     long value;
                                     if (stats.TryGetValue(stat.Key, out value))
-                                        stats[stat.Key] = value - stat.Value + 11;
+                                        stats[stat.Key] = value - stat.Value + (stat.Value > 0 ? 11 : -11);
                                 }
+                            Console.WriteLine(plug.ToString());
+                            string plugType = plug.PlugType;
+                            if (string.IsNullOrWhiteSpace(plugType) || plugType == "Weapon Mod")
+                                continue;
+                            if (plugType == "Trait")
+                                plugType = "Perk" + (++traitNumber).ToString();
+                            // Cerberus has three barrel plugs.  Ikelos weapons also have more than one barrel plug (seems like a bug).
+                            // We'll just ignore the extra barrels because they are not particularly interesting.
+                            System.Diagnostics.Debug.Assert(plugType == "Barrel/Sight" || !plugs.ContainsKey(plugType));
+                            if (!plugs.ContainsKey(plugType))
+                                plugs[plugType] = plug;
+                        }
                     }
-                ItemInstance itemInstance = new ItemInstance(itemInfo, power, energyType, masterwork, stats, perks);
+                ItemInstance itemInstance = new ItemInstance(itemInfo, power, energyType, masterwork, stats, plugs);
                 instances.Add(itemInstance);
                 Console.WriteLine(itemInstance.ToString());
             }
@@ -369,3 +397,9 @@ namespace D2VE
         }
     }
 }
+
+/*
+TODO
+Option to exclude armor pieces from consideration (if they are designated for PVP say).
+Add unclaimed season pass armor pieces.
+ */

@@ -21,8 +21,9 @@ namespace D2VE
             Discipline = discipline;
             Intellect = intellect;
             Strength = strength;
-            Id = Name + " (" + Mobility.ToString() + "-" + Resilience.ToString() + "-" + Recovery.ToString() + "-"
-                + Discipline.ToString() + "-" + Intellect.ToString() + "-" + Strength.ToString() + ")";
+            BaseStats = mobility + resilience + recovery + discipline + intellect + strength;
+            Id = Name + " "+ BaseStats.ToString() + " (" + Mobility.ToString() + "-" + Resilience.ToString() + "-"
+                + Recovery.ToString() + "-" + Discipline.ToString() + "-" + Intellect.ToString() + "-" + Strength.ToString() + ")";
         }
         public string Name { get; }
         public string TierType { get; }
@@ -34,6 +35,7 @@ namespace D2VE
         public long Discipline { get; }
         public long Intellect { get; }
         public long Strength { get; }
+        public long BaseStats { get; }
         public string Id { get; }
         public override string ToString() { return Id; }
     }
@@ -80,6 +82,7 @@ namespace D2VE
             category.ColumnIndex("Usage");
             category.ColumnIndex("Wastage");
             category.ColumnIndex("TotalExcludingStrength");
+            category.ColumnIndex("LowestBaseStats");
             // First find the exotic.
             List<Armor> exotic = armorItems.Where(a => a.Name == Exotic).ToList();
             string exoticType = exotic[0].ItemType;
@@ -121,6 +124,7 @@ namespace D2VE
             long usage = (mobi + resi + reco + disc + inte + stre) * 10;
             long wastage = mobility + resilience + recovery + discipline + intellect + strength - usage;
             long totalExcludingStrength = mobi + resi + reco + disc + inte;
+            long lowestBaseStats = Math.Min(Math.Min(head.BaseStats, arm.BaseStats), Math.Min(chest.BaseStats, leg.BaseStats));
             object[] row = new object[category.ColumnNames.Count];
             row[category.ColumnIndex("Name")] = head.Id + "/" + arm.Id + "/" + chest.Id + "/" + leg.Id;
             row[category.ColumnIndex("Mobility")] = mobi;
@@ -132,6 +136,7 @@ namespace D2VE
             row[category.ColumnIndex("Usage")] = usage;
             row[category.ColumnIndex("Wastage")] = wastage;
             row[category.ColumnIndex("TotalExcludingStrength")] = totalExcludingStrength;
+            row[category.ColumnIndex("LowestBaseStats")] = lowestBaseStats;
             return row;
         }
     }

@@ -188,5 +188,16 @@
                     return value;
             }
         }
+        // Different weapon types use different plug types but we can rename them to avoid lots of space.
+        public static string PlugTypeName(string value)
+        {
+            if (value == "Arrow" || value == "Barrel" || value == "Launcher Barrel" || value == "Scope" || value == "Sight")
+                return "Barrel/Sight";
+            if (value == "Battery" || value == "Magazine")  // Fusion rifles have a stat called Magazine
+                return "Magazine/Battery";
+            if (value == "Grip" || value == "Stock")
+                return "Perk2";
+            return value;
+        }
     }
 }

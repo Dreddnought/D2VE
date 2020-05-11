@@ -7,8 +7,9 @@ namespace D2VE
 {
     public class Plug
     {
-        public Plug(string name, SortedDictionary<string, long> stats) { Name = name; Stats = stats; }
+        public Plug(string name, string plugType, SortedDictionary<string, long> stats) { Name = name; PlugType = plugType; Stats = stats; }
         public string Name { get; }
+        public string PlugType { get; }
         public SortedDictionary<string, long> Stats { get; }
         public override string ToString()
         {
@@ -33,21 +34,26 @@ namespace D2VE
                 if (!string.IsNullOrWhiteSpace(plugName))
                 {
                     string type = ConvertValue.ItemSubType(item.itemSubType.Value);
-                    if (type== "None")  // We expect None or Mask, Shader or Ornament which we ignore
+                    if (type == "None")  // We expect None or Mask, Shader or Ornament which we ignore
                     {
-                        SortedDictionary<string, long> stats = new SortedDictionary<string, long>();
-                        dynamic investmentStats = item["investmentStats"];
-                        if (investmentStats != null)
-                            foreach (var investmentStat in investmentStats)
-                            {
-                                long statHash = investmentStat.statTypeHash.Value;
-                                string statName = D2VE.StatCache.GetStatName(statHash);
-                                if (statName.Contains(" Cost") || statName.Contains(" Energy Capacity"))
-                                    continue;  // Not one we're interested in
-                                long value = investmentStat.value.Value;
-                                stats[statName] = value;
-                            }
-                        plug = new Plug(plugName, stats);
+                        string plugType = ConvertValue.PlugTypeName(item.itemTypeDisplayName.Value);
+                        if (plugType != "Temper Effect")  // Obsidian Radiance on forge weapons
+                        {
+                            SortedDictionary<string, long> stats = new SortedDictionary<string, long>();
+                            dynamic investmentStats = item["investmentStats"];
+                            if (investmentStats != null)
+                                foreach (var investmentStat in investmentStats)
+                                {
+                                    long statHash = investmentStat.statTypeHash.Value;
+                                    string statName = D2VE.StatCache.GetStatName(statHash);
+                                    if (string.IsNullOrWhiteSpace(statName) || 
+                                        statName.Contains(" Cost") || statName.Contains(" Energy Capacity"))
+                                        continue;  // Not one we're interested in
+                                    long value = investmentStat.value.Value;
+                                    stats[statName] = value;
+                                }
+                            plug = new Plug(plugName, plugType, stats);
+                        }
                     }
                 }
                 _cache[plugHash] = plug;
