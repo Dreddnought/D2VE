@@ -202,14 +202,14 @@ namespace D2VE
             // Armor calculation.
             List<Armor> armor = instances.Where(i => i.ItemCategory == "Armor" && i.TierType != "Rare" &&
                 !i.ItemType.StartsWith("Warlock") && !i.ItemType.StartsWith("Hunter") && !i.ItemType.StartsWith("Titan"))
-                .Select(i => new Armor(i.Name, i.TierType, i.ItemType, i.Season,
+                .Select(i => new Armor(i.Name, i.ClassType, i.TierType, i.ItemType, i.Season,
                     i.Stats["1"], i.Stats["2"], i.Stats["3"], i.Stats["4"], i.Stats["5"], i.Stats["6"])).ToList();
-            AddArmorCalculation(data, armor, new ArmorCalculator("PVP", "Ophidian Aspect", "", 25));
-            AddArmorCalculation(data, armor, new ArmorCalculator("PVE - Next", "Karnstein Armlets", "Next", 25));
-            AddArmorCalculation(data, armor, new ArmorCalculator("PVE - Dawn", "Karnstein Armlets", "Dawn", 25));
-            AddArmorCalculation(data, armor, new ArmorCalculator("PVE - Garden", "Karnstein Armlets", "Undying", 25));
-            AddArmorCalculation(data, armor, new ArmorCalculator("PVE - Leviathan", "Karnstein Armlets", "Opulence", 25));
-            AddArmorCalculation(data, armor, new ArmorCalculator("PVE - All Seasons", "Karnstein Armlets", "", 25));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVP", "Warlock", "Ophidian Aspect", "", 25));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Next", "Warlock", "Karnstein Armlets", "Next", 25));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Dawn", "Warlock", "Karnstein Armlets", "Dawn", 25));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Garden", "Warlock", "Karnstein Armlets", "Undying", 25));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Opulence", "Warlock", "Karnstein Armlets", "Opulence", 25));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - All Seasons", "Warlock", "Karnstein Armlets", "", 25));
         }
         private static void AddArmorCalculation(Dictionary<string, Category> data, List<Armor> armor, ArmorCalculator armorCalculator)
         {
@@ -332,7 +332,7 @@ namespace D2VE
         }
         public static dynamic Request(string path)
         {
-            // Note; Bungie's API sometimes requires the path to end in / or it doesn't work.  If there are parameters, there
+            // Note: Bungie's API sometimes requires the path to end in / or it doesn't work.  If there are parameters, there
             // sometimes needs to be a / before the ?.  But it is not consistent so I will not try to deal with it.  The calls
             // will need to pass the correct string.  If it works in Postman but not here then it's probably due to this.
             try

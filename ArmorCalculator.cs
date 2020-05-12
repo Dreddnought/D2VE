@@ -8,10 +8,11 @@ namespace D2VE
 {
     public class Armor
     {
-        public Armor(string name, string tierType, string itemType, string season,
+        public Armor(string name, string classType, string tierType, string itemType, string season,
             long mobility, long resilience, long recovery, long discipline, long intellect, long strength)
         {
             Name = name;
+            ClassType = classType;
             TierType = tierType;
             ItemType = itemType;
             Season = season;
@@ -26,6 +27,7 @@ namespace D2VE
                 + Recovery.ToString() + "-" + Discipline.ToString() + "-" + Intellect.ToString() + "-" + Strength.ToString() + ")";
         }
         public string Name { get; }
+        public string ClassType { get; }
         public string TierType { get; }
         public string ItemType { get; }
         public string Season { get; }
@@ -41,11 +43,12 @@ namespace D2VE
     }
     public class ArmorCalculator
     {
-        public ArmorCalculator(string name, string exotic, string season ="",
+        public ArmorCalculator(string name, string classType, string exotic, string season ="",
             long mobilityMod = 0L, long resilienceMod = 0L, long recoveryMod = 0L,
             long disciplineMod = 0L, long intellectMod = 0L, long strengthMod = 0L)
         {
             Name = name;
+            ClassType = classType;
             Exotic = exotic;
             Season = season;
             MobilityMod = mobilityMod;
@@ -57,6 +60,8 @@ namespace D2VE
         }
         /// <summary>Name for the calculation.</summary>
         public string Name { get; }
+        /// <summary>Class type (Warlock, Hunter or Titan).</summary>
+        public string ClassType { get; }
         /// <summary>Exotic name to base the build on.</summary>
         public string Exotic { get; }
         /// <summary>Season to restrict to. (Optional)</summary>=
