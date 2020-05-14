@@ -78,6 +78,10 @@ namespace D2VE
         {
             Category category = new Category(Name);
             category.ColumnIndex("Name");
+            category.ColumnIndex("Helmet");
+            category.ColumnIndex("Gauntlets");
+            category.ColumnIndex("Chest Armor");
+            category.ColumnIndex("Leg Armor");
             category.ColumnIndex("Mobility");
             category.ColumnIndex("Resilience");
             category.ColumnIndex("Recovery");
@@ -132,6 +136,10 @@ namespace D2VE
             long lowestBaseStats = Math.Min(Math.Min(head.BaseStats, arm.BaseStats), Math.Min(chest.BaseStats, leg.BaseStats));
             object[] row = new object[category.ColumnNames.Count];
             row[category.ColumnIndex("Name")] = head.Id + "/" + arm.Id + "/" + chest.Id + "/" + leg.Id;
+            row[category.ColumnIndex("Helmet")] = head.Id;
+            row[category.ColumnIndex("Gauntlets")] = arm.Id;
+            row[category.ColumnIndex("Chest Armor")] = chest.Id;
+            row[category.ColumnIndex("Leg Armor")] = leg.Id;
             row[category.ColumnIndex("Mobility")] = mobi;
             row[category.ColumnIndex("Resilience")] = resi;
             row[category.ColumnIndex("Recovery")] = reco;
