@@ -18,7 +18,9 @@ namespace D2VE
         private const string ApplicationRegistrationUrl = "https://www.bungie.net/en/Application";
         private static HttpClient _httpClient;
         private static string _jsonMediaType = "application/json";
+#if !TEST_OUTPUT
         private static string _formMediaType = "application/x-www-form-urlencoded";
+#endif
         private static MediaTypeWithQualityHeaderValue _jsonAcceptHeader
             = new MediaTypeWithQualityHeaderValue(_jsonMediaType);
         private static TimeSpan _timeout = new TimeSpan(0, 1, 0);  // 1 minute
@@ -92,7 +94,7 @@ namespace D2VE
             StatCache.Load();
             SlotCache.Load();
             SeasonCache.Load();
-            List<Membership> memberships = new List<Membership>();          
+            List<Membership> memberships = new List<Membership>();
 #if TEST_OUTPUT
             memberships.Add(new Membership("DrEdd_Nought", "2", "4611686018434882493"));
 #else
@@ -117,69 +119,7 @@ namespace D2VE
 #endif
                 // Convert the data to spreadsheet form.
                 Dictionary<string, Category> data = new Dictionary<string, Category>();
-                // First pass.  Determine all column names except stats which we want on the end.
-                foreach (ItemInstance itemInstance in instances)
-                {
-                    Category category = null;
-                    if (!data.TryGetValue(itemInstance.ItemCategory, out category))
-                    {
-                        data[itemInstance.ItemCategory] = category = new Category(itemInstance.ItemCategory);
-                        category.ColumnIndex("Name");
-                        category.ColumnIndex("ItemType");
-                        category.ColumnIndex("Power");
-                        category.ColumnIndex("TierType");
-                        category.ColumnIndex("Slot");
-                        category.ColumnIndex("ClassType");
-                        category.ColumnIndex("EnergyType");
-                        if (itemInstance.ItemCategory == "Armor")
-                            category.ColumnIndex("Season");
-                        else
-                        {
-                            category.ColumnIndex("Intrinsic");
-                            category.ColumnIndex("Barrel/Sight");
-                            category.ColumnIndex("Magazine/Battery");
-                            category.ColumnIndex("Perk1");
-                            category.ColumnIndex("Perk2");
-                            category.ColumnIndex("Masterwork");
-                        }
-                    }
-                    if (itemInstance.ItemCategory == "Weapon")  // In case we missed any
-                        foreach (string plugTypeName in itemInstance.Plugs.Keys)
-                            category.ColumnIndex(plugTypeName);
-                }
-                // Second pass.  Add all column names for stats.
-                foreach (ItemInstance itemInstance in instances)
-                {
-                    Category category = data[itemInstance.ItemCategory];
-                    foreach (string statName in itemInstance.Stats.Keys)
-                        category.ColumnIndex(ConvertValue.StatSortedName(statName));
-                }
-                // Third pass.  Add rows.
-                foreach (ItemInstance itemInstance in instances)
-                {
-                    Category category = data[itemInstance.ItemCategory];
-                    object[] row = new object[category.ColumnNames.Count];
-                    row[category.ColumnIndex("Name")] = itemInstance.Name;
-                    row[category.ColumnIndex("ItemType")] = itemInstance.ItemType;
-                    row[category.ColumnIndex("Power")] = itemInstance.Power;
-                    row[category.ColumnIndex("TierType")] = itemInstance.TierType;
-                    row[category.ColumnIndex("Slot")] = itemInstance.Slot;
-                    row[category.ColumnIndex("EnergyType")] = itemInstance.EnergyType;
-                    row[category.ColumnIndex("ClassType")] = itemInstance.ClassType;
-                    if (itemInstance.ItemCategory == "Armor")
-                        row[category.ColumnIndex("Season")] = itemInstance.Season;
-                    else
-                        row[category.ColumnIndex("Masterwork")] = itemInstance.Masterwork;
-                    if (itemInstance.ItemCategory == "Weapon")
-                        foreach (var kvp in itemInstance.Plugs)
-                            row[category.ColumnIndex(kvp.Key)] = kvp.Value;
-                    foreach (var kvp in itemInstance.Stats)
-                    {
-                        int index = category.ColumnIndex(ConvertValue.StatSortedName(kvp.Key));
-                        row[index] = kvp.Value;
-                    }
-                    category.Rows.Add(row);
-                }
+                WeaponsAndArmor(instances, data);
                 ArmorCalculations(instances, data);
                 // Create an output spreadsheet. 
                 OutputContext outputContext = new OutputContext()
@@ -197,6 +137,72 @@ namespace D2VE
             SeasonCache.Save();
             Console.Read();
         }
+        private static void WeaponsAndArmor(List<ItemInstance> instances, Dictionary<string, Category> data)
+        {
+            // First pass.  Determine all column names except stats which we want on the end.
+            foreach (ItemInstance itemInstance in instances)
+            {
+                Category category = null;
+                if (!data.TryGetValue(itemInstance.ItemCategory, out category))
+                {
+                    data[itemInstance.ItemCategory] = category = new Category(itemInstance.ItemCategory);
+                    category.ColumnIndex("Name");
+                    category.ColumnIndex("ItemType");
+                    category.ColumnIndex("Power");
+                    category.ColumnIndex("TierType");
+                    category.ColumnIndex("Slot");
+                    category.ColumnIndex("ClassType");
+                    category.ColumnIndex("EnergyType");
+                    if (itemInstance.ItemCategory == "Armor")
+                        category.ColumnIndex("Season");
+                    else
+                    {
+                        category.ColumnIndex("Intrinsic");
+                        category.ColumnIndex("Barrel/Sight");
+                        category.ColumnIndex("Magazine/Battery");
+                        category.ColumnIndex("Perk1");
+                        category.ColumnIndex("Perk2");
+                        category.ColumnIndex("Masterwork");
+                    }
+                }
+                if (itemInstance.ItemCategory == "Weapon")  // In case we missed any
+                    foreach (string plugTypeName in itemInstance.Plugs.Keys)
+                        category.ColumnIndex(plugTypeName);
+            }
+            // Second pass.  Add all column names for stats.
+            foreach (ItemInstance itemInstance in instances)
+            {
+                Category category = data[itemInstance.ItemCategory];
+                foreach (string statName in itemInstance.Stats.Keys)
+                    category.ColumnIndex(ConvertValue.StatSortedName(statName));
+            }
+            // Third pass.  Add rows.
+            foreach (ItemInstance itemInstance in instances)
+            {
+                Category category = data[itemInstance.ItemCategory];
+                object[] row = new object[category.ColumnNames.Count];
+                row[category.ColumnIndex("Name")] = itemInstance.Name;
+                row[category.ColumnIndex("ItemType")] = itemInstance.ItemType;
+                row[category.ColumnIndex("Power")] = itemInstance.Power;
+                row[category.ColumnIndex("TierType")] = itemInstance.TierType;
+                row[category.ColumnIndex("Slot")] = itemInstance.Slot;
+                row[category.ColumnIndex("EnergyType")] = itemInstance.EnergyType;
+                row[category.ColumnIndex("ClassType")] = itemInstance.ClassType;
+                if (itemInstance.ItemCategory == "Armor")
+                    row[category.ColumnIndex("Season")] = itemInstance.Season;
+                else
+                    row[category.ColumnIndex("Masterwork")] = itemInstance.Masterwork;
+                if (itemInstance.ItemCategory == "Weapon")
+                    foreach (var kvp in itemInstance.Plugs)
+                        row[category.ColumnIndex(kvp.Key)] = kvp.Value;
+                foreach (var kvp in itemInstance.Stats)
+                {
+                    int index = category.ColumnIndex(ConvertValue.StatSortedName(kvp.Key));
+                    row[index] = kvp.Value;
+                }
+                category.Rows.Add(row);
+            }
+        }
         private static void ArmorCalculations(List<ItemInstance> instances, Dictionary<string, Category> data)
         {
             // Armor calculation.
@@ -205,6 +211,7 @@ namespace D2VE
                 .Select(i => new Armor(i.Name, i.ClassType, i.TierType, i.ItemType, i.Season,
                     i.Stats["1"], i.Stats["2"], i.Stats["3"], i.Stats["4"], i.Stats["5"], i.Stats["6"])).ToList();
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVP", "Warlock", "Ophidian Aspect", "", 25));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVP - Next", "Warlock", "Ophidian Aspect", "Next", 25));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Next", "Warlock", "Karnstein Armlets", "Next", 25));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Dawn", "Warlock", "Karnstein Armlets", "Dawn", 25));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Garden", "Warlock", "Karnstein Armlets", "Undying", 25));
@@ -235,8 +242,53 @@ namespace D2VE
             // Items in the vault.
             foreach (var item in inventories["profileInventory"]["data"]["items"])
                 ProcessItem(membership, instances, item);
+            // Add unclaimed season pass armor.
+            if (membership.DisplayName == "DrEdd_Nought")
+            {
+                AddSeasonPassArmor(instances, "Seventh Seraph Hood", "Solar", new SortedDictionary<string, long>()
+                {
+                    {  ConvertValue.StatName("Mobility"), 8 },
+                    {  ConvertValue.StatName("Resilience"), 10 },
+                    {  ConvertValue.StatName("Recovery"), 14 },
+                    {  ConvertValue.StatName("Discipline"), 11 },
+                    {  ConvertValue.StatName("Intellect"), 14 },
+                    {  ConvertValue.StatName("Strength"), 7 }
+                });
+                AddSeasonPassArmor(instances, "Seventh Seraph Gloves", "Solar", new SortedDictionary<string, long>()
+                {
+                    {  ConvertValue.StatName("Mobility"), 6 },
+                    {  ConvertValue.StatName("Resilience"), 6 },
+                    {  ConvertValue.StatName("Recovery"), 22 },
+                    {  ConvertValue.StatName("Discipline"), 9 },
+                    {  ConvertValue.StatName("Intellect"), 12 },
+                    {  ConvertValue.StatName("Strength"), 12 }
+                });
+                AddSeasonPassArmor(instances, "Seventh Seraph Boots", "Solar", new SortedDictionary<string, long>()
+                {
+                    {  ConvertValue.StatName("Mobility"), 7 },
+                    {  ConvertValue.StatName("Resilience"), 6 },
+                    {  ConvertValue.StatName("Recovery"), 20 },
+                    {  ConvertValue.StatName("Discipline"), 12 },
+                    {  ConvertValue.StatName("Intellect"), 9 },
+                    {  ConvertValue.StatName("Strength"), 12 }
+                });
+            }
             Save(membership.DisplayName, instances);  // Save result for dev purposes (testing output)
             return instances;
+        }
+        // Assume the item can be found by name because we already have one.  TODO: Do this properly.
+        private static void AddSeasonPassArmor(List<ItemInstance> instances, string name, string energyType,
+            SortedDictionary<string, long> stats)
+        {
+            ItemInfo itemInfo = ItemCache.GetItemInfo(name);
+            if (itemInfo == null)
+            {
+                Console.WriteLine("Could not find " + name);
+                return;
+            }
+            ItemInstance itemInstance = new ItemInstance(itemInfo, 0, energyType, "", stats, new SortedDictionary<string, Plug>());
+            instances.Add(itemInstance);
+            Console.WriteLine(itemInstance.ToString());
         }
         private static void ProcessItem(Membership membership, List<ItemInstance> instances, dynamic item)
         {
