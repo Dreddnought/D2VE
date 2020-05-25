@@ -1,4 +1,4 @@
-﻿#define TEST_OUTPUT
+﻿//#define TEST_OUTPUT
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -217,7 +217,7 @@ namespace D2VE
                     i.Stats["1"], i.Stats["2"], i.Stats["3"], i.Stats["4"], i.Stats["5"], i.Stats["6"])).ToList();
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVP", "Warlock", "Ophidian Aspect", "", 25));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVP - Next", "Warlock", "Ophidian Aspect", "Next", 25));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVP - Dawn", "Warlock", "Ophidian Aspect", "Dawn", 25));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVP - Worthy", "Warlock", "Ophidian Aspect", "Worthy", 25));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Next", "Warlock", "Karnstein Armlets", "Next", 25));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Dawn", "Warlock", "Karnstein Armlets", "Dawn", 25));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Garden", "Warlock", "Karnstein Armlets", "Undying", 25));
@@ -258,7 +258,7 @@ namespace D2VE
                     {  ConvertValue.StatName("Recovery"), 14 },
                     {  ConvertValue.StatName("Discipline"), 11 },
                     {  ConvertValue.StatName("Intellect"), 14 },
-                    {  ConvertValue.StatName("Strength"), 7 }
+                    {  ConvertValue.StatName("Strength"), 6 }
                 });
                 AddSeasonPassArmor(instances, "Seventh Seraph Gloves", "Solar", new SortedDictionary<string, long>()
                 {
