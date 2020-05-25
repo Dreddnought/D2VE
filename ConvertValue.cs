@@ -204,15 +204,15 @@
             switch (value)
             {
                 case "Dawn/Worthy/Next":
-                    return "W";
+                    return " W";
                 case "Undying/Dawn/Worthy":
-                    return "D";
+                    return " D";
                 case "Opulence/Undying/Dawn":
-                    return "U";
+                    return " U";
                 case "Outlaw/Forge":
-                    return "O";
+                    return " O";
                 case "Opulence/Undying":
-                    return "1";  // This is an armor 1.0 piece
+                    return " 1";  // This is an armor 1.0 piece
                 default:
                     return value;
             }
