@@ -199,5 +199,23 @@
                 return "Perk2";
             return value;
         }
+        public static string SeasonAbbreviation(string value)
+        {
+            switch (value)
+            {
+                case "Dawn/Worthy/Next":
+                    return "W";
+                case "Undying/Dawn/Worthy":
+                    return "D";
+                case "Opulence/Undying/Dawn":
+                    return "U";
+                case "Outlaw/Forge":
+                    return "O";
+                case "Opulence/Undying":
+                    return "1";  // This is an armor 1.0 piece
+                default:
+                    return value;
+            }
+        }
     }
 }

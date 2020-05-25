@@ -23,8 +23,9 @@ namespace D2VE
             Intellect = intellect;
             Strength = strength;
             BaseStats = mobility + resilience + recovery + discipline + intellect + strength;
-            Id = Name + " "+ BaseStats.ToString() + " (" + Mobility.ToString() + "-" + Resilience.ToString() + "-"
-                + Recovery.ToString() + "-" + Discipline.ToString() + "-" + Intellect.ToString() + "-" + Strength.ToString() + ")";
+            Id = Name + " " + BaseStats.ToString() + " (" + Mobility.ToString() + "-" + Resilience.ToString() + "-"
+                + Recovery.ToString() + "-" + Discipline.ToString() + "-" + Intellect.ToString() + "-" + Strength.ToString() + ") "
+                + ConvertValue.SeasonAbbreviation(Season);
         }
         public string Name { get; }
         public string ClassType { get; }

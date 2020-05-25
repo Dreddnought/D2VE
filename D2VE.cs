@@ -1,4 +1,4 @@
-﻿//#define TEST_OUTPUT
+﻿#define TEST_OUTPUT
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -163,6 +163,7 @@ namespace D2VE
                         category.ColumnIndex("Perk1");
                         category.ColumnIndex("Perk2");
                         category.ColumnIndex("Masterwork");
+                        category.ColumnIndex("Impact x RPM");
                     }
                 }
                 if (itemInstance.ItemCategory == "Weapon")  // In case we missed any
@@ -191,7 +192,11 @@ namespace D2VE
                 if (itemInstance.ItemCategory == "Armor")
                     row[category.ColumnIndex("Season")] = itemInstance.Season;
                 else
+                {
                     row[category.ColumnIndex("Masterwork")] = itemInstance.Masterwork;
+                    if (itemInstance.Stats.ContainsKey("Impact") && itemInstance.Stats.ContainsKey("Rounds Per Minute"))
+                        row[category.ColumnIndex("Impact x RPM")] = itemInstance.Stats["Impact"] * itemInstance.Stats["Rounds Per Minute"];
+                }
                 if (itemInstance.ItemCategory == "Weapon")
                     foreach (var kvp in itemInstance.Plugs)
                         row[category.ColumnIndex(kvp.Key)] = kvp.Value;
@@ -212,6 +217,7 @@ namespace D2VE
                     i.Stats["1"], i.Stats["2"], i.Stats["3"], i.Stats["4"], i.Stats["5"], i.Stats["6"])).ToList();
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVP", "Warlock", "Ophidian Aspect", "", 25));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVP - Next", "Warlock", "Ophidian Aspect", "Next", 25));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVP - Dawn", "Warlock", "Ophidian Aspect", "Dawn", 25));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Next", "Warlock", "Karnstein Armlets", "Next", 25));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Dawn", "Warlock", "Karnstein Armlets", "Dawn", 25));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Garden", "Warlock", "Karnstein Armlets", "Undying", 25));
