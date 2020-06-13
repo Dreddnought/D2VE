@@ -89,6 +89,8 @@
                 case "v480":
                     return "Worthy";
                 case "v490":
+                    return "Arrivals";
+                case "v500":
                     return "Next";
                 default:
                     return value.ToString();

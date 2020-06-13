@@ -30,6 +30,7 @@ namespace D2VE
         public static StatCache StatCache { get; } = new StatCache();
         public static SlotCache SlotCache { get; } = new SlotCache();
         public static SeasonCache SeasonCache { get; } = new SeasonCache();
+        public static PowerCapCache PowerCapCache { get; } = new PowerCapCache();
         static void Main(string[] args)
         {
             _apiKey = Persister.Load("ApiKey");
@@ -94,6 +95,7 @@ namespace D2VE
             StatCache.Load();
             SlotCache.Load();
             SeasonCache.Load();
+            PowerCapCache.Load();
             List<Membership> memberships = new List<Membership>();
 #if TEST_OUTPUT
             memberships.Add(new Membership("DrEdd_Nought", "2", "4611686018434882493"));
@@ -135,7 +137,8 @@ namespace D2VE
             StatCache.Save();
             SlotCache.Save();
             SeasonCache.Save();
-            Console.Read();
+            PowerCapCache.Save();
+            //Console.Read();
         }
         private static void WeaponsAndArmor(List<ItemInstance> instances, Dictionary<string, Category> data)
         {
@@ -149,6 +152,7 @@ namespace D2VE
                     category.ColumnIndex("Name");
                     category.ColumnIndex("ItemType");
                     category.ColumnIndex("Power");
+                    category.ColumnIndex("PowerCap");
                     category.ColumnIndex("TierType");
                     category.ColumnIndex("Slot");
                     category.ColumnIndex("ClassType");
@@ -185,6 +189,7 @@ namespace D2VE
                 row[category.ColumnIndex("Name")] = itemInstance.Name;
                 row[category.ColumnIndex("ItemType")] = itemInstance.ItemType;
                 row[category.ColumnIndex("Power")] = itemInstance.Power;
+                row[category.ColumnIndex("PowerCap")] = itemInstance.PowerCap;
                 row[category.ColumnIndex("TierType")] = itemInstance.TierType;
                 row[category.ColumnIndex("Slot")] = itemInstance.Slot;
                 row[category.ColumnIndex("EnergyType")] = itemInstance.EnergyType;
@@ -217,8 +222,9 @@ namespace D2VE
                     i.Stats["1"], i.Stats["2"], i.Stats["3"], i.Stats["4"], i.Stats["5"], i.Stats["6"])).ToList();
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVP", "Warlock", "Ophidian Aspect", "", 25));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVP - Next", "Warlock", "Ophidian Aspect", "Next", 25));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVP - Worthy", "Warlock", "Ophidian Aspect", "Worthy", 25));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVP - Worthy", "Warlock", "Ophidian Aspect", "Arrivals", 25));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Next", "Warlock", "Karnstein Armlets", "Next", 25));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Arrivals", "Warlock", "Karnstein Armlets", "Arrivals", 25));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Dawn", "Warlock", "Karnstein Armlets", "Dawn", 25));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Garden", "Warlock", "Karnstein Armlets", "Undying", 25));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Opulence", "Warlock", "Karnstein Armlets", "Opulence", 25));
@@ -251,33 +257,33 @@ namespace D2VE
             // Add unclaimed season pass armor.
             if (membership.DisplayName == "DrEdd_Nought")
             {
-                AddSeasonPassArmor(instances, "Seventh Seraph Hood", "Solar", new SortedDictionary<string, long>()
-                {
-                    {  ConvertValue.StatName("Mobility"), 8 },
-                    {  ConvertValue.StatName("Resilience"), 10 },
-                    {  ConvertValue.StatName("Recovery"), 14 },
-                    {  ConvertValue.StatName("Discipline"), 11 },
-                    {  ConvertValue.StatName("Intellect"), 14 },
-                    {  ConvertValue.StatName("Strength"), 6 }
-                });
-                AddSeasonPassArmor(instances, "Seventh Seraph Gloves", "Solar", new SortedDictionary<string, long>()
-                {
-                    {  ConvertValue.StatName("Mobility"), 6 },
-                    {  ConvertValue.StatName("Resilience"), 6 },
-                    {  ConvertValue.StatName("Recovery"), 22 },
-                    {  ConvertValue.StatName("Discipline"), 9 },
-                    {  ConvertValue.StatName("Intellect"), 12 },
-                    {  ConvertValue.StatName("Strength"), 12 }
-                });
-                AddSeasonPassArmor(instances, "Seventh Seraph Boots", "Solar", new SortedDictionary<string, long>()
-                {
-                    {  ConvertValue.StatName("Mobility"), 7 },
-                    {  ConvertValue.StatName("Resilience"), 6 },
-                    {  ConvertValue.StatName("Recovery"), 20 },
-                    {  ConvertValue.StatName("Discipline"), 12 },
-                    {  ConvertValue.StatName("Intellect"), 9 },
-                    {  ConvertValue.StatName("Strength"), 12 }
-                });
+                //AddSeasonPassArmor(instances, "Seventh Seraph Hood", "Solar", new SortedDictionary<string, long>()
+                //{
+                //    {  ConvertValue.StatName("Mobility"), 8 },
+                //    {  ConvertValue.StatName("Resilience"), 10 },
+                //    {  ConvertValue.StatName("Recovery"), 14 },
+                //    {  ConvertValue.StatName("Discipline"), 11 },
+                //    {  ConvertValue.StatName("Intellect"), 14 },
+                //    {  ConvertValue.StatName("Strength"), 6 }
+                //});
+                //AddSeasonPassArmor(instances, "Seventh Seraph Gloves", "Solar", new SortedDictionary<string, long>()
+                //{
+                //    {  ConvertValue.StatName("Mobility"), 6 },
+                //    {  ConvertValue.StatName("Resilience"), 6 },
+                //    {  ConvertValue.StatName("Recovery"), 22 },
+                //    {  ConvertValue.StatName("Discipline"), 9 },
+                //    {  ConvertValue.StatName("Intellect"), 12 },
+                //    {  ConvertValue.StatName("Strength"), 12 }
+                //});
+                //AddSeasonPassArmor(instances, "Seventh Seraph Boots", "Solar", new SortedDictionary<string, long>()
+                //{
+                //    {  ConvertValue.StatName("Mobility"), 7 },
+                //    {  ConvertValue.StatName("Resilience"), 6 },
+                //    {  ConvertValue.StatName("Recovery"), 20 },
+                //    {  ConvertValue.StatName("Discipline"), 12 },
+                //    {  ConvertValue.StatName("Intellect"), 9 },
+                //    {  ConvertValue.StatName("Strength"), 12 }
+                //});
             }
             Save(membership.DisplayName, instances);  // Save result for dev purposes (testing output)
             return instances;
@@ -292,7 +298,7 @@ namespace D2VE
                 Console.WriteLine("Could not find " + name);
                 return;
             }
-            ItemInstance itemInstance = new ItemInstance(itemInfo, 0, energyType, "", stats, new SortedDictionary<string, Plug>());
+            ItemInstance itemInstance = new ItemInstance(itemInfo, 0, 0, energyType, "", stats, new SortedDictionary<string, Plug>());
             instances.Add(itemInstance);
             Console.WriteLine(itemInstance.ToString());
         }
@@ -313,6 +319,7 @@ namespace D2VE
                 dynamic instance = Request("Destiny2/" + membership.Type + "/Profile/" + membership.Id + "/Item/"
                     + itemInstanceId + "?components=300,304,305,306,308,309,310");
                 long power = instance.instance.data.primaryStat.value.Value;
+                long powerCap = 0;
                 string masterwork = "";
                 string energyType = itemInfo.EnergyType;
                 if (itemInfo.ItemCategory == "Armor")  // Armor, energyType is at instance level
@@ -379,7 +386,7 @@ namespace D2VE
                                 plugs[plugType] = plug;
                         }
                     }
-                ItemInstance itemInstance = new ItemInstance(itemInfo, power, energyType, masterwork, stats, plugs);
+                ItemInstance itemInstance = new ItemInstance(itemInfo, power, powerCap, energyType, masterwork, stats, plugs);
                 instances.Add(itemInstance);
                 Console.WriteLine(itemInstance.ToString());
             }

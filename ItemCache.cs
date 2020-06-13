@@ -8,7 +8,7 @@ namespace D2VE
     public class ItemInfo
     {
         public ItemInfo(string name, string tierType, string itemCategory, string itemType, string slot, string energyType,
-            string season, string classType, Dictionary<string, long> stats)
+            string season, long powerCap, string classType, Dictionary<string, long> stats)
         {
             Name = name;
             TierType = tierType;
@@ -17,6 +17,7 @@ namespace D2VE
             Slot = slot;
             EnergyType = energyType;
             Season = season;
+            PowerCap = powerCap;
             ClassType = classType;
             Stats = stats;
         }
@@ -27,6 +28,7 @@ namespace D2VE
         public string Slot { get; }
         public string EnergyType { get; }
         public string Season { get; }
+        public long PowerCap { get; }
         public string ClassType { get; }
         public Dictionary<string, long> Stats { get; }
         public override string ToString() { return Name; }
@@ -129,6 +131,9 @@ namespace D2VE
                     energyType = ConvertValue.DamageType(definition.defaultDamageType?.Value);
                     slot = D2VE.SlotCache.GetSlotName(definition.equippingBlock.equipmentSlotTypeHash.Value);
                 }
+                // PowerCap
+                long powerCapHash = definition.quality.versions[0].powerCapHash.Value;
+                long powerCap = D2VE.PowerCapCache.GetPowerCapValue(powerCapHash);
                 itemInfo = new ItemInfo(
                    definition.displayProperties.name.Value,
                    tierType,
@@ -137,6 +142,7 @@ namespace D2VE
                    slot,
                    energyType,
                    season,
+                   powerCap,
                    ConvertValue.ClassType(definition.classType?.Value ?? 0L),
                    stats);
             }
