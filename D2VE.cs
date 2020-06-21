@@ -189,7 +189,7 @@ namespace D2VE
                 row[category.ColumnIndex("Name")] = itemInstance.Name;
                 row[category.ColumnIndex("ItemType")] = itemInstance.ItemType;
                 row[category.ColumnIndex("Power")] = itemInstance.Power;
-                row[category.ColumnIndex("PowerCap")] = itemInstance.PowerCap;
+                row[category.ColumnIndex("PowerCap")] = ConvertValue.PowerCap(itemInstance.PowerCap);  // Replace 999990 with ""
                 row[category.ColumnIndex("TierType")] = itemInstance.TierType;
                 row[category.ColumnIndex("Slot")] = itemInstance.Slot;
                 row[category.ColumnIndex("EnergyType")] = itemInstance.EnergyType;
@@ -319,7 +319,7 @@ namespace D2VE
                 dynamic instance = Request("Destiny2/" + membership.Type + "/Profile/" + membership.Id + "/Item/"
                     + itemInstanceId + "?components=300,304,305,306,308,309,310");
                 long power = instance.instance.data.primaryStat.value.Value;
-                long powerCap = 0;
+                long powerCap = itemInfo.PowerCaps[(int)item.versionNumber.Value];
                 string masterwork = "";
                 string energyType = itemInfo.EnergyType;
                 if (itemInfo.ItemCategory == "Armor")  // Armor, energyType is at instance level

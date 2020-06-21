@@ -219,5 +219,13 @@
                     return value;
             }
         }
+        public static string PowerCap(long value)
+        {
+            if (value >= 999990)  // 999990 is used on exotics to indicate no power cap
+                return "";
+            if (value >= 100000)  // 999960 is used on blues to indicate they can't be infused.  I guess whites may be lower
+                return "";  // Let's just say 100000
+            return value.ToString();
+        }
     }
 }
