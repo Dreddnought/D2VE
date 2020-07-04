@@ -91,7 +91,13 @@
                 case "v490":
                     return "Arrivals";
                 case "v500":
-                    return "Next";
+                    return "12";
+                case "v510":
+                    return "13";
+                case "v520":
+                    return "14";
+                case "v530":
+                    return "15";
                 default:
                     return value.ToString();
             }
@@ -205,7 +211,11 @@
         {
             switch (value)
             {
-                case "Dawn/Worthy/Next":
+                case "Dawn/Worthy/Arrivals/12":
+                    return " A";
+                case "Worthy/Arrivals/12":
+                    return " A";
+                case "Dawn/Worthy/Arrivals":
                     return " W";
                 case "Undying/Dawn/Worthy":
                     return " D";

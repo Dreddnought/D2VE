@@ -150,6 +150,7 @@ namespace D2VE
                 {
                     data[itemInstance.ItemCategory] = category = new Category(itemInstance.ItemCategory);
                     category.ColumnIndex("Name");
+                    category.ColumnIndex("ItemInstanceId");
                     category.ColumnIndex("ItemType");
                     category.ColumnIndex("Power");
                     category.ColumnIndex("PowerCap");
@@ -187,6 +188,7 @@ namespace D2VE
                 Category category = data[itemInstance.ItemCategory];
                 object[] row = new object[category.ColumnNames.Count];
                 row[category.ColumnIndex("Name")] = itemInstance.Name;
+                row[category.ColumnIndex("ItemInstanceId")] = itemInstance.ItemInstanceId;
                 row[category.ColumnIndex("ItemType")] = itemInstance.ItemType;
                 row[category.ColumnIndex("Power")] = itemInstance.Power;
                 row[category.ColumnIndex("PowerCap")] = ConvertValue.PowerCap(itemInstance.PowerCap);  // Replace 999990 with ""
@@ -221,14 +223,16 @@ namespace D2VE
                 .Select(i => new Armor(i.Name, i.ClassType, i.TierType, i.ItemType, i.Season,
                     i.Stats["1"], i.Stats["2"], i.Stats["3"], i.Stats["4"], i.Stats["5"], i.Stats["6"])).ToList();
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVP", "Warlock", "Ophidian Aspect", "", 25));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVP - Next", "Warlock", "Ophidian Aspect", "Next", 25));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVP - 12", "Warlock", "Ophidian Aspect", "12", 25));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVP - Worthy", "Warlock", "Ophidian Aspect", "Arrivals", 25));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Next", "Warlock", "Karnstein Armlets", "Next", 25));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - 12", "Warlock", "Karnstein Armlets", "12", 25));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Arrivals", "Warlock", "Karnstein Armlets", "Arrivals", 25));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Dawn", "Warlock", "Karnstein Armlets", "Dawn", 25));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Garden", "Warlock", "Karnstein Armlets", "Undying", 25));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Opulence", "Warlock", "Karnstein Armlets", "Opulence", 25));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Garden", "Warlock", "Karnstein Armlets", "Undying", 5));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Opulence", "Warlock", "Karnstein Armlets", "Opulence", 5));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - All Seasons", "Warlock", "Karnstein Armlets", "", 25));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Contraverse Hold", "Warlock", "Contraverse Hold", "Arrivals", 25));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Phogoth", "Warlock", "Contraverse Hold", "", 5));
         }
         private static void AddArmorCalculation(Dictionary<string, Category> data, List<Armor> armor, ArmorCalculator armorCalculator)
         {
@@ -288,7 +292,8 @@ namespace D2VE
             Save(membership.DisplayName, instances);  // Save result for dev purposes (testing output)
             return instances;
         }
-        // Assume the item can be found by name because we already have one.  TODO: Do this properly.
+        // Assume the item can be found by name because we already have one.
+        // TODO: Do this properly.  In particular we need the real itemInstanceId.
         private static void AddSeasonPassArmor(List<ItemInstance> instances, string name, string energyType,
             SortedDictionary<string, long> stats)
         {
@@ -298,7 +303,7 @@ namespace D2VE
                 Console.WriteLine("Could not find " + name);
                 return;
             }
-            ItemInstance itemInstance = new ItemInstance(itemInfo, 0, 0, energyType, "", stats, new SortedDictionary<string, Plug>());
+            ItemInstance itemInstance = new ItemInstance(null, itemInfo, 0, 0, energyType, "", stats, new SortedDictionary<string, Plug>());
             instances.Add(itemInstance);
             Console.WriteLine(itemInstance.ToString());
         }
@@ -316,8 +321,9 @@ namespace D2VE
                 SortedDictionary<string, Plug> plugs = new SortedDictionary<string, Plug>();
                 // Now get the specific stats and perks for the item.
                 string itemInstanceId = item.itemInstanceId.Value;
-                dynamic instance = Request("Destiny2/" + membership.Type + "/Profile/" + membership.Id + "/Item/"
-                    + itemInstanceId + "?components=300,304,305,306,308,309,310");
+                string request = "Destiny2/" + membership.Type + "/Profile/" + membership.Id + "/Item/" + itemInstanceId
+                    + "?components=300,304,305,306,308,309,310";
+                dynamic instance = Request(request);
                 long power = instance.instance.data.primaryStat.value.Value;
                 long powerCap = itemInfo.PowerCaps[(int)item.versionNumber.Value];
                 string masterwork = "";
@@ -348,12 +354,16 @@ namespace D2VE
                         if (plug == null)
                             continue;
                         if (itemInfo.ItemCategory == "Armor")  // Remove stat values from plugs
+                        {
                             foreach (var stat in plug.Stats)
                             {
                                 long value;
                                 if (stats.TryGetValue(stat.Key, out value))
                                     stats[stat.Key] = value - stat.Value;
                             }
+                            stats["MRR"] = stats["1"] + stats["2"] + stats["3"];
+                            stats["DIS"] = stats["4"] + stats["5"] + stats["6"];
+                        }
                         else
                         {
                             foreach (var stat in plug.Stats)  // We'll leave equipped plugs except we want to max out the masterwork
@@ -386,7 +396,8 @@ namespace D2VE
                                 plugs[plugType] = plug;
                         }
                     }
-                ItemInstance itemInstance = new ItemInstance(itemInfo, power, powerCap, energyType, masterwork, stats, plugs);
+                ItemInstance itemInstance =
+                    new ItemInstance(itemInstanceId, itemInfo, power, powerCap, energyType, masterwork, stats, plugs);
                 instances.Add(itemInstance);
                 Console.WriteLine(itemInstance.ToString());
             }
