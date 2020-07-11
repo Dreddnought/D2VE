@@ -363,6 +363,7 @@ namespace D2VE
                             }
                             stats["MRR"] = stats["1"] + stats["2"] + stats["3"];
                             stats["DIS"] = stats["4"] + stats["5"] + stats["6"];
+                            stats["Total"] = stats["MRR"] + stats["DIS"];
                         }
                         else
                         {
@@ -413,7 +414,7 @@ namespace D2VE
             // will need to pass the correct string.  If it works in Postman but not here then it's probably due to this.
             try
             {
-                //Console.WriteLine(PlatformUrl + path);
+                Console.WriteLine(PlatformUrl + path);
                 HttpResponseMessage response = Client.GetAsync(PlatformUrl + path).Result;
                 string content = response.Content.ReadAsStringAsync().Result;
                 dynamic item = JsonConvert.DeserializeObject(content);
