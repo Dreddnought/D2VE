@@ -150,7 +150,7 @@ namespace D2VE
                 {
                     data[itemInstance.ItemCategory] = category = new Category(itemInstance.ItemCategory);
                     category.ColumnIndex("Name");
-                    category.ColumnIndex("ItemInstanceId");
+                    //category.ColumnIndex("ItemInstanceId");
                     category.ColumnIndex("ItemType");
                     category.ColumnIndex("Power");
                     category.ColumnIndex("PowerCap");
@@ -188,7 +188,7 @@ namespace D2VE
                 Category category = data[itemInstance.ItemCategory];
                 object[] row = new object[category.ColumnNames.Count];
                 row[category.ColumnIndex("Name")] = itemInstance.Name;
-                row[category.ColumnIndex("ItemInstanceId")] = itemInstance.ItemInstanceId;
+                //row[category.ColumnIndex("ItemInstanceId")] = itemInstance.ItemInstanceId;
                 row[category.ColumnIndex("ItemType")] = itemInstance.ItemType;
                 row[category.ColumnIndex("Power")] = itemInstance.Power;
                 row[category.ColumnIndex("PowerCap")] = ConvertValue.PowerCap(itemInstance.PowerCap);  // Replace 999990 with ""
@@ -224,15 +224,17 @@ namespace D2VE
                     i.Stats["1"], i.Stats["2"], i.Stats["3"], i.Stats["4"], i.Stats["5"], i.Stats["6"])).ToList();
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVP", "Warlock", "Ophidian Aspect", "", 25));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVP - 12", "Warlock", "Ophidian Aspect", "12", 25));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVP - Worthy", "Warlock", "Ophidian Aspect", "Arrivals", 25));
+            //AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVP - Worthy", "Warlock", "Ophidian Aspect", "Arrivals", 25));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - 12", "Warlock", "Karnstein Armlets", "12", 25));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Arrivals", "Warlock", "Karnstein Armlets", "Arrivals", 25));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Dawn", "Warlock", "Karnstein Armlets", "Dawn", 25));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Garden", "Warlock", "Karnstein Armlets", "Undying", 5));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Opulence", "Warlock", "Karnstein Armlets", "Opulence", 5));
+            //AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Dawn", "Warlock", "Karnstein Armlets", "Dawn", 25));
+            //AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Garden", "Warlock", "Karnstein Armlets", "Undying", 5));
+            //AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Opulence", "Warlock", "Karnstein Armlets", "Opulence", 5));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - All Seasons", "Warlock", "Karnstein Armlets", "", 25));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Contraverse Hold", "Warlock", "Contraverse Hold", "Arrivals", 25));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Phogoth", "Warlock", "Contraverse Hold", "", 5));
+            //AddArmorCalculation(data, armor, new ArmorCalculator("Hunter PVE - 12", "Hunter", "Celestial Nighthawk", "12", 25));
+            //AddArmorCalculation(data, armor, new ArmorCalculator("Hunter PVP - 12", "Hunter", "St0mp-EE5", "12", 25));
         }
         private static void AddArmorCalculation(Dictionary<string, Category> data, List<Armor> armor, ArmorCalculator armorCalculator)
         {
@@ -261,33 +263,42 @@ namespace D2VE
             // Add unclaimed season pass armor.
             if (membership.DisplayName == "DrEdd_Nought")
             {
-                //AddSeasonPassArmor(instances, "Seventh Seraph Hood", "Solar", new SortedDictionary<string, long>()
-                //{
-                //    {  ConvertValue.StatName("Mobility"), 8 },
-                //    {  ConvertValue.StatName("Resilience"), 10 },
-                //    {  ConvertValue.StatName("Recovery"), 14 },
-                //    {  ConvertValue.StatName("Discipline"), 11 },
-                //    {  ConvertValue.StatName("Intellect"), 14 },
-                //    {  ConvertValue.StatName("Strength"), 6 }
-                //});
-                //AddSeasonPassArmor(instances, "Seventh Seraph Gloves", "Solar", new SortedDictionary<string, long>()
-                //{
-                //    {  ConvertValue.StatName("Mobility"), 6 },
-                //    {  ConvertValue.StatName("Resilience"), 6 },
-                //    {  ConvertValue.StatName("Recovery"), 22 },
-                //    {  ConvertValue.StatName("Discipline"), 9 },
-                //    {  ConvertValue.StatName("Intellect"), 12 },
-                //    {  ConvertValue.StatName("Strength"), 12 }
-                //});
-                //AddSeasonPassArmor(instances, "Seventh Seraph Boots", "Solar", new SortedDictionary<string, long>()
-                //{
-                //    {  ConvertValue.StatName("Mobility"), 7 },
-                //    {  ConvertValue.StatName("Resilience"), 6 },
-                //    {  ConvertValue.StatName("Recovery"), 20 },
-                //    {  ConvertValue.StatName("Discipline"), 12 },
-                //    {  ConvertValue.StatName("Intellect"), 9 },
-                //    {  ConvertValue.StatName("Strength"), 12 }
-                //});
+                AddSeasonPassArmor(instances, "Holdfast Cover", "Solar", new SortedDictionary<string, long>()
+                {
+                    {  ConvertValue.StatName("Mobility"), 8 },
+                    {  ConvertValue.StatName("Resilience"), 10 },
+                    {  ConvertValue.StatName("Recovery"), 14 },
+                    {  ConvertValue.StatName("Discipline"), 11 },
+                    {  ConvertValue.StatName("Intellect"), 14 },
+                    {  ConvertValue.StatName("Strength"), 6 }
+                });
+                AddSeasonPassArmor(instances, "Holdfast Gloves", "Solar", new SortedDictionary<string, long>()
+                {
+                    {  ConvertValue.StatName("Mobility"), 6 },
+                    {  ConvertValue.StatName("Resilience"), 6 },
+                    {  ConvertValue.StatName("Recovery"), 22 },
+                    {  ConvertValue.StatName("Discipline"), 9 },
+                    {  ConvertValue.StatName("Intellect"), 12 },
+                    {  ConvertValue.StatName("Strength"), 12 }
+                });
+                AddSeasonPassArmor(instances, "Holdfast Boots", "Solar", new SortedDictionary<string, long>()
+                {
+                    {  ConvertValue.StatName("Mobility"), 7 },
+                    {  ConvertValue.StatName("Resilience"), 6 },
+                    {  ConvertValue.StatName("Recovery"), 20 },
+                    {  ConvertValue.StatName("Discipline"), 12 },
+                    {  ConvertValue.StatName("Intellect"), 9 },
+                    {  ConvertValue.StatName("Strength"), 12 }
+                });
+                AddSeasonPassArmor(instances, "Holdfast Robes", "Solar", new SortedDictionary<string, long>()
+                {
+                    {  ConvertValue.StatName("Mobility"), 7 },
+                    {  ConvertValue.StatName("Resilience"), 7 },
+                    {  ConvertValue.StatName("Recovery"), 18 },
+                    {  ConvertValue.StatName("Discipline"), 6 },
+                    {  ConvertValue.StatName("Intellect"), 19 },
+                    {  ConvertValue.StatName("Strength"), 8 }
+                });
             }
             Save(membership.DisplayName, instances);  // Save result for dev purposes (testing output)
             return instances;
