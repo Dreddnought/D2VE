@@ -25,7 +25,9 @@ namespace D2VE
             BaseStats = mobility + resilience + recovery + discipline + intellect + strength;
             Mrr = mobility + resilience + recovery;
             Dis = discipline + intellect + strength;
-            Id = Name + " " + BaseStats.ToString() + "=" + Mrr.ToString() + "+" + Dis.ToString()
+            RI = recovery + intellect;
+            Id = Name + " " + BaseStats.ToString() + "(" + RI.ToString() + ")="
+                + Mrr.ToString() + "+" + Dis.ToString()
                 + " (" + Mobility.ToString() + "-" + Resilience.ToString() + "-" + Recovery.ToString()
                 + "-" + Discipline.ToString() + "-" + Intellect.ToString() + "-" + Strength.ToString() + ")"
                 + ConvertValue.SeasonAbbreviation(Season);
@@ -44,6 +46,7 @@ namespace D2VE
         public long BaseStats { get; }
         public long Mrr { get; }
         public long Dis { get; }
+        public long RI { get; }
         public string Id { get; }
         public override string ToString() { return Id; }
     }
@@ -114,10 +117,18 @@ namespace D2VE
                 armorItems.Where(a => a.ItemType == "Leg Armor" && a.TierType != "Exotic" &&
                 (string.IsNullOrWhiteSpace(Season) || a.Season.Contains(Season))).ToList();
             foreach (Armor head in helmets)
-                foreach (Armor arm in gauntlets)
-                    foreach (Armor chest in chestArmor)
-                        foreach (Armor leg in legArmor)
-                            category.Rows.Add(Calculate(category, head, arm, chest, leg));
+                if (head.ClassType == ClassType)
+                    foreach (Armor arm in gauntlets)
+                        if (arm.ClassType == ClassType)
+                            foreach (Armor chest in chestArmor)
+                                if (chest.ClassType == ClassType)
+                                    foreach (Armor leg in legArmor)
+                                        if (leg.ClassType == ClassType)
+                                        {
+                                            object[] row = Calculate(category, head, arm, chest, leg);
+                                            if (row != null)
+                                                category.Rows.Add(row);
+                                        }
             return category;
         }
         private object[] Calculate(Category category, Armor head, Armor arm, Armor chest, Armor leg)
@@ -137,6 +148,8 @@ namespace D2VE
             long inte = Math.Min(10L, intellect / 10);
             long stre = Math.Min(10L, strength / 10);
             long usage = (mobi + resi + reco + disc + inte + stre) * 10;
+            if (usage < _minimumUsage)
+                return null;
             long wastage = mobility + resilience + recovery + discipline + intellect + strength - usage;
             long totalExcludingStrength = mobi + resi + reco + disc + inte;
             long lowestBaseStats = Math.Min(Math.Min(head.BaseStats, arm.BaseStats), Math.Min(chest.BaseStats, leg.BaseStats));
@@ -158,5 +171,6 @@ namespace D2VE
             row[category.ColumnIndex("LowestBaseStats")] = lowestBaseStats;
             return row;
         }
+        private const int _minimumUsage = 310;
     }
 }

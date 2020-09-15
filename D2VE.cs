@@ -224,15 +224,16 @@ namespace D2VE
                     i.Stats["1"], i.Stats["2"], i.Stats["3"], i.Stats["4"], i.Stats["5"], i.Stats["6"])).ToList();
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVP", "Warlock", "Ophidian Aspect", "", 25));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVP - 12", "Warlock", "Ophidian Aspect", "12", 25));
-            //AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVP - Worthy", "Warlock", "Ophidian Aspect", "Arrivals", 25));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVP - Karnstein", "Warlock", "Karnstein Armlets", "Arrivals", 25));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVP - Karnstein 12", "Warlock", "Karnstein Armlets", "12", 25));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - 12", "Warlock", "Karnstein Armlets", "12", 25));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Arrivals", "Warlock", "Karnstein Armlets", "Arrivals", 25));
+            //AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Arrivals", "Warlock", "Karnstein Armlets", "Arrivals", 25));
             //AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Dawn", "Warlock", "Karnstein Armlets", "Dawn", 25));
             //AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Garden", "Warlock", "Karnstein Armlets", "Undying", 5));
             //AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Opulence", "Warlock", "Karnstein Armlets", "Opulence", 5));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - All Seasons", "Warlock", "Karnstein Armlets", "", 25));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Contraverse Hold", "Warlock", "Contraverse Hold", "Arrivals", 25));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Phogoth", "Warlock", "Contraverse Hold", "", 5));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Phogoth", "Warlock", "Contraverse Hold", "Arrivals", 5));
             //AddArmorCalculation(data, armor, new ArmorCalculator("Hunter PVE - 12", "Hunter", "Celestial Nighthawk", "12", 25));
             //AddArmorCalculation(data, armor, new ArmorCalculator("Hunter PVP - 12", "Hunter", "St0mp-EE5", "12", 25));
         }
@@ -374,6 +375,7 @@ namespace D2VE
                             }
                             stats["MRR"] = stats["1"] + stats["2"] + stats["3"];
                             stats["DIS"] = stats["4"] + stats["5"] + stats["6"];
+                            stats["RI"] = stats["3"] + stats["5"];
                             stats["Total"] = stats["MRR"] + stats["DIS"];
                         }
                         else
