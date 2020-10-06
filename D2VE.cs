@@ -226,6 +226,7 @@ namespace D2VE
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVP - 12", "Warlock", "Ophidian Aspect", "12", 25));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVP - Karnstein", "Warlock", "Karnstein Armlets", "Arrivals", 25));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVP - Karnstein 12", "Warlock", "Karnstein Armlets", "12", 25));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVP - Claws 12", "Warlock", "Claws of Ahamkara", "12", 25));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - 12", "Warlock", "Karnstein Armlets", "12", 25));
             //AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Arrivals", "Warlock", "Karnstein Armlets", "Arrivals", 25));
             //AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - Dawn", "Warlock", "Karnstein Armlets", "Dawn", 25));
