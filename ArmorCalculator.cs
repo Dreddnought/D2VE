@@ -8,14 +8,14 @@ namespace D2VE
 {
     public class Armor
     {
-        public Armor(string name, string classType, string tierType, string itemType, string season,
+        public Armor(string name, string classType, string tierType, string itemType, long powerCap,
             long mobility, long resilience, long recovery, long discipline, long intellect, long strength)
         {
             Name = name;
             ClassType = classType;
             TierType = tierType;
             ItemType = itemType;
-            Season = season;
+            PowerCap = powerCap;
             Mobility = mobility;
             Resilience = resilience;
             Recovery = recovery;
@@ -30,13 +30,13 @@ namespace D2VE
                 + Mrr.ToString() + "+" + Dis.ToString()
                 + " (" + Mobility.ToString() + "-" + Resilience.ToString() + "-" + Recovery.ToString()
                 + "-" + Discipline.ToString() + "-" + Intellect.ToString() + "-" + Strength.ToString() + ")"
-                + ConvertValue.SeasonAbbreviation(Season);
+                + ConvertValue.SeasonAbbreviation(powerCap);
         }
         public string Name { get; }
         public string ClassType { get; }
         public string TierType { get; }
         public string ItemType { get; }
-        public string Season { get; }
+        public long PowerCap { get; }
         public long Mobility { get; }
         public long Resilience { get; }
         public long Recovery { get; }
@@ -52,14 +52,14 @@ namespace D2VE
     }
     public class ArmorCalculator
     {
-        public ArmorCalculator(string name, string classType, string exotic, string season ="",
+        public ArmorCalculator(string name, string classType, string exotic, long powerCap = 0L,
             long mobilityMod = 0L, long resilienceMod = 0L, long recoveryMod = 0L,
             long disciplineMod = 0L, long intellectMod = 0L, long strengthMod = 0L)
         {
             Name = name;
             ClassType = classType;
             Exotic = exotic;
-            Season = season;
+            PowerCap = powerCap;
             MobilityMod = mobilityMod;
             ResilienceMod = resilienceMod;
             RecoveryMod = recoveryMod;
@@ -73,8 +73,8 @@ namespace D2VE
         public string ClassType { get; }
         /// <summary>Exotic name to base the build on.</summary>
         public string Exotic { get; }
-        /// <summary>Season to restrict to. (Optional)</summary>=
-        public string Season { get; }
+        /// <summary>Power cap to restrict to. (Optional)</summary>
+        public long PowerCap { get; }
         /// <summary>Expected mobility mod value, e.g., 25 (20 for Powerful Friends, 5 for Traction. (Optional)</summary>
         public long MobilityMod { get; }
         /// <summary>Expected resilence mod value. (Optional)</summary>
@@ -106,16 +106,16 @@ namespace D2VE
             string exoticType = exotic[0].ItemType;
             List<Armor> helmets = exoticType == "Helmet" ? exotic :
                 armorItems.Where(a => a.ItemType == "Helmet" && a.TierType != "Exotic" &&
-                (string.IsNullOrWhiteSpace(Season) || a.Season.Contains(Season))).ToList();
+                a.PowerCap >= PowerCap).ToList();
             List<Armor> gauntlets = exoticType == "Gauntlets" ? exotic :
                 armorItems.Where(a => a.ItemType == "Gauntlets" && a.TierType != "Exotic" &&
-                (string.IsNullOrWhiteSpace(Season) || a.Season.Contains(Season))).ToList();
+                a.PowerCap >= PowerCap).ToList();
             List<Armor> chestArmor = exoticType == "Chest Armor" ? exotic :
                 armorItems.Where(a => a.ItemType == "Chest Armor" && a.TierType != "Exotic" &&
-                (string.IsNullOrWhiteSpace(Season) || a.Season.Contains(Season))).ToList();
+                a.PowerCap >= PowerCap).ToList();
             List<Armor> legArmor = exoticType == "Leg Armor" ? exotic :
                 armorItems.Where(a => a.ItemType == "Leg Armor" && a.TierType != "Exotic" &&
-                (string.IsNullOrWhiteSpace(Season) || a.Season.Contains(Season))).ToList();
+                a.PowerCap >= PowerCap).ToList();
             foreach (Armor head in helmets)
                 if (head.ClassType == ClassType)
                     foreach (Armor arm in gauntlets)

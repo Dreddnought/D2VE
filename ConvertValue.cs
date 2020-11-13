@@ -207,26 +207,22 @@
                 return "Perk2";
             return value;
         }
-        public static string SeasonAbbreviation(string value)
+        public static string SeasonAbbreviation(long powerCap)
         {
-            switch (value)
+            switch (powerCap)
             {
-                case "Dawn/Worthy/Arrivals/12":
+                case 1410:
+                    return " H";
+                case 1360:
                     return " A";
-                case "Worthy/Arrivals/12":
-                    return " A";
-                case "Dawn/Worthy/Arrivals":
+                case 1310:
                     return " W";
-                case "Undying/Dawn/Worthy":
+                case 1260:
                     return " D";
-                case "Opulence/Undying/Dawn":
-                    return " U";
-                case "Outlaw/Forge":
-                    return " O";
-                case "Opulence/Undying":
-                    return " 1";  // This is an armor 1.0 piece
+                case 1060:
+                    return " S";  // Sunset
                 default:
-                    return value;
+                    return powerCap.ToString();
             }
         }
         public static string PowerCap(long value)
