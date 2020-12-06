@@ -211,6 +211,8 @@
         {
             switch (powerCap)
             {
+                case 999990:  // Exotic
+                    return "";
                 case 1410:
                     return " H";
                 case 1360:

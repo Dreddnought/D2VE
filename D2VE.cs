@@ -1,4 +1,4 @@
-﻿//#define TEST_OUTPUT
+﻿#define TEST_OUTPUT
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -232,7 +232,8 @@ namespace D2VE
             //AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVP - Transversive 11", "Warlock", "Transversive Steps", "Worthy", 20));
             //AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVP - Transversive 12", "Warlock", "Transversive Steps", "12", 20));
             //AddArmorCalculation(data, armor, new ArmorCalculator("Warlock PVE - 12", "Warlock", "Karnstein Armlets", "12", 20));
-            
+
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Karnstein 1260", "Warlock", "Karnstein Armlets", 1260, 20));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Karnstein 1310", "Warlock", "Karnstein Armlets", 1310, 20));
             //AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Ophidian 11", "Warlock", "Ophidian Aspect", 1310, 20));
             //AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Claws 11", "Warlock", "Claws of Ahamkara", 1310, 20));
@@ -240,6 +241,18 @@ namespace D2VE
             //AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Ophidian 12", "Warlock", "Ophidian Aspect", 1360, 20));
             //AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Claws 12", "Warlock", "Claws of Ahamkara", 1360, 20));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Karnstein 1410", "Warlock", "Karnstein Armlets", 1410, 20));
+
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Verity 1310", "Warlock", "Verity's Brow", 1310, 0));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Verity 1360", "Warlock", "Verity's Brow", 1360, 0));
+
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Phoenix 1310", "Warlock", "Phoenix Protocol", 1310, 0));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Phoenix 1360", "Warlock", "Phoenix Protocol", 1360, 0));
+
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Lunafaction 1310", "Warlock", "Lunafaction Boots", 1310, 0));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Lunafaction 1360", "Warlock", "Lunafaction Boots", 1360, 0));
+
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Dawn Chorus 1310", "Warlock", "Dawn Chorus", 1310, 0));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Dawn Chorus 1360", "Warlock", "Dawn Chorus", 1360, 0));
 
             //AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Contraverse Hold 11", "Warlock", "Contraverse Hold", "Worthy", 20));
             //AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Contraverse Hold 12", "Warlock", "Contraverse Hold", "12", 20));
@@ -254,6 +267,9 @@ namespace D2VE
             //AddArmorCalculation(data, armor, new ArmorCalculator("Hunter PVE - 12", "Hunter", "Celestial Nighthawk", "12", 20));
             AddArmorCalculation(data, armor, new ArmorCalculator("Hunter PVP - 1310", "Hunter", "St0mp-EE5", 1310, 20));
             AddArmorCalculation(data, armor, new ArmorCalculator("Hunter PVP - 1360", "Hunter", "St0mp-EE5", 1360, 20));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Hunter Wormhusk Crown - 1310", "Hunter", "Wormhusk Crown", 1310, 20));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Hunter Wormhusk Crown - 1360", "Hunter", "Wormhusk Crown", 1360, 20));
+
         }
         private static void AddArmorCalculation(Dictionary<string, Category> data, List<Armor> armor, ArmorCalculator armorCalculator)
         {
@@ -282,41 +298,41 @@ namespace D2VE
             // Add unclaimed season pass armor.
             if (membership.DisplayName == "DrEdd_Nought")
             {
-                AddSeasonPassArmor(instances, "Holdfast Cover", "Solar", new SortedDictionary<string, long>()
-                {
-                    {  ConvertValue.StatName("Mobility"), 8 },
-                    {  ConvertValue.StatName("Resilience"), 10 },
-                    {  ConvertValue.StatName("Recovery"), 14 },
-                    {  ConvertValue.StatName("Discipline"), 11 },
-                    {  ConvertValue.StatName("Intellect"), 14 },
-                    {  ConvertValue.StatName("Strength"), 6 }
-                });
-                AddSeasonPassArmor(instances, "Holdfast Gloves", "Solar", new SortedDictionary<string, long>()
+                AddSeasonPassArmor(instances, "SP Wild Hunt Hood", "Arc", new SortedDictionary<string, long>()
                 {
                     {  ConvertValue.StatName("Mobility"), 6 },
-                    {  ConvertValue.StatName("Resilience"), 6 },
-                    {  ConvertValue.StatName("Recovery"), 22 },
-                    {  ConvertValue.StatName("Discipline"), 9 },
-                    {  ConvertValue.StatName("Intellect"), 12 },
-                    {  ConvertValue.StatName("Strength"), 12 }
-                });
-                AddSeasonPassArmor(instances, "Holdfast Boots", "Solar", new SortedDictionary<string, long>()
-                {
-                    {  ConvertValue.StatName("Mobility"), 7 },
-                    {  ConvertValue.StatName("Resilience"), 6 },
-                    {  ConvertValue.StatName("Recovery"), 20 },
-                    {  ConvertValue.StatName("Discipline"), 12 },
-                    {  ConvertValue.StatName("Intellect"), 9 },
-                    {  ConvertValue.StatName("Strength"), 12 }
-                });
-                AddSeasonPassArmor(instances, "Holdfast Robes", "Solar", new SortedDictionary<string, long>()
-                {
-                    {  ConvertValue.StatName("Mobility"), 7 },
-                    {  ConvertValue.StatName("Resilience"), 7 },
+                    {  ConvertValue.StatName("Resilience"), 9 },
                     {  ConvertValue.StatName("Recovery"), 18 },
                     {  ConvertValue.StatName("Discipline"), 6 },
-                    {  ConvertValue.StatName("Intellect"), 19 },
-                    {  ConvertValue.StatName("Strength"), 8 }
+                    {  ConvertValue.StatName("Intellect"), 7 },
+                    {  ConvertValue.StatName("Strength"), 20 }
+                });
+                AddSeasonPassArmor(instances, "SP Wild Hunt Gloves", "Arc", new SortedDictionary<string, long>()
+                {
+                    {  ConvertValue.StatName("Mobility"), 19 },
+                    {  ConvertValue.StatName("Resilience"), 6 },
+                    {  ConvertValue.StatName("Recovery"), 8 },
+                    {  ConvertValue.StatName("Discipline"), 7 },
+                    {  ConvertValue.StatName("Intellect"), 6 },
+                    {  ConvertValue.StatName("Strength"), 20 }
+                });
+                AddSeasonPassArmor(instances, "SP Wild Hunt Boots", "Arc", new SortedDictionary<string, long>()
+                {
+                    {  ConvertValue.StatName("Mobility"), 6 },
+                    {  ConvertValue.StatName("Resilience"), 9 },
+                    {  ConvertValue.StatName("Recovery"), 18 },
+                    {  ConvertValue.StatName("Discipline"), 6 },
+                    {  ConvertValue.StatName("Intellect"), 10 },
+                    {  ConvertValue.StatName("Strength"), 16 }
+                });
+                AddSeasonPassArmor(instances, "SP Wild Hunt Vestment", "Arc", new SortedDictionary<string, long>()
+                {
+                    {  ConvertValue.StatName("Mobility"), 9 },
+                    {  ConvertValue.StatName("Resilience"), 6 },
+                    {  ConvertValue.StatName("Recovery"), 18 },
+                    {  ConvertValue.StatName("Discipline"), 7 },
+                    {  ConvertValue.StatName("Intellect"), 6 },
+                    {  ConvertValue.StatName("Strength"), 20 }
                 });
             }
             Save(membership.DisplayName, instances);  // Save result for dev purposes (testing output)
