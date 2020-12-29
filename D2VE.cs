@@ -1,4 +1,4 @@
-﻿#define TEST_OUTPUT
+﻿//#define TEST_OUTPUT
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -119,6 +119,8 @@ namespace D2VE
 #else
                 instances = GetItemInstances(membership);
 #endif
+                if (instances == null)
+                    continue;
                 // Convert the data to spreadsheet form.
                 Dictionary<string, Category> data = new Dictionary<string, Category>();
                 WeaponsAndArmor(instances, data);
@@ -282,6 +284,8 @@ namespace D2VE
             // Get all inventories in their vault and characters.
             dynamic inventories =
                 Request("Destiny2/" + membership.Type + "/Profile/" + membership.Id + "/?components=102,201,205");
+            if (inventories == null)
+                return null;
             // Items equipped on the character.
             foreach (var characters in inventories["characterEquipment"]["data"])
                 foreach (var character in characters)
