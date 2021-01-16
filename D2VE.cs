@@ -241,7 +241,7 @@ namespace D2VE
             //AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Claws 11", "Warlock", "Claws of Ahamkara", 1310, 20));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Karnstein 1360", "Warlock", "Karnstein Armlets", 1360, 20));
             //AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Ophidian 12", "Warlock", "Ophidian Aspect", 1360, 20));
-            //AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Claws 12", "Warlock", "Claws of Ahamkara", 1360, 20));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Claws 1410", "Warlock", "Claws of Ahamkara", 1410, 20));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Karnstein 1410", "Warlock", "Karnstein Armlets", 1410, 20));
 
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Verity 1310", "Warlock", "Verity's Brow", 1310, 0));
@@ -271,6 +271,9 @@ namespace D2VE
             AddArmorCalculation(data, armor, new ArmorCalculator("Hunter PVP - 1360", "Hunter", "St0mp-EE5", 1360, 20));
             AddArmorCalculation(data, armor, new ArmorCalculator("Hunter Wormhusk Crown - 1310", "Hunter", "Wormhusk Crown", 1310, 20));
             AddArmorCalculation(data, armor, new ArmorCalculator("Hunter Wormhusk Crown - 1360", "Hunter", "Wormhusk Crown", 1360, 20));
+
+            AddArmorCalculation(data, armor, new ArmorCalculator("Titan Actium War Rig - 1310", "Titan", "Actium War Rig", 1310));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Titan Actium War Rig - 1360", "Titan", "Actium War Rig", 1360));
 
         }
         private static void AddArmorCalculation(Dictionary<string, Category> data, List<Armor> armor, ArmorCalculator armorCalculator)
