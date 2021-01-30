@@ -241,6 +241,7 @@ namespace D2VE
             //AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Claws 11", "Warlock", "Claws of Ahamkara", 1310, 20));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Karnstein 1360", "Warlock", "Karnstein Armlets", 1360, 20));
             //AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Ophidian 12", "Warlock", "Ophidian Aspect", 1360, 20));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Claws 1310", "Warlock", "Claws of Ahamkara", 1310, 20));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Claws 1410", "Warlock", "Claws of Ahamkara", 1410, 20));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Karnstein 1410", "Warlock", "Karnstein Armlets", 1410, 20));
 
@@ -269,11 +270,18 @@ namespace D2VE
             //AddArmorCalculation(data, armor, new ArmorCalculator("Hunter PVE - 12", "Hunter", "Celestial Nighthawk", "12", 20));
             AddArmorCalculation(data, armor, new ArmorCalculator("Hunter PVP - 1310", "Hunter", "St0mp-EE5", 1310, 20));
             AddArmorCalculation(data, armor, new ArmorCalculator("Hunter PVP - 1360", "Hunter", "St0mp-EE5", 1360, 20));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Hunter Wormhusk Crown - 1310", "Hunter", "Wormhusk Crown", 1310, 20));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Hunter Wormhusk Crown - 1360", "Hunter", "Wormhusk Crown", 1360, 20));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Hunter Wormhusk Crown - 1310", "Hunter", "Wormhusk Crown", 1310, -2, -2, -2, -2, -2, -2));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Hunter Wormhusk Crown - 1360", "Hunter", "Wormhusk Crown", 1360, -2, -2, -2, -2, -2, -2));
 
             AddArmorCalculation(data, armor, new ArmorCalculator("Titan Actium War Rig - 1310", "Titan", "Actium War Rig", 1310));
             AddArmorCalculation(data, armor, new ArmorCalculator("Titan Actium War Rig - 1360", "Titan", "Actium War Rig", 1360));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Titan Citan - 1310", "Titan", "Citan's Ramparts", 1310, -2, -2, -2, -2, -2, -2));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Titan Citan - 1360", "Titan", "Citan's Ramparts", 1360, -2, -2, -2, -2, -2, -2));
+
+            AddArmorCalculation(data, armor, new ArmorCalculator("Titan Alpha Lupi - 1310", "Titan", "Crest of Alpha Lupi", 1310, -2, -2, -2, -2, -2, -2));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Titan Alpha Lupi - 1360", "Titan", "Crest of Alpha Lupi", 1360, -2, -2, -2, -2, -2, -2));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Titan Alpha Lupi MW - 1310", "Titan", "Crest of Alpha Lupi", 1310));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Titan Alpha Lupi MW - 1360", "Titan", "Crest of Alpha Lupi", 1360));
 
         }
         private static void AddArmorCalculation(Dictionary<string, Category> data, List<Armor> armor, ArmorCalculator armorCalculator)
@@ -305,7 +313,7 @@ namespace D2VE
             // Add unclaimed season pass armor.
             if (membership.DisplayName == "DrEdd_Nought")
             {
-                AddSeasonPassArmor(instances, "SP Wild Hunt Hood", "Arc", new SortedDictionary<string, long>()
+                AddSeasonPassArmor(instances, "Wild Hunt Hood", "Arc", 0, new SortedDictionary<string, long>()
                 {
                     {  ConvertValue.StatName("Mobility"), 6 },
                     {  ConvertValue.StatName("Resilience"), 9 },
@@ -314,7 +322,7 @@ namespace D2VE
                     {  ConvertValue.StatName("Intellect"), 7 },
                     {  ConvertValue.StatName("Strength"), 20 }
                 });
-                AddSeasonPassArmor(instances, "SP Wild Hunt Gloves", "Arc", new SortedDictionary<string, long>()
+                AddSeasonPassArmor(instances, "Wild Hunt Gloves", "Arc", 0, new SortedDictionary<string, long>()
                 {
                     {  ConvertValue.StatName("Mobility"), 19 },
                     {  ConvertValue.StatName("Resilience"), 6 },
@@ -323,7 +331,7 @@ namespace D2VE
                     {  ConvertValue.StatName("Intellect"), 6 },
                     {  ConvertValue.StatName("Strength"), 20 }
                 });
-                AddSeasonPassArmor(instances, "SP Wild Hunt Boots", "Arc", new SortedDictionary<string, long>()
+                AddSeasonPassArmor(instances, "Wild Hunt Boots", "Arc", 0, new SortedDictionary<string, long>()
                 {
                     {  ConvertValue.StatName("Mobility"), 6 },
                     {  ConvertValue.StatName("Resilience"), 9 },
@@ -332,7 +340,7 @@ namespace D2VE
                     {  ConvertValue.StatName("Intellect"), 10 },
                     {  ConvertValue.StatName("Strength"), 16 }
                 });
-                AddSeasonPassArmor(instances, "SP Wild Hunt Vestment", "Arc", new SortedDictionary<string, long>()
+                AddSeasonPassArmor(instances, "Wild Hunt Vestment", "Arc", 0, new SortedDictionary<string, long>()
                 {
                     {  ConvertValue.StatName("Mobility"), 9 },
                     {  ConvertValue.StatName("Resilience"), 6 },
@@ -341,6 +349,52 @@ namespace D2VE
                     {  ConvertValue.StatName("Intellect"), 6 },
                     {  ConvertValue.StatName("Strength"), 20 }
                 });
+                AddSeasonPassArmor(instances, "Wild Hunt Mask", "Arc", 0, new SortedDictionary<string, long>()
+                {
+                    {  ConvertValue.StatName("Mobility"), 7 },
+                    {  ConvertValue.StatName("Resilience"), 6 },
+                    {  ConvertValue.StatName("Recovery"), 20 },
+                    {  ConvertValue.StatName("Discipline"), 6 },
+                    {  ConvertValue.StatName("Intellect"), 20 },
+                    {  ConvertValue.StatName("Strength"), 7 }
+                });
+                AddSeasonPassArmor(instances, "Wild Hunt Helm", "Arc", 3887272785, new SortedDictionary<string, long>()
+                {
+                    {  ConvertValue.StatName("Mobility"), 8 },
+                    {  ConvertValue.StatName("Resilience"), 6 },
+                    {  ConvertValue.StatName("Recovery"), 19 },
+                    {  ConvertValue.StatName("Discipline"), 10 },
+                    {  ConvertValue.StatName("Intellect"), 12 },
+                    {  ConvertValue.StatName("Strength"), 11 }
+                });
+                AddSeasonPassArmor(instances, "Wild Hunt Gauntlets", "Arc", 2545401128, new SortedDictionary<string, long>()
+                {
+                    {  ConvertValue.StatName("Mobility"), 6 },
+                    {  ConvertValue.StatName("Resilience"), 8 },
+                    {  ConvertValue.StatName("Recovery"), 19 },
+                    {  ConvertValue.StatName("Discipline"), 12 },
+                    {  ConvertValue.StatName("Intellect"), 14 },
+                    {  ConvertValue.StatName("Strength"), 7 }
+                });
+                AddSeasonPassArmor(instances, "Wild Hunt Plate", "Arc", 3351935136, new SortedDictionary<string, long>()
+                {
+                    {  ConvertValue.StatName("Mobility"), 6 },
+                    {  ConvertValue.StatName("Resilience"), 8 },
+                    {  ConvertValue.StatName("Recovery"), 19 },
+                    {  ConvertValue.StatName("Discipline"), 7 },
+                    {  ConvertValue.StatName("Intellect"), 20 },
+                    {  ConvertValue.StatName("Strength"), 6 }
+                });
+                AddSeasonPassArmor(instances, "Wild Hunt Greaves", "Arc", 3180809346, new SortedDictionary<string, long>()
+                {
+                    {  ConvertValue.StatName("Mobility"), 12 },
+                    {  ConvertValue.StatName("Resilience"), 2 },
+                    {  ConvertValue.StatName("Recovery"), 19 },
+                    {  ConvertValue.StatName("Discipline"), 10 },
+                    {  ConvertValue.StatName("Intellect"), 16 },
+                    {  ConvertValue.StatName("Strength"), 6 }
+                });
+
             }
             Save(membership.DisplayName, instances);  // Save result for dev purposes (testing output)
             return instances;
@@ -348,9 +402,9 @@ namespace D2VE
         // Assume the item can be found by name because we already have one.
         // TODO: Do this properly.  In particular we need the real itemInstanceId.
         private static void AddSeasonPassArmor(List<ItemInstance> instances, string name, string energyType,
-            SortedDictionary<string, long> stats)
+            long hash, SortedDictionary<string, long> stats)
         {
-            ItemInfo itemInfo = ItemCache.GetItemInfo(name);
+            ItemInfo itemInfo = ItemCache.GetItemInfo(name, hash);
             if (itemInfo == null)
             {
                 Console.WriteLine("Could not find " + name);

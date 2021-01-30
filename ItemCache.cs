@@ -49,8 +49,12 @@ namespace D2VE
             return itemInfo;
         }
         // For items in the season pass where we haven't got the hash.
-        public ItemInfo GetItemInfo(string name)
+        public ItemInfo GetItemInfo(string name, long itemHash)
         {
+            // If we knwo the hash use it.
+            if (itemHash != 0)
+                return GetItemInfo(itemHash);
+            // Otherwise look it up by name and hope we've already got one.
             foreach (var kvp in _cache)
                 if (kvp.Value?.Name == name)
                     return kvp.Value;

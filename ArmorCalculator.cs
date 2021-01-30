@@ -171,6 +171,6 @@ namespace D2VE
             row[category.ColumnIndex("LowestBaseStats")] = lowestBaseStats;
             return row;
         }
-        private const int _minimumUsage = 300;
+        private const int _minimumUsage = 290;
     }
 }
