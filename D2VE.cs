@@ -410,7 +410,7 @@ namespace D2VE
                 Console.WriteLine("Could not find " + name);
                 return;
             }
-            ItemInstance itemInstance = new ItemInstance(null, itemInfo, 0, 0, energyType, "", stats, new SortedDictionary<string, Plug>());
+            ItemInstance itemInstance = new ItemInstance(null, itemInfo, 0, 1410, energyType, "", stats, new SortedDictionary<string, Plug>());
             instances.Add(itemInstance);
             Console.WriteLine(itemInstance.ToString());
         }
