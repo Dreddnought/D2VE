@@ -150,6 +150,8 @@
                     return "Solar";
                 case 3L:
                     return "Void";
+                case 6L:
+                    return "Stasis";
                 default:
                     return value.ToString();
             }

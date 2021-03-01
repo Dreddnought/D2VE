@@ -101,6 +101,14 @@ namespace D2VE
             category.ColumnIndex("Wastage");
             category.ColumnIndex("TotalExcludingStrength");
             category.ColumnIndex("LowestBaseStats");
+            category.ColumnIndex("Mob");
+            category.ColumnIndex("Res");
+            category.ColumnIndex("Rec");
+            category.ColumnIndex("Dis");
+            category.ColumnIndex("Int");
+            category.ColumnIndex("Str");
+            category.ColumnIndex("MRR");
+            category.ColumnIndex("DIS");
             // First find the exotic.
             List<Armor> exotic = armorItems.Where(a => a.Name == Exotic).ToList();
             string exoticType = exotic[0].ItemType;
@@ -153,6 +161,8 @@ namespace D2VE
             long wastage = mobility + resilience + recovery + discipline + intellect + strength - usage;
             long totalExcludingStrength = mobi + resi + reco + disc + inte;
             long lowestBaseStats = Math.Min(Math.Min(head.BaseStats, arm.BaseStats), Math.Min(chest.BaseStats, leg.BaseStats));
+            long mrr = mobi + resi + reco;
+            long dis = disc + inte + stre;
             object[] row = new object[category.ColumnNames.Count];
             row[category.ColumnIndex("Name")] = head.Id + "/" + arm.Id + "/" + chest.Id + "/" + leg.Id;
             row[category.ColumnIndex("Helmet")] = head.Id;
@@ -169,8 +179,16 @@ namespace D2VE
             row[category.ColumnIndex("Wastage")] = wastage;
             row[category.ColumnIndex("TotalExcludingStrength")] = totalExcludingStrength;
             row[category.ColumnIndex("LowestBaseStats")] = lowestBaseStats;
+            row[category.ColumnIndex("Mob")] = mobility;
+            row[category.ColumnIndex("Res")] = resilience;
+            row[category.ColumnIndex("Rec")] = recovery;
+            row[category.ColumnIndex("Dis")] = discipline;
+            row[category.ColumnIndex("Int")] = intellect;
+            row[category.ColumnIndex("Str")] = strength;
+            row[category.ColumnIndex("MRR")] = mrr;
+            row[category.ColumnIndex("DIS")] = dis;
             return row;
         }
-        private const int _minimumUsage = 290;
+        private const int _minimumUsage = 250;
     }
 }

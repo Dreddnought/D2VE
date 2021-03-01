@@ -51,7 +51,7 @@ namespace D2VE
         // For items in the season pass where we haven't got the hash.
         public ItemInfo GetItemInfo(string name, long itemHash)
         {
-            // If we knwo the hash use it.
+            // If we know the hash use it.
             if (itemHash != 0)
                 return GetItemInfo(itemHash);
             // Otherwise look it up by name and hope we've already got one.
