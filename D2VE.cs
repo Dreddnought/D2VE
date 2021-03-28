@@ -1,4 +1,4 @@
-﻿#define TEST_OUTPUT
+﻿//#define TEST_OUTPUT
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -230,6 +230,7 @@ namespace D2VE
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Claws 1310", "Warlock", "Claws of Ahamkara", 1310));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Karnstein 1310", "Warlock", "Karnstein Armlets", 1310));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Ophidian 1310", "Warlock", "Ophidian Aspect", 1310));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Battle Harmony 1310", "Warlock", "Mantle of Battle Harmony", 1310));
             AddArmorCalculation(data, armor, new ArmorCalculator("Titan Alpha Lupi - 1310", "Titan", "Crest of Alpha Lupi", 1310));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Contraverse Hold 1310", "Warlock", "Contraverse Hold", 1310));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Aeon Soul", "Warlock", "Aeon Soul", 1310));
@@ -273,42 +274,6 @@ namespace D2VE
             // Add unclaimed season pass armor.
             if (membership.DisplayName == "DrEdd_Nought")
             {
-                AddSeasonPassArmor(instances, "Wild Hunt Hood", "Arc", 0, new SortedDictionary<string, long>()
-                {
-                    {  ConvertValue.StatName("Mobility"), 6 },
-                    {  ConvertValue.StatName("Resilience"), 9 },
-                    {  ConvertValue.StatName("Recovery"), 18 },
-                    {  ConvertValue.StatName("Discipline"), 6 },
-                    {  ConvertValue.StatName("Intellect"), 7 },
-                    {  ConvertValue.StatName("Strength"), 20 }
-                });
-                AddSeasonPassArmor(instances, "Wild Hunt Gloves", "Arc", 0, new SortedDictionary<string, long>()
-                {
-                    {  ConvertValue.StatName("Mobility"), 19 },
-                    {  ConvertValue.StatName("Resilience"), 6 },
-                    {  ConvertValue.StatName("Recovery"), 8 },
-                    {  ConvertValue.StatName("Discipline"), 7 },
-                    {  ConvertValue.StatName("Intellect"), 6 },
-                    {  ConvertValue.StatName("Strength"), 20 }
-                });
-                AddSeasonPassArmor(instances, "Wild Hunt Boots", "Arc", 0, new SortedDictionary<string, long>()
-                {
-                    {  ConvertValue.StatName("Mobility"), 6 },
-                    {  ConvertValue.StatName("Resilience"), 9 },
-                    {  ConvertValue.StatName("Recovery"), 18 },
-                    {  ConvertValue.StatName("Discipline"), 6 },
-                    {  ConvertValue.StatName("Intellect"), 10 },
-                    {  ConvertValue.StatName("Strength"), 16 }
-                });
-                AddSeasonPassArmor(instances, "Wild Hunt Vestment", "Arc", 0, new SortedDictionary<string, long>()
-                {
-                    {  ConvertValue.StatName("Mobility"), 9 },
-                    {  ConvertValue.StatName("Resilience"), 6 },
-                    {  ConvertValue.StatName("Recovery"), 18 },
-                    {  ConvertValue.StatName("Discipline"), 7 },
-                    {  ConvertValue.StatName("Intellect"), 6 },
-                    {  ConvertValue.StatName("Strength"), 20 }
-                });
                 AddSeasonPassArmor(instances, "Praefectus Strides", "Void", 48951631, new SortedDictionary<string, long>()
                 {
                     {  ConvertValue.StatName("Mobility"), 6 },
@@ -336,43 +301,6 @@ namespace D2VE
                     {  ConvertValue.StatName("Intellect"), 10 },
                     {  ConvertValue.StatName("Strength"), 16 }
                 });
-                AddSeasonPassArmor(instances, "Wild Hunt Helm", "Arc", 3887272785, new SortedDictionary<string, long>()
-                {
-                    {  ConvertValue.StatName("Mobility"), 8 },
-                    {  ConvertValue.StatName("Resilience"), 6 },
-                    {  ConvertValue.StatName("Recovery"), 19 },
-                    {  ConvertValue.StatName("Discipline"), 10 },
-                    {  ConvertValue.StatName("Intellect"), 12 },
-                    {  ConvertValue.StatName("Strength"), 11 }
-                });
-                AddSeasonPassArmor(instances, "Wild Hunt Gauntlets", "Arc", 2545401128, new SortedDictionary<string, long>()
-                {
-                    {  ConvertValue.StatName("Mobility"), 6 },
-                    {  ConvertValue.StatName("Resilience"), 8 },
-                    {  ConvertValue.StatName("Recovery"), 19 },
-                    {  ConvertValue.StatName("Discipline"), 12 },
-                    {  ConvertValue.StatName("Intellect"), 14 },
-                    {  ConvertValue.StatName("Strength"), 7 }
-                });
-                AddSeasonPassArmor(instances, "Wild Hunt Plate", "Arc", 3351935136, new SortedDictionary<string, long>()
-                {
-                    {  ConvertValue.StatName("Mobility"), 6 },
-                    {  ConvertValue.StatName("Resilience"), 8 },
-                    {  ConvertValue.StatName("Recovery"), 19 },
-                    {  ConvertValue.StatName("Discipline"), 7 },
-                    {  ConvertValue.StatName("Intellect"), 20 },
-                    {  ConvertValue.StatName("Strength"), 6 }
-                });
-                AddSeasonPassArmor(instances, "Wild Hunt Greaves", "Arc", 3180809346, new SortedDictionary<string, long>()
-                {
-                    {  ConvertValue.StatName("Mobility"), 12 },
-                    {  ConvertValue.StatName("Resilience"), 2 },
-                    {  ConvertValue.StatName("Recovery"), 19 },
-                    {  ConvertValue.StatName("Discipline"), 10 },
-                    {  ConvertValue.StatName("Intellect"), 16 },
-                    {  ConvertValue.StatName("Strength"), 6 }
-                });
-
             }
             Save(membership.DisplayName, instances);  // Save result for dev purposes (testing output)
             return instances;
