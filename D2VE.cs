@@ -225,18 +225,21 @@ namespace D2VE
                 .Select(i => new Armor(i.Name, i.ClassType, i.TierType, i.ItemType, i.PowerCap,
                     i.Stats["1"], i.Stats["2"], i.Stats["3"], i.Stats["4"], i.Stats["5"], i.Stats["6"])).ToList();
 
-            AddArmorCalculation(data, armor, new ArmorCalculator("Hunter Wormhusk Crown - 1310", "Hunter", "Wormhusk Crown", 1310));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Hunter Wormhusk Crown Cloak Only - 1310", "Hunter", "Wormhusk Crown", 1310, -8, -8, -8, -8, -8, -8));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Claws 1310", "Warlock", "Claws of Ahamkara", 1310));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Karnstein 1310", "Warlock", "Karnstein Armlets", 1310));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Ophidian 1310", "Warlock", "Ophidian Aspect", 1310));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Battle Harmony 1310", "Warlock", "Mantle of Battle Harmony", 1310));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Titan Alpha Lupi - 1310", "Titan", "Crest of Alpha Lupi", 1310));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Contraverse Hold 1310", "Warlock", "Contraverse Hold", 1310));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Hunter Wormhusk Crown", "Hunter", "Wormhusk Crown", 1310));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Claws", "Warlock", "Claws of Ahamkara", 1310));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Karnstein", "Warlock", "Karnstein Armlets", 1310));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Ophidian", "Warlock", "Ophidian Aspect", 1310));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Battle Harmony", "Warlock", "Mantle of Battle Harmony", 1310));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Transversive Steps", "Warlock", "Transversive Steps", 1310));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Titan - Alpha Lupi", "Titan", "Crest of Alpha Lupi", 1310));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Contraverse Hold", "Warlock", "Contraverse Hold", 1310));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Geomag Stabilizers", "Warlock", "Geomag Stabilizers", 1310));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Eye of Another World", "Warlock", "Eye of Another World", 1310));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Phoenix Protocol", "Warlock", "Phoenix Protocol", 1310));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Phoenix Protocol -5", "Warlock", "Phoenix Protocol", 1310, -5));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Aeon Soul", "Warlock", "Aeon Soul", 1310));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Aeon Soul Bond Only", "Warlock", "Aeon Soul", 1310, -8, -8, -8, -8, -8, -8));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Aeon Soul Except Exotic", "Warlock", "Aeon Soul", 1310, -2, -2, -2, -2, -2, -2));
-
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Aeon Soul Except Exotic", "Warlock", "Aeon Soul", 1310, -2, -2, -2, -2, -2, -2));            
         }
         private static void AddArmorCalculation(Dictionary<string, Category> data, List<Armor> armor, ArmorCalculator armorCalculator)
         {
