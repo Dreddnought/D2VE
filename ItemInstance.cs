@@ -5,7 +5,8 @@ namespace D2VE
 {
     public class ItemInstance
     {
-        public ItemInstance(string itemInstanceId, ItemInfo itemInfo, long power, long powerCap, string energyType, string masterwork,
+        public ItemInstance(string itemInstanceId, ItemInfo itemInfo, long power, long powerCap,
+            string energyType, long energyCapacity, string masterwork,
             SortedDictionary<string, long> stats, SortedDictionary<string, Plug> plugs)
         {
             ItemInstanceId = itemInstanceId;
@@ -13,6 +14,7 @@ namespace D2VE
             Power = power;
             PowerCap = powerCap;
             EnergyType = energyType;
+            EnergyCapacity = energyCapacity;
             Masterwork = masterwork;
             Stats = stats;
             Plugs = plugs;
@@ -29,13 +31,16 @@ namespace D2VE
         public string Season { get { return ItemInfo.Season; } }
         public string ClassType { get { return ItemInfo.ClassType; } }
         public string EnergyType { get; }
+        public long EnergyCapacity { get; }
         public string Masterwork { get; }
         public SortedDictionary<string, long> Stats { get; }
         public SortedDictionary<string, Plug> Plugs { get; }
         public override string ToString()
         {
-            return ItemInstanceId + " " + Name + " " + Power.ToString() + " " + PowerCap.ToString() + " (" + ItemType + ") "
-                + Slot + " " + EnergyType + " " + TierType + (string.IsNullOrWhiteSpace(ClassType) ? "" : " [" + ClassType + "]")
+            return ItemInstanceId + " " + Name + " " + Power.ToString() + " " + PowerCap.ToString()
+                + " (" + ItemType + ") " + Slot + " " + EnergyType + " " + EnergyCapacity.ToString()
+                + " " + TierType
+                + (string.IsNullOrWhiteSpace(ClassType) ? "" : " [" + ClassType + "]")
                 + (string.IsNullOrWhiteSpace(Season) ? "" : " [" + Season + "]")
                 + "\r\n  " + string.Join("\r\n  ",
                 Stats.Keys.Zip(Stats.Values, (k, v) => ConvertValue.StatSortedName(k) + " = " + v))

@@ -8,13 +8,16 @@ namespace D2VE
 {
     public class Armor
     {
-        public Armor(string name, string classType, string tierType, string itemType, long powerCap,
+        public Armor(string name, string classType, string tierType, string itemType, string energyType,
+            long energyCapacity, long powerCap,
             long mobility, long resilience, long recovery, long discipline, long intellect, long strength)
         {
             Name = name;
             ClassType = classType;
             TierType = tierType;
             ItemType = itemType;
+            EnergyType = energyType;
+            EnergyCapacity = energyCapacity;
             PowerCap = powerCap;
             Mobility = mobility;
             Resilience = resilience;
@@ -30,12 +33,14 @@ namespace D2VE
                 + Mrr.ToString() + "+" + Dis.ToString()
                 + " (" + Mobility.ToString() + "-" + Resilience.ToString() + "-" + Recovery.ToString()
                 + "-" + Discipline.ToString() + "-" + Intellect.ToString() + "-" + Strength.ToString() + ")"
-                + ConvertValue.SeasonAbbreviation(powerCap);
+                + (EnergyCapacity == 10L ? " " + EnergyType : "");
         }
         public string Name { get; }
         public string ClassType { get; }
         public string TierType { get; }
         public string ItemType { get; }
+        public string EnergyType { get; }
+        public long EnergyCapacity { get; }
         public long PowerCap { get; }
         public long Mobility { get; }
         public long Resilience { get; }
@@ -189,6 +194,6 @@ namespace D2VE
             row[category.ColumnIndex("DIS")] = dis;
             return row;
         }
-        private const int _minimumUsage = 250;
+        private const int _minimumUsage = 290;
     }
 }

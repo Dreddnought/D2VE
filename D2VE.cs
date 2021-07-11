@@ -222,19 +222,24 @@ namespace D2VE
             // Armor calculation.
             List<Armor> armor = instances.Where(i => i.ItemCategory == "Armor" && i.TierType != "Rare" &&
                 !i.ItemType.StartsWith("Warlock") && !i.ItemType.StartsWith("Hunter") && !i.ItemType.StartsWith("Titan"))
-                .Select(i => new Armor(i.Name, i.ClassType, i.TierType, i.ItemType, i.PowerCap,
-                    i.Stats["1"], i.Stats["2"], i.Stats["3"], i.Stats["4"], i.Stats["5"], i.Stats["6"])).ToList();
+                .Select(i => new Armor(i.Name, i.ClassType, i.TierType, i.ItemType, i.EnergyType,i.EnergyCapacity,
+                    i.PowerCap, i.Stats["1"], i.Stats["2"], i.Stats["3"], i.Stats["4"], i.Stats["5"], i.Stats["6"]))
+                .ToList();
 
             AddArmorCalculation(data, armor, new ArmorCalculator("Hunter Wormhusk Crown", "Hunter", "Wormhusk Crown", 1310));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Claws", "Warlock", "Claws of Ahamkara", 1310));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Karnstein", "Warlock", "Karnstein Armlets", 1310));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Ophidian", "Warlock", "Ophidian Aspect", 1310));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Battle Harmony", "Warlock", "Mantle of Battle Harmony", 1310));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Lunafaction Boots", "Warlock", "Lunafaction Boots", 1310));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Transversive Steps", "Warlock", "Transversive Steps", 1310));
             AddArmorCalculation(data, armor, new ArmorCalculator("Titan - Alpha Lupi", "Titan", "Crest of Alpha Lupi", 1310));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Contraverse Hold", "Warlock", "Contraverse Hold", 1310));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Geomag Stabilizers", "Warlock", "Geomag Stabilizers", 1310));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Verity's Brow", "Warlock", "Verity's Brow", 1310));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Dawn Chorus", "Warlock", "Dawn Chorus", 1310));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Eye of Another World", "Warlock", "Eye of Another World", 1310));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - The Stag", "Warlock", "The Stag", 1310));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Phoenix Protocol", "Warlock", "Phoenix Protocol", 1310));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Phoenix Protocol -5", "Warlock", "Phoenix Protocol", 1310, -5));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock - Aeon Soul", "Warlock", "Aeon Soul", 1310));
@@ -319,7 +324,8 @@ namespace D2VE
                 Console.WriteLine("Could not find " + name);
                 return;
             }
-            ItemInstance itemInstance = new ItemInstance(null, itemInfo, 0, 1410, energyType, "", stats, new SortedDictionary<string, Plug>());
+            ItemInstance itemInstance = new ItemInstance(null, itemInfo, 0, 1410, energyType, 0, "", stats,
+                new SortedDictionary<string, Plug>());
             instances.Add(itemInstance);
             Console.WriteLine(itemInstance.ToString());
         }
@@ -344,11 +350,13 @@ namespace D2VE
                 long powerCap = itemInfo.PowerCaps[(int)item.versionNumber.Value];
                 string masterwork = "";
                 string energyType = itemInfo.EnergyType;
+                long energyCapacity = 0L;
                 if (itemInfo.ItemCategory == "Armor")  // Armor, energyType is at instance level
                 {
                     if (instance.instance.data.energy == null)  // Armor 1.0 ignore
                         return;
                     energyType = ConvertValue.EnergyType(instance.instance.data.energy.energyType.Value);
+                    energyCapacity = instance.instance.data.energy.energyCapacity.Value;
                 }
                 foreach (var stat in instance["stats"]["data"]["stats"])
                 {
@@ -418,7 +426,8 @@ namespace D2VE
                         }
                     }
                 ItemInstance itemInstance =
-                    new ItemInstance(itemInstanceId, itemInfo, power, powerCap, energyType, masterwork, stats, plugs);
+                    new ItemInstance(itemInstanceId, itemInfo, power, powerCap, energyType, energyCapacity,
+                        masterwork, stats, plugs);
                 instances.Add(itemInstance);
                 Console.WriteLine(itemInstance.ToString());
             }

@@ -7,7 +7,8 @@ namespace D2VE
 {
     public class ItemInfo
     {
-        public ItemInfo(string name, string tierType, string itemCategory, string itemType, string slot, string energyType,
+        public ItemInfo(string name, string tierType, string itemCategory, string itemType, string slot,
+            string energyType,
             string season, string classType, Dictionary<string, long> stats, List<long> powerCaps)
         {
             Name = name;
@@ -27,6 +28,7 @@ namespace D2VE
         public string ItemType { get; }
         public string Slot { get; }
         public string EnergyType { get; }
+        public string EnergyCapacity { get; }
         public string Season { get; }
         public string ClassType { get; }
         public Dictionary<string, long> Stats { get; }
