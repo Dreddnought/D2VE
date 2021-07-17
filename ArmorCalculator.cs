@@ -57,14 +57,15 @@ namespace D2VE
     }
     public class ArmorCalculator
     {
-        public ArmorCalculator(string name, string classType, string exotic, long powerCap = 0L,
+        public ArmorCalculator(string classType, string exotic,
             long mobilityMod = 0L, long resilienceMod = 0L, long recoveryMod = 0L,
             long disciplineMod = 0L, long intellectMod = 0L, long strengthMod = 0L)
         {
-            Name = name;
+            string mods = mobilityMod.ToString() + "," + resilienceMod.ToString() + "," + recoveryMod.ToString()
+                + "," + disciplineMod.ToString() + "," + intellectMod.ToString() + "," + strengthMod.ToString();
+            Name = classType + " - " + exotic + (mods == "0,0,0,0,0,0" ? "" : " - " + mods);
             ClassType = classType;
             Exotic = exotic;
-            PowerCap = powerCap;
             MobilityMod = mobilityMod;
             ResilienceMod = resilienceMod;
             RecoveryMod = recoveryMod;
@@ -78,8 +79,6 @@ namespace D2VE
         public string ClassType { get; }
         /// <summary>Exotic name to base the build on.</summary>
         public string Exotic { get; }
-        /// <summary>Power cap to restrict to. (Optional)</summary>
-        public long PowerCap { get; }
         /// <summary>Expected mobility mod value, e.g., 25 (20 for Powerful Friends, 5 for Traction. (Optional)</summary>
         public long MobilityMod { get; }
         /// <summary>Expected resilence mod value. (Optional)</summary>
@@ -118,17 +117,13 @@ namespace D2VE
             List<Armor> exotic = armorItems.Where(a => a.Name == Exotic).ToList();
             string exoticType = exotic[0].ItemType;
             List<Armor> helmets = exoticType == "Helmet" ? exotic :
-                armorItems.Where(a => a.ItemType == "Helmet" && a.TierType != "Exotic" &&
-                a.PowerCap >= PowerCap).ToList();
+                armorItems.Where(a => a.ItemType == "Helmet" && a.TierType != "Exotic").ToList();
             List<Armor> gauntlets = exoticType == "Gauntlets" ? exotic :
-                armorItems.Where(a => a.ItemType == "Gauntlets" && a.TierType != "Exotic" &&
-                a.PowerCap >= PowerCap).ToList();
+                armorItems.Where(a => a.ItemType == "Gauntlets" && a.TierType != "Exotic").ToList();
             List<Armor> chestArmor = exoticType == "Chest Armor" ? exotic :
-                armorItems.Where(a => a.ItemType == "Chest Armor" && a.TierType != "Exotic" &&
-                a.PowerCap >= PowerCap).ToList();
+                armorItems.Where(a => a.ItemType == "Chest Armor" && a.TierType != "Exotic").ToList();
             List<Armor> legArmor = exoticType == "Leg Armor" ? exotic :
-                armorItems.Where(a => a.ItemType == "Leg Armor" && a.TierType != "Exotic" &&
-                a.PowerCap >= PowerCap).ToList();
+                armorItems.Where(a => a.ItemType == "Leg Armor" && a.TierType != "Exotic").ToList();
             foreach (Armor head in helmets)
                 if (head.ClassType == ClassType)
                     foreach (Armor arm in gauntlets)
