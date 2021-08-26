@@ -115,6 +115,8 @@ namespace D2VE
             category.ColumnIndex("DIS");
             // First find the exotic.
             List<Armor> exotic = armorItems.Where(a => a.Name == Exotic).ToList();
+            if (exotic.Count == 0)  // we don't have one!
+                return category;
             string exoticType = exotic[0].ItemType;
             List<Armor> helmets = exoticType == "Helmet" ? exotic :
                 armorItems.Where(a => a.ItemType == "Helmet" && a.TierType != "Exotic").ToList();

@@ -91,13 +91,13 @@
                 case "v490":
                     return "Arrivals";
                 case "v500":
-                    return "12";
+                    return "Hunt";
                 case "v510":
-                    return "13";
+                    return "Chosen";
                 case "v520":
-                    return "14";
+                    return "Splicer";
                 case "v530":
-                    return "15";
+                    return "Lost";
                 default:
                     return value.ToString();
             }
@@ -134,6 +134,8 @@
                     return "Void";
                 case 5L:
                     return "Raid";
+                case 6L:
+                    return "Stasis";
                 default:
                     return value.ToString();
             }
