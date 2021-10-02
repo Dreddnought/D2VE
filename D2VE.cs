@@ -1,4 +1,4 @@
-﻿//#define TEST_OUTPUT
+﻿#define TEST_OUTPUT
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -249,6 +249,7 @@ namespace D2VE
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Getaway Artist"));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Necrotic Grip"));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Nezarec's Sin"));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Nothing Manacles"));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Promethium Spur"));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Sanguine Alchemy"));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Skull of Dire Ahamkara"));
@@ -261,12 +262,27 @@ namespace D2VE
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Phoenix Protocol"));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Aeon Soul"));
         }
-        private static void AddArmorCalculation(Dictionary<string, Category> data, List<Armor> armor, ArmorCalculator armorCalculator)
+        private static void AddArmorCalculation(Dictionary<string, Category> data, List<Armor> armor,
+            ArmorCalculator armorCalculator)
         {
             try
             {
                 Category category = armorCalculator.Calculate(armor);
                 data[category.Name] = category;
+                // Make file of all 320 armor.
+                if (!data.ContainsKey("320"))
+                {
+                    data["320"] = new Category("320");
+                    data["320"].ColumnNames.AddRange(category.ColumnNames);
+                }
+                data["320"].Rows.AddRange(category.Rows);
+                // Make file of all fully masterworked sets.
+                if (!data.ContainsKey("Masterworked"))
+                {
+                    data["Masterworked"] = new Category("Masterworked");
+                    data["Masterworked"].ColumnNames.AddRange(category.ColumnNames);
+                }
+                data["Masterworked"].Rows.AddRange(category.Rows);
             }
             catch (Exception x)
             {
@@ -297,33 +313,6 @@ namespace D2VE
             // Add unclaimed season pass armor.
             if (membership.DisplayName == "DrEdd_Nought")
             {
-                AddSeasonPassArmor(instances, "Praefectus Strides", "Void", 48951631, new SortedDictionary<string, long>()
-                {
-                    {  ConvertValue.StatName("Mobility"), 6 },
-                    {  ConvertValue.StatName("Resilience"), 9 },
-                    {  ConvertValue.StatName("Recovery"), 18 },
-                    {  ConvertValue.StatName("Discipline"), 7 },
-                    {  ConvertValue.StatName("Intellect"), 6 },
-                    {  ConvertValue.StatName("Strength"), 20 }
-                });
-                AddSeasonPassArmor(instances, "Praefectus Cuirass", "Void", 3100185651, new SortedDictionary<string, long>()
-                {
-                    {  ConvertValue.StatName("Mobility"), 19 },
-                    {  ConvertValue.StatName("Resilience"), 6 },
-                    {  ConvertValue.StatName("Recovery"), 8 },
-                    {  ConvertValue.StatName("Discipline"), 6 },
-                    {  ConvertValue.StatName("Intellect"), 7 },
-                    {  ConvertValue.StatName("Strength"), 20 }
-                });
-                AddSeasonPassArmor(instances, "Praefectus Grips", "Void", 3673119885, new SortedDictionary<string, long>()
-                {
-                    {  ConvertValue.StatName("Mobility"), 6 },
-                    {  ConvertValue.StatName("Resilience"), 9 },
-                    {  ConvertValue.StatName("Recovery"), 18 },
-                    {  ConvertValue.StatName("Discipline"), 6 },
-                    {  ConvertValue.StatName("Intellect"), 10 },
-                    {  ConvertValue.StatName("Strength"), 16 }
-                });
             }
             Save(membership.DisplayName, instances);  // Save result for dev purposes (testing output)
             return instances;
@@ -398,8 +387,37 @@ namespace D2VE
                             {
                                 long value;
                                 if (stats.TryGetValue(stat.Key, out value))
-                                    stats[stat.Key] = value - stat.Value;
+                                    if (value == 0 && stat.Value < 0)  // E.g., Protective Light (plugHash 3523075120L)
+                                    {
+                                        if (!(stat.Key == "6" && (itemInstanceId == "6917529197610536488"
+                                            || itemInstanceId == "6917529396441144390"
+                                            || itemInstanceId == "6917529186941930616"
+                                            || itemInstanceId == "6917529209922408391"
+                                            || itemInstanceId == "6917529369993566692"
+                                            || itemInstanceId == "6917529196627182734"
+                                            || itemInstanceId == "6917529200048653470")))
+                                        {
+                                            Console.WriteLine("XXXX " + itemInfo.Name + " " + itemInstanceId + " "
+                                                + ConvertValue.StatSortedName(stat.Key) + " " + stats["1"] + " "
+                                                + stats["2"] + " " + stats["3"] + " " + stats["4"] + " "
+                                                + stats["5"] + " " + stats["6"]);
+                                            stats[stat.Key] = 2;  // Can't get original value so assume worst case (2)
+                                        }
+                                    }
+                                    else
+                                        stats[stat.Key] = value - stat.Value;
                             }
+                            // Fix some specific armor pieces where Protective Light screws us up.
+                            if (itemInstanceId == "6917529197610536488")
+                                stats["6"] = 6;
+                            else if (itemInstanceId == "6917529396441144390"
+                                || itemInstanceId == "6917529186941930616")
+                                stats["6"] = 7;
+                            else if (itemInstanceId == "6917529209922408391"
+                                || itemInstanceId == "6917529369993566692"
+                                || itemInstanceId == "6917529196627182734"
+                                 || itemInstanceId == "6917529200048653470")
+                                stats["6"] = 2;
                             stats["MRR"] = stats["1"] + stats["2"] + stats["3"];
                             stats["DIS"] = stats["4"] + stats["5"] + stats["6"];
                             stats["RI"] = stats["3"] + stats["5"];

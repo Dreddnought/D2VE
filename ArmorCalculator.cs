@@ -113,6 +113,7 @@ namespace D2VE
             category.ColumnIndex("Str");
             category.ColumnIndex("MRR");
             category.ColumnIndex("DIS");
+            category.ColumnIndex("Masterworked");
             // First find the exotic.
             List<Armor> exotic = armorItems.Where(a => a.Name == Exotic).ToList();
             if (exotic.Count == 0)  // we don't have one!
@@ -165,6 +166,8 @@ namespace D2VE
             long lowestBaseStats = Math.Min(Math.Min(head.BaseStats, arm.BaseStats), Math.Min(chest.BaseStats, leg.BaseStats));
             long mrr = mobi + resi + reco;
             long dis = disc + inte + stre;
+            bool masterworked = head.EnergyCapacity == 10L && arm.EnergyCapacity == 10L
+                && chest.EnergyCapacity == 10L && leg.EnergyCapacity == 10L;
             object[] row = new object[category.ColumnNames.Count];
             row[category.ColumnIndex("Name")] = head.Id + "/" + arm.Id + "/" + chest.Id + "/" + leg.Id;
             row[category.ColumnIndex("Helmet")] = head.Id;
@@ -189,8 +192,9 @@ namespace D2VE
             row[category.ColumnIndex("Str")] = strength;
             row[category.ColumnIndex("MRR")] = mrr;
             row[category.ColumnIndex("DIS")] = dis;
+            row[category.ColumnIndex("Masterworked")] = masterworked;
             return row;
         }
-        private const int _minimumUsage = 290;
+        private const int _minimumUsage = 310;
     }
 }
