@@ -1,4 +1,4 @@
-﻿#define TEST_OUTPUT
+﻿//#define TEST_OUTPUT
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -275,14 +275,16 @@ namespace D2VE
                     data["320"] = new Category("320");
                     data["320"].ColumnNames.AddRange(category.ColumnNames);
                 }
-                data["320"].Rows.AddRange(category.Rows);
+                data["320"].Rows.AddRange(category.Rows.Where(row =>
+                    (long)row[category.ColumnIndex("Usage")] == 320L));
                 // Make file of all fully masterworked sets.
                 if (!data.ContainsKey("Masterworked"))
                 {
                     data["Masterworked"] = new Category("Masterworked");
                     data["Masterworked"].ColumnNames.AddRange(category.ColumnNames);
                 }
-                data["Masterworked"].Rows.AddRange(category.Rows);
+                data["Masterworked"].Rows.AddRange(category.Rows.Where(row =>
+                    (bool)row[category.ColumnIndex("Masterworked")] == true));
             }
             catch (Exception x)
             {

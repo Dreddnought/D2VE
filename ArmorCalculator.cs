@@ -113,6 +113,7 @@ namespace D2VE
             category.ColumnIndex("Str");
             category.ColumnIndex("MRR");
             category.ColumnIndex("DIS");
+            category.ColumnIndex("Exotic");
             category.ColumnIndex("Masterworked");
             // First find the exotic.
             List<Armor> exotic = armorItems.Where(a => a.Name == Exotic).ToList();
@@ -192,6 +193,7 @@ namespace D2VE
             row[category.ColumnIndex("Str")] = strength;
             row[category.ColumnIndex("MRR")] = mrr;
             row[category.ColumnIndex("DIS")] = dis;
+            row[category.ColumnIndex("Exotic")] = Exotic;
             row[category.ColumnIndex("Masterworked")] = masterworked;
             return row;
         }
