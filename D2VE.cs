@@ -227,6 +227,7 @@ namespace D2VE
                 .ToList();
 
             AddArmorCalculation(data, armor, new ArmorCalculator("Hunter", "Wormhusk Crown"));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Hunter", "The Sixth Coyote"));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Claws of Ahamkara"));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Karnstein Armlets"));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Ophidian Aspect"));
@@ -261,6 +262,7 @@ namespace D2VE
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Sunbracers"));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Phoenix Protocol"));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Aeon Soul"));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Wings of Sacred Dawn"));
         }
         private static void AddArmorCalculation(Dictionary<string, Category> data, List<Armor> armor,
             ArmorCalculator armorCalculator)
