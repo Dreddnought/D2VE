@@ -228,6 +228,7 @@ namespace D2VE
 
             AddArmorCalculation(data, armor, new ArmorCalculator("Hunter", "Wormhusk Crown"));
             AddArmorCalculation(data, armor, new ArmorCalculator("Hunter", "The Sixth Coyote"));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Hunter", "Aeon Swift"));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Claws of Ahamkara"));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Karnstein Armlets"));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Ophidian Aspect"));
@@ -399,7 +400,8 @@ namespace D2VE
                                             || itemInstanceId == "6917529209922408391"
                                             || itemInstanceId == "6917529369993566692"
                                             || itemInstanceId == "6917529196627182734"
-                                            || itemInstanceId == "6917529200048653470")))
+                                            || itemInstanceId == "6917529200048653470"
+                                            || itemInstanceId == "6917529418067559390")))
                                         {
                                             Console.WriteLine("XXXX " + itemInfo.Name + " " + itemInstanceId + " "
                                                 + ConvertValue.StatSortedName(stat.Key) + " " + stats["1"] + " "
@@ -420,7 +422,8 @@ namespace D2VE
                             else if (itemInstanceId == "6917529209922408391"
                                 || itemInstanceId == "6917529369993566692"
                                 || itemInstanceId == "6917529196627182734"
-                                 || itemInstanceId == "6917529200048653470")
+                                || itemInstanceId == "6917529200048653470"
+                                || itemInstanceId == "6917529418067559390")
                                 stats["6"] = 2;
                             stats["MRR"] = stats["1"] + stats["2"] + stats["3"];
                             stats["DIS"] = stats["4"] + stats["5"] + stats["6"];

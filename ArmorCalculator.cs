@@ -115,6 +115,18 @@ namespace D2VE
             category.ColumnIndex("DIS");
             category.ColumnIndex("Exotic");
             category.ColumnIndex("Masterworked");
+            category.ColumnIndex("Head MMR");
+            category.ColumnIndex("Arms MMR");
+            category.ColumnIndex("Chest MMR");
+            category.ColumnIndex("Leg MMR");
+            category.ColumnIndex("Head DIS");
+            category.ColumnIndex("Arms DIS");
+            category.ColumnIndex("Chest DIS");
+            category.ColumnIndex("Leg DIS");
+            category.ColumnIndex("Head Rec");
+            category.ColumnIndex("Arms Rec");
+            category.ColumnIndex("Chest Rec");
+            category.ColumnIndex("Leg Rec");
             // First find the exotic.
             List<Armor> exotic = armorItems.Where(a => a.Name == Exotic).ToList();
             if (exotic.Count == 0)  // we don't have one!
@@ -195,6 +207,18 @@ namespace D2VE
             row[category.ColumnIndex("DIS")] = dis;
             row[category.ColumnIndex("Exotic")] = Exotic;
             row[category.ColumnIndex("Masterworked")] = masterworked;
+            row[category.ColumnIndex("Head MMR")] = head.Mrr;
+            row[category.ColumnIndex("Arms MMR")] = arm.Mrr;
+            row[category.ColumnIndex("Chest MMR")] = chest.Mrr;
+            row[category.ColumnIndex("Leg MMR")] = leg.Mrr;
+            row[category.ColumnIndex("Head DIS")] = head.Dis;
+            row[category.ColumnIndex("Arms DIS")] = arm.Dis;
+            row[category.ColumnIndex("Chest DIS")] = chest.Dis;
+            row[category.ColumnIndex("Leg DIS")] = leg.Dis;
+            row[category.ColumnIndex("Head Rec")] = head.Recovery;
+            row[category.ColumnIndex("Arms Rec")] = arm.Recovery;
+            row[category.ColumnIndex("Chest Rec")] = chest.Recovery;
+            row[category.ColumnIndex("Leg Rec")] = leg.Recovery;
             return row;
         }
         private const int _minimumUsage = 310;
