@@ -114,7 +114,12 @@ namespace D2VE
             category.ColumnIndex("MRR");
             category.ColumnIndex("DIS");
             category.ColumnIndex("Exotic");
+            category.ColumnIndex("ExoticType");
             category.ColumnIndex("Masterworked");
+            category.ColumnIndex("Head Masterworked");
+            category.ColumnIndex("Arms Masterworked");
+            category.ColumnIndex("Chest Masterworked");
+            category.ColumnIndex("Leg Masterworked");
             category.ColumnIndex("Head MMR");
             category.ColumnIndex("Arms MMR");
             category.ColumnIndex("Chest MMR");
@@ -149,13 +154,13 @@ namespace D2VE
                                     foreach (Armor leg in legArmor)
                                         if (leg.ClassType == ClassType)
                                         {
-                                            object[] row = Calculate(category, head, arm, chest, leg);
+                                            object[] row = Calculate(category, head, arm, chest, leg, exoticType);
                                             if (row != null)
                                                 category.Rows.Add(row);
                                         }
             return category;
         }
-        private object[] Calculate(Category category, Armor head, Armor arm, Armor chest, Armor leg)
+        private object[] Calculate(Category category, Armor head, Armor arm, Armor chest, Armor leg, string exoticType)
         {
             // Calculate a result for this combination.
             long mobility = 10 + MobilityMod + head.Mobility + arm.Mobility + chest.Mobility + leg.Mobility;
@@ -206,7 +211,12 @@ namespace D2VE
             row[category.ColumnIndex("MRR")] = mrr;
             row[category.ColumnIndex("DIS")] = dis;
             row[category.ColumnIndex("Exotic")] = Exotic;
+            row[category.ColumnIndex("ExoticType")] = exoticType;
             row[category.ColumnIndex("Masterworked")] = masterworked;
+            row[category.ColumnIndex("Head Masterworked")] = head.EnergyCapacity == 10L;
+            row[category.ColumnIndex("Arms Masterworked")] = arm.EnergyCapacity == 10L;
+            row[category.ColumnIndex("Chest Masterworked")] = chest.EnergyCapacity == 10L;
+            row[category.ColumnIndex("Leg Masterworked")] = leg.EnergyCapacity == 10L;
             row[category.ColumnIndex("Head MMR")] = head.Mrr;
             row[category.ColumnIndex("Arms MMR")] = arm.Mrr;
             row[category.ColumnIndex("Chest MMR")] = chest.Mrr;
