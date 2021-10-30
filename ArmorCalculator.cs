@@ -116,6 +116,7 @@ namespace D2VE
             category.ColumnIndex("Exotic");
             category.ColumnIndex("ExoticType");
             category.ColumnIndex("Masterworked");
+            category.ColumnIndex("Exotic Masterworked");
             category.ColumnIndex("Head Masterworked");
             category.ColumnIndex("Arms Masterworked");
             category.ColumnIndex("Chest Masterworked");
@@ -186,6 +187,10 @@ namespace D2VE
             long dis = disc + inte + stre;
             bool masterworked = head.EnergyCapacity == 10L && arm.EnergyCapacity == 10L
                 && chest.EnergyCapacity == 10L && leg.EnergyCapacity == 10L;
+            bool exoticMasterworked = exoticType == "Helmet" && head.EnergyCapacity == 10L
+                || exoticType == "Gauntlets" && arm.EnergyCapacity == 10L
+                || exoticType == "Chest Armor" && chest.EnergyCapacity == 10L
+                || exoticType == "Leg Armor" && leg.EnergyCapacity == 10L;
             object[] row = new object[category.ColumnNames.Count];
             row[category.ColumnIndex("Name")] = head.Id + "/" + arm.Id + "/" + chest.Id + "/" + leg.Id;
             row[category.ColumnIndex("Helmet")] = head.Id;
@@ -213,6 +218,7 @@ namespace D2VE
             row[category.ColumnIndex("Exotic")] = Exotic;
             row[category.ColumnIndex("ExoticType")] = exoticType;
             row[category.ColumnIndex("Masterworked")] = masterworked;
+            row[category.ColumnIndex("Exotic Masterworked")] = exoticMasterworked;
             row[category.ColumnIndex("Head Masterworked")] = head.EnergyCapacity == 10L;
             row[category.ColumnIndex("Arms Masterworked")] = arm.EnergyCapacity == 10L;
             row[category.ColumnIndex("Chest Masterworked")] = chest.EnergyCapacity == 10L;

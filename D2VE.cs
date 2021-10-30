@@ -125,7 +125,43 @@ namespace D2VE
                 Dictionary<string, Category> data = new Dictionary<string, Category>();
                 WeaponsAndArmor(instances, data);
                 ArmorCalculations(instances, data);
-                // Create an output spreadsheet. 
+                // Find all non-masterworked Warlock armor that isn't in the PVE, PVP or 320 sheets.
+                List<string> candidates = new List<string>();
+                foreach (ItemInstance i in instances)
+                    if (i.ClassType == "Warlock" && i.ItemCategory == "Armor" && i.EnergyCapacity != 10L)
+                    {
+                        long mobility = i.Stats["1"];
+                        long resilience = i.Stats["2"];
+                        long recovery = i.Stats["3"];
+                        long discipline = i.Stats["4"];
+                        long intellect = i.Stats["5"];
+                        long strength = i.Stats["6"];
+                        long baseStats = mobility + resilience + recovery + discipline + intellect + strength;
+                        long mrr = mobility + resilience + recovery;
+                        long dis = discipline + intellect + strength;
+                        long ri = recovery + intellect;
+                        string id = i.Name + " " + baseStats.ToString() + "(" + ri.ToString() + ")="
+                            + mrr.ToString() + "+" + dis.ToString()
+                            + " (" + mobility.ToString() + "-" + resilience.ToString() + "-" + recovery.ToString()
+                            + "-" + discipline.ToString() + "-" + intellect.ToString() + "-" + strength.ToString() + ")";
+                        if (!candidates.Contains(id))
+                            candidates.Add(id);
+                    }
+                string[] sheets = new string[] { "320", "PVE", "PVP" };
+                foreach (string sheet in sheets)
+                {
+                    Category category = data[sheet];
+                    foreach (object[] row in category.Rows)
+                    {
+                        candidates.Remove((string)row[category.ColumnIndex("Helmet")]);
+                        candidates.Remove((string)row[category.ColumnIndex("Gauntlets")]);
+                        candidates.Remove((string)row[category.ColumnIndex("Chest Armor")]);
+                        candidates.Remove((string)row[category.ColumnIndex("Leg Armor")]);
+                    }
+                }
+                foreach (string unwantedArmor in candidates)
+                    Console.WriteLine("Delete " + unwantedArmor);
+                // Create an output spreadsheet.     
                 OutputContext outputContext = new OutputContext()
                 {
                     SpreadsheetName = membership.DisplayName + "_" + DateTime.Now.ToString("yyyyMMdd_HHmmss"),
@@ -222,7 +258,7 @@ namespace D2VE
             // Armor calculation.
             List<Armor> armor = instances.Where(i => i.ItemCategory == "Armor" && i.TierType != "Rare" &&
                 !i.ItemType.StartsWith("Warlock") && !i.ItemType.StartsWith("Hunter") && !i.ItemType.StartsWith("Titan"))
-                .Select(i => new Armor(i.Name, i.ClassType, i.TierType, i.ItemType, i.EnergyType,i.EnergyCapacity,
+                .Select(i => new Armor(i.Name, i.ClassType, i.TierType, i.ItemType, i.EnergyType, i.EnergyCapacity,
                     i.PowerCap, i.Stats["1"], i.Stats["2"], i.Stats["3"], i.Stats["4"], i.Stats["5"], i.Stats["6"]))
                 .ToList();
 
@@ -288,6 +324,34 @@ namespace D2VE
                 }
                 data["Masterworked"].Rows.AddRange(category.Rows.Where(row =>
                     (bool)row[category.ColumnIndex("Masterworked")] == true));
+                // Make file of all perfect PVE 310s  3 4 9 7 6 2
+                if (!data.ContainsKey("PVE"))
+                {
+                    data["PVE"] = new Category("PVE");
+                    data["PVE"].ColumnNames.AddRange(category.ColumnNames);
+                }
+                data["PVE"].Rows.AddRange(category.Rows.Where(row =>
+                    (long)row[category.ColumnIndex("Usage")] >= 310L &&
+                    (long)row[category.ColumnIndex("Mobility")] >= 3L &&
+                    (long)row[category.ColumnIndex("Resilience")] >= 4L &&
+                    (long)row[category.ColumnIndex("Recovery")] >= 9L &&
+                    (long)row[category.ColumnIndex("Discipline")] >= 7L &&
+                    (long)row[category.ColumnIndex("Intellect")] >= 5L &&
+                    (long)row[category.ColumnIndex("Strength")] >= 2L));
+                // Make file of all perfect PVP 310s  3 4 9 2 9 4
+                if (!data.ContainsKey("PVP"))
+                {
+                    data["PVP"] = new Category("PVP");
+                    data["PVP"].ColumnNames.AddRange(category.ColumnNames);
+                }
+                data["PVP"].Rows.AddRange(category.Rows.Where(row =>
+                    (long)row[category.ColumnIndex("Usage")] >= 310L &&
+                    (long)row[category.ColumnIndex("Mobility")] >= 3L &&
+                    (long)row[category.ColumnIndex("Resilience")] >= 4L &&
+                    (long)row[category.ColumnIndex("Recovery")] >= 9L &&
+                    (long)row[category.ColumnIndex("Discipline")] >= 2L &&
+                    (long)row[category.ColumnIndex("Intellect")] >= 8L &&
+                    (long)row[category.ColumnIndex("Strength")] >= 3L));
             }
             catch (Exception x)
             {
