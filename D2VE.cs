@@ -1,4 +1,4 @@
-﻿#define TEST_OUTPUT
+﻿//#define TEST_OUTPUT
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -336,7 +336,7 @@ namespace D2VE
                     (long)row[category.ColumnIndex("Resilience")] >= 4L &&
                     (long)row[category.ColumnIndex("Recovery")] >= 9L &&
                     (long)row[category.ColumnIndex("Discipline")] >= 7L &&
-                    (long)row[category.ColumnIndex("Intellect")] >= 5L &&
+                    (long)row[category.ColumnIndex("Intellect")] >= 6L &&
                     (long)row[category.ColumnIndex("Strength")] >= 2L));
                 // Make file of all perfect PVP 310s  3 4 9 2 9 4
                 if (!data.ContainsKey("PVP"))

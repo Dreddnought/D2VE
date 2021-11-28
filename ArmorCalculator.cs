@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace D2VE
 {
@@ -91,6 +89,7 @@ namespace D2VE
         {
             Category category = new Category(Name);
             category.ColumnIndex("Name");
+            category.ColumnIndex("Affinity");
             category.ColumnIndex("Helmet");
             category.ColumnIndex("Gauntlets");
             category.ColumnIndex("Chest Armor");
@@ -102,8 +101,11 @@ namespace D2VE
             category.ColumnIndex("Intellect");
             category.ColumnIndex("Strength");
             category.ColumnIndex("Usage");
+            category.ColumnIndex("Head Type");
+            category.ColumnIndex("Arms Type");
+            category.ColumnIndex("Chest Type");
+            category.ColumnIndex("Leg Type");
             category.ColumnIndex("Wastage");
-            category.ColumnIndex("TotalExcludingStrength");
             category.ColumnIndex("LowestBaseStats");
             category.ColumnIndex("Mob");
             category.ColumnIndex("Res");
@@ -181,7 +183,6 @@ namespace D2VE
             if (usage < _minimumUsage)
                 return null;
             long wastage = mobility + resilience + recovery + discipline + intellect + strength - usage;
-            long totalExcludingStrength = mobi + resi + reco + disc + inte;
             long lowestBaseStats = Math.Min(Math.Min(head.BaseStats, arm.BaseStats), Math.Min(chest.BaseStats, leg.BaseStats));
             long mrr = mobi + resi + reco;
             long dis = disc + inte + stre;
@@ -191,8 +192,13 @@ namespace D2VE
                 || exoticType == "Gauntlets" && arm.EnergyCapacity == 10L
                 || exoticType == "Chest Armor" && chest.EnergyCapacity == 10L
                 || exoticType == "Leg Armor" && leg.EnergyCapacity == 10L;
+            string affinity = (head.EnergyCapacity == 10L ? ConvertValue.EnergyTypeShort(head.EnergyType) : "_")
+                + (arm.EnergyCapacity == 10L ? ConvertValue.EnergyTypeShort(arm.EnergyType) : "_")
+                + (chest.EnergyCapacity == 10L ? ConvertValue.EnergyTypeShort(chest.EnergyType) : "_")
+                + (leg.EnergyCapacity == 10L ? ConvertValue.EnergyTypeShort(leg.EnergyType) : "_");
             object[] row = new object[category.ColumnNames.Count];
             row[category.ColumnIndex("Name")] = head.Id + "/" + arm.Id + "/" + chest.Id + "/" + leg.Id;
+            row[category.ColumnIndex("Affinity")] = affinity;
             row[category.ColumnIndex("Helmet")] = head.Id;
             row[category.ColumnIndex("Gauntlets")] = arm.Id;
             row[category.ColumnIndex("Chest Armor")] = chest.Id;
@@ -204,8 +210,11 @@ namespace D2VE
             row[category.ColumnIndex("Intellect")] = inte;
             row[category.ColumnIndex("Strength")] = stre;
             row[category.ColumnIndex("Usage")] = usage;
+            row[category.ColumnIndex("Head Type")] = head.EnergyCapacity == 10L ? head.EnergyType : "";
+            row[category.ColumnIndex("Arms Type")] = arm.EnergyCapacity == 10L ? arm.EnergyType : "";
+            row[category.ColumnIndex("Chest Type")] = chest.EnergyCapacity == 10L ? chest.EnergyType : "";
+            row[category.ColumnIndex("Leg Type")] = leg.EnergyCapacity == 10L ? leg.EnergyType : "";
             row[category.ColumnIndex("Wastage")] = wastage;
-            row[category.ColumnIndex("TotalExcludingStrength")] = totalExcludingStrength;
             row[category.ColumnIndex("LowestBaseStats")] = lowestBaseStats;
             row[category.ColumnIndex("Mob")] = mobility;
             row[category.ColumnIndex("Res")] = resilience;

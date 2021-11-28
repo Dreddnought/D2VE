@@ -158,6 +158,22 @@
                     return value.ToString();
             }
         }
+        public static string EnergyTypeShort(string value)
+        {
+            switch (value)
+            {
+                case "Solar":
+                    return "S";
+                case "Arc":
+                    return "A";
+                case "Void":
+                    return "V";
+                case "Stasis":
+                    return "$";  // S already used
+                default:
+                    return value;
+            }
+        }
         public static string StatName(string value)
         {
             if (string.IsNullOrWhiteSpace(value))
