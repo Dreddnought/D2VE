@@ -27,6 +27,7 @@ namespace D2VE
             Mrr = mobility + resilience + recovery;
             Dis = discipline + intellect + strength;
             RI = recovery + intellect;
+            RD = recovery + discipline;
             Id = Name + " " + BaseStats.ToString() + "(" + RI.ToString() + ")="
                 + Mrr.ToString() + "+" + Dis.ToString()
                 + " (" + Mobility.ToString() + "-" + Resilience.ToString() + "-" + Recovery.ToString()
@@ -50,6 +51,7 @@ namespace D2VE
         public long Mrr { get; }
         public long Dis { get; }
         public long RI { get; }
+        public long RD { get; }
         public string Id { get; }
         public override string ToString() { return Id; }
     }
@@ -246,6 +248,6 @@ namespace D2VE
             row[category.ColumnIndex("Leg Rec")] = leg.Recovery;
             return row;
         }
-        private const int _minimumUsage = 310;
+        private const int _minimumUsage = 300;
     }
 }

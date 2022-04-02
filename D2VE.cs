@@ -197,7 +197,7 @@ namespace D2VE
                     category.ColumnIndex("ClassType");
                     category.ColumnIndex("EnergyType");
                     if (itemInstance.ItemCategory == "Armor")
-                        category.ColumnIndex("Season");
+                        category.ColumnIndex("Masterworked");
                     else
                     {
                         category.ColumnIndex("Intrinsic");
@@ -235,7 +235,7 @@ namespace D2VE
                 row[category.ColumnIndex("EnergyType")] = itemInstance.EnergyType;
                 row[category.ColumnIndex("ClassType")] = itemInstance.ClassType;
                 if (itemInstance.ItemCategory == "Armor")
-                    row[category.ColumnIndex("Season")] = itemInstance.Season;
+                    row[category.ColumnIndex("Masterworked")] = itemInstance.EnergyCapacity == 10L;
                 else
                 {
                     row[category.ColumnIndex("Masterwork")] = itemInstance.Masterwork;
@@ -273,6 +273,8 @@ namespace D2VE
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Transversive Steps"));
             AddArmorCalculation(data, armor, new ArmorCalculator("Titan", "Crest of Alpha Lupi"));
             AddArmorCalculation(data, armor, new ArmorCalculator("Titan", "Wormgod Caress"));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Titan", "Synthoceps"));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Titan", "Heart of Inmost Light"));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Contraverse Hold"));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Geomag Stabilizers"));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Verity's Brow"));
@@ -420,7 +422,8 @@ namespace D2VE
                     + "?components=300,304,305,306,308,309,310";
                 dynamic instance = Request(request);
                 long power = instance.instance.data.primaryStat.value.Value;
-                long powerCap = itemInfo.PowerCaps[(int)item.versionNumber.Value];
+                long powerCap = itemInfo.PowerCaps[itemInfo.PowerCaps.Count <= (int)item.versionNumber.Value ? 0
+                    : (int)item.versionNumber.Value];
                 string masterwork = "";
                 string energyType = itemInfo.EnergyType;
                 long energyCapacity = 0L;
@@ -458,14 +461,20 @@ namespace D2VE
                                 if (stats.TryGetValue(stat.Key, out value))
                                     if (value == 0 && stat.Value < 0)  // E.g., Protective Light (plugHash 3523075120L)
                                     {
-                                        if (!(stat.Key == "6" && (itemInstanceId == "6917529197610536488"
+                                        if (itemInfo.ItemType == "Warlock Bond"
+                                            || itemInfo.ItemType == "Hunter Cloak"
+                                            || itemInfo.ItemType == "Titan Mark")
+                                            stats[stat.Key] = 2;
+                                        else if (!(stat.Key == "6" && 
+                                            (itemInstanceId == "6917529197610536488"
                                             || itemInstanceId == "6917529396441144390"
                                             || itemInstanceId == "6917529186941930616"
                                             || itemInstanceId == "6917529209922408391"
                                             || itemInstanceId == "6917529369993566692"
                                             || itemInstanceId == "6917529196627182734"
                                             || itemInstanceId == "6917529200048653470"
-                                            || itemInstanceId == "6917529418067559390")))
+                                            || itemInstanceId == "6917529418067559390"
+                                            || itemInstanceId == "6917529330988751513")))
                                         {
                                             Console.WriteLine("XXXX " + itemInfo.Name + " " + itemInstanceId + " "
                                                 + ConvertValue.StatSortedName(stat.Key) + " " + stats["1"] + " "
@@ -487,11 +496,12 @@ namespace D2VE
                                 || itemInstanceId == "6917529369993566692"
                                 || itemInstanceId == "6917529196627182734"
                                 || itemInstanceId == "6917529200048653470"
-                                || itemInstanceId == "6917529418067559390")
+                                || itemInstanceId == "6917529418067559390"            
+                                || itemInstanceId == "6917529330988751513")
                                 stats["6"] = 2;
                             stats["MRR"] = stats["1"] + stats["2"] + stats["3"];
                             stats["DIS"] = stats["4"] + stats["5"] + stats["6"];
-                            stats["RI"] = stats["3"] + stats["5"];
+                            stats["RD"] = stats["3"] + stats["4"];
                             stats["Total"] = stats["MRR"] + stats["DIS"];
                         }
                         else
@@ -518,10 +528,14 @@ namespace D2VE
                                             stats[stat.Key] = value - stat.Value - 11;
                                 }
                             string plugType = plug.PlugType;
-                            if (string.IsNullOrWhiteSpace(plugType) || plugType == "Weapon Mod")
+                            if (string.IsNullOrWhiteSpace(plugType) || plugType == "Weapon Mod" || plugType == "Memento")
                                 continue;
-                            if (plugType == "Trait")
+                            if (plugType == "Trait" || plugType == "Enhanced Trait")
                                 plugType = "Perk" + (++traitNumber).ToString();
+                            if (plugType == "Enhanced Intrinsic")
+                                plugType = "Intrinsic";
+                            if (plugType == "Haft")
+                                plugType = "Barrel/Sight";
                             // Cerberus has three barrel plugs.  Ikelos weapons also have more than one barrel plug (seems like a bug).
                             // We'll just ignore the extra barrels because they are not particularly interesting.
                             System.Diagnostics.Debug.Assert(plugType == "Barrel/Sight" || !plugs.ContainsKey(plugType));
