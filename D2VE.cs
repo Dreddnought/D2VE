@@ -1,4 +1,4 @@
-﻿//#define TEST_OUTPUT
+﻿#define TEST_OUTPUT
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -264,6 +264,7 @@ namespace D2VE
 
             AddArmorCalculation(data, armor, new ArmorCalculator("Hunter", "Wormhusk Crown"));
             AddArmorCalculation(data, armor, new ArmorCalculator("Hunter", "The Sixth Coyote"));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Hunter", "Omnioculus"));
             AddArmorCalculation(data, armor, new ArmorCalculator("Hunter", "Aeon Swift"));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Claws of Ahamkara"));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Karnstein Armlets"));
@@ -302,6 +303,7 @@ namespace D2VE
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Phoenix Protocol"));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Aeon Soul"));
             AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Wings of Sacred Dawn"));
+            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Osmiomancy Gloves"));
         }
         private static void AddArmorCalculation(Dictionary<string, Category> data, List<Armor> armor,
             ArmorCalculator armorCalculator)
