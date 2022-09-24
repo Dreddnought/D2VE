@@ -1,4 +1,5 @@
-﻿#define TEST_OUTPUT
+﻿//#define TEST_OUTPUT
+#define ARMOR_ONLY
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,9 @@ namespace D2VE
         private const string AccessTokenUrl = "https://www.bungie.net/Platform/App/OAuth/token/";
         private const string PlatformUrl = "https://www.bungie.net/Platform/";
         private const string ApplicationRegistrationUrl = "https://www.bungie.net/en/Application";
+        private static List<string> _warlockExotics = new List<string>();
+        private static List<string> _hunterExotics = new List<string>();
+        private static List<string> _titanExotics = new List<string>();
         private static HttpClient _httpClient;
         private static string _jsonMediaType = "application/json";
 #if !TEST_OUTPUT
@@ -261,49 +265,12 @@ namespace D2VE
                 .Select(i => new Armor(i.Name, i.ClassType, i.TierType, i.ItemType, i.EnergyType, i.EnergyCapacity,
                     i.PowerCap, i.Stats["1"], i.Stats["2"], i.Stats["3"], i.Stats["4"], i.Stats["5"], i.Stats["6"]))
                 .ToList();
-
-            AddArmorCalculation(data, armor, new ArmorCalculator("Hunter", "Wormhusk Crown"));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Hunter", "The Sixth Coyote"));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Hunter", "Omnioculus"));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Hunter", "Aeon Swift"));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Claws of Ahamkara"));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Karnstein Armlets"));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Ophidian Aspect"));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Mantle of Battle Harmony"));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Lunafaction Boots"));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Transversive Steps"));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Titan", "Crest of Alpha Lupi"));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Titan", "Wormgod Caress"));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Titan", "Synthoceps"));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Titan", "Heart of Inmost Light"));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Contraverse Hold"));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Geomag Stabilizers"));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Verity's Brow"));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Dawn Chorus"));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Eye of Another World"));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Crown of Tempests"));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Boots of the Assembler"));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Chromatic Fire"));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Apotheosis Veil"));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Astrocyte Verse"));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Felwinter's Helm"));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Getaway Artist"));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Necrotic Grip"));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Nezarec's Sin"));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Nothing Manacles"));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Promethium Spur"));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Sanguine Alchemy"));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Skull of Dire Ahamkara"));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Vesper of Radius"));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Winter's Guile"));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Starfire Protocol"));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "The Stag"));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Stormdancer's Brace"));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Sunbracers"));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Phoenix Protocol"));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Aeon Soul"));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Wings of Sacred Dawn"));
-            AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", "Osmiomancy Gloves"));
+            foreach (string exotic in _warlockExotics)
+                AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", exotic));
+            foreach (string exotic in _hunterExotics)
+                AddArmorCalculation(data, armor, new ArmorCalculator("Hunter", exotic));
+            foreach (string exotic in _titanExotics)
+                AddArmorCalculation(data, armor, new ArmorCalculator("Titan", exotic));
         }
         private static void AddArmorCalculation(Dictionary<string, Category> data, List<Armor> armor,
             ArmorCalculator armorCalculator)
@@ -433,9 +400,22 @@ namespace D2VE
                 {
                     if (instance.instance.data.energy == null)  // Armor 1.0 ignore
                         return;
+                    if (itemInfo.TierType == "Exotic")
+                    {
+                        if (itemInfo.ClassType == "Warlock" && !_warlockExotics.Contains(itemInfo.Name))
+                            _warlockExotics.Add(itemInfo.Name);
+                        else if (itemInfo.ClassType == "Hunter" && !_hunterExotics.Contains(itemInfo.Name))
+                            _hunterExotics.Add(itemInfo.Name);
+                        else if (itemInfo.ClassType == "Titan" && !_titanExotics.Contains(itemInfo.Name))
+                            _titanExotics.Add(itemInfo.Name);
+                    }
                     energyType = ConvertValue.EnergyType(instance.instance.data.energy.energyType.Value);
                     energyCapacity = instance.instance.data.energy.energyCapacity.Value;
                 }
+#if ARMOR_ONLY
+                else
+                    return;
+#endif
                 foreach (var stat in instance["stats"]["data"]["stats"])
                 {
                     long statHash = stat.Value["statHash"].Value;
