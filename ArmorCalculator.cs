@@ -187,10 +187,10 @@ namespace D2VE
             long usage = (mobi + resi + reco + disc + inte + stre) * 10;
             if (usage < _minimumUsage)
                 return null;
-            bool artifice = exoticType == "Helmet" || head.Artifice
-                && exoticType == "Gauntlets" || arm.Artifice
-                && exoticType == "Chest Armor" || chest.Artifice
-                && exoticType == "Leg Armor" || leg.Artifice;
+            bool artifice = (exoticType == "Helmet" || head.Artifice)
+                && (exoticType == "Gauntlets" || arm.Artifice)
+                && (exoticType == "Chest Armor" || chest.Artifice)
+                && (exoticType == "Leg Armor" || leg.Artifice);
             long wastage = mobility + resilience + recovery + discipline + intellect + strength - usage;
             long lowestBaseStats = Math.Min(Math.Min(head.BaseStats, arm.BaseStats), Math.Min(chest.BaseStats, leg.BaseStats));
             long mrr = mobi + resi + reco;
