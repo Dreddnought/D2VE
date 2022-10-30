@@ -30,6 +30,7 @@ namespace D2VE
         public string Slot { get { return ItemInfo.Slot; } }
         public string Season { get { return ItemInfo.Season; } }
         public string ClassType { get { return ItemInfo.ClassType; } }
+        public string Artifice { get { return ItemInfo.Artifice; } }
         public string EnergyType { get; }
         public long EnergyCapacity { get; }
         public string Masterwork { get; }
@@ -42,6 +43,7 @@ namespace D2VE
                 + " " + TierType
                 + (string.IsNullOrWhiteSpace(ClassType) ? "" : " [" + ClassType + "]")
                 + (string.IsNullOrWhiteSpace(Season) ? "" : " [" + Season + "]")
+                + (Artifice == "FALSE" ? "" : " Artifice")
                 + "\r\n  " + string.Join("\r\n  ",
                 Stats.Keys.Zip(Stats.Values, (k, v) => ConvertValue.StatSortedName(k) + " = " + v))
                 + "\r\n  " + string.Join("\r\n  ",

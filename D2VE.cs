@@ -201,7 +201,10 @@ namespace D2VE
                     category.ColumnIndex("ClassType");
                     category.ColumnIndex("EnergyType");
                     if (itemInstance.ItemCategory == "Armor")
+                    {
                         category.ColumnIndex("Masterworked");
+                        category.ColumnIndex("Artifice");
+                    }
                     else
                     {
                         category.ColumnIndex("Intrinsic");
@@ -239,7 +242,10 @@ namespace D2VE
                 row[category.ColumnIndex("EnergyType")] = itemInstance.EnergyType;
                 row[category.ColumnIndex("ClassType")] = itemInstance.ClassType;
                 if (itemInstance.ItemCategory == "Armor")
+                {
                     row[category.ColumnIndex("Masterworked")] = itemInstance.EnergyCapacity == 10L;
+                    row[category.ColumnIndex("Artifice")] = itemInstance.Artifice;
+                }
                 else
                 {
                     row[category.ColumnIndex("Masterwork")] = itemInstance.Masterwork;
@@ -262,7 +268,8 @@ namespace D2VE
             // Armor calculation.
             List<Armor> armor = instances.Where(i => i.ItemCategory == "Armor" && i.TierType != "Rare" &&
                 !i.ItemType.StartsWith("Warlock") && !i.ItemType.StartsWith("Hunter") && !i.ItemType.StartsWith("Titan"))
-                .Select(i => new Armor(i.Name, i.ClassType, i.TierType, i.ItemType, i.EnergyType, i.EnergyCapacity,
+                .Select(i => new Armor(i.Name, i.ClassType, i.TierType, i.ItemType, i.EnergyType,
+                    i.Artifice != "FALSE", i.EnergyCapacity,
                     i.PowerCap, i.Stats["1"], i.Stats["2"], i.Stats["3"], i.Stats["4"], i.Stats["5"], i.Stats["6"]))
                 .ToList();
             foreach (string exotic in _warlockExotics)

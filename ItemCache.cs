@@ -9,7 +9,7 @@ namespace D2VE
     {
         public ItemInfo(string name, string tierType, string itemCategory, string itemType, string slot,
             string energyType,
-            string season, string classType, Dictionary<string, long> stats, List<long> powerCaps)
+            string season, string classType, string artifice, Dictionary<string, long> stats, List<long> powerCaps)
         {
             Name = name;
             TierType = tierType;
@@ -19,6 +19,7 @@ namespace D2VE
             EnergyType = energyType;
             Season = season;
             ClassType = classType;
+            Artifice = artifice;
             Stats = stats;
             PowerCaps = powerCaps;
         }
@@ -31,6 +32,7 @@ namespace D2VE
         public string EnergyCapacity { get; }
         public string Season { get; }
         public string ClassType { get; }
+        public string Artifice { get; }
         public Dictionary<string, long> Stats { get; }
         public List<long> PowerCaps { get; }
         public override string ToString() { return Name; }
@@ -114,6 +116,7 @@ namespace D2VE
                 string slot = "";
                 string energyType = "";
                 string season = "";
+                string artifice = "FALSE";
                 if (itemType == 2L)  // Armor, energyType is at instance level
                 {
                     slot = D2VE.SlotCache.GetSlotName(definition.equippingBlock.equipmentSlotTypeHash.Value);
@@ -131,6 +134,18 @@ namespace D2VE
                         long socketTypeHash = definition.sockets.socketEntries[lastIndex].socketTypeHash.Value;
                         season = D2VE.SeasonCache.GetSeasonName(socketTypeHash);
                     }
+                    foreach (dynamic socketEntry in definition.sockets.socketEntries)
+                        if (socketEntry.singleInitialItemHash.Value == 3727270518L)
+                        {
+                            artifice = "TRUE";
+                            break;
+                        }
+                        else if (socketEntry.singleInitialItemHash.Value == 0  
+                            && socketEntry.socketTypeHash == "965959289")
+                        {
+                            artifice = "MAYBE";
+                            break;
+                        }
                 }
                 else  // Weapon
                 {
@@ -150,6 +165,7 @@ namespace D2VE
                    energyType,
                    season,
                    ConvertValue.ClassType(definition.classType?.Value ?? 0L),
+                   artifice,
                    stats,
                    powerCaps);
             }
