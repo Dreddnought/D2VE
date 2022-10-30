@@ -7,7 +7,7 @@ namespace D2VE
     public class Armor
     {
         public Armor(string name, string classType, string tierType, string itemType, string energyType,
-            long energyCapacity, long powerCap,
+            bool artifice, long energyCapacity, long powerCap,
             long mobility, long resilience, long recovery, long discipline, long intellect, long strength)
         {
             Name = name;
@@ -15,6 +15,7 @@ namespace D2VE
             TierType = tierType;
             ItemType = itemType;
             EnergyType = energyType;
+            Artifice = artifice;
             EnergyCapacity = energyCapacity;
             PowerCap = powerCap;
             Mobility = mobility;
@@ -39,6 +40,7 @@ namespace D2VE
         public string TierType { get; }
         public string ItemType { get; }
         public string EnergyType { get; }
+        public bool Artifice { get; }
         public long EnergyCapacity { get; }
         public long PowerCap { get; }
         public long Mobility { get; }
@@ -103,6 +105,7 @@ namespace D2VE
             category.ColumnIndex("Intellect");
             category.ColumnIndex("Strength");
             category.ColumnIndex("Usage");
+            category.ColumnIndex("Artifice");
             category.ColumnIndex("Head Type");
             category.ColumnIndex("Arms Type");
             category.ColumnIndex("Chest Type");
@@ -184,6 +187,10 @@ namespace D2VE
             long usage = (mobi + resi + reco + disc + inte + stre) * 10;
             if (usage < _minimumUsage)
                 return null;
+            bool artifice = exoticType == "Helmet" || head.Artifice
+                && exoticType == "Gauntlets" || arm.Artifice
+                && exoticType == "Chest Armor" || chest.Artifice
+                && exoticType == "Leg Armor" || leg.Artifice;
             long wastage = mobility + resilience + recovery + discipline + intellect + strength - usage;
             long lowestBaseStats = Math.Min(Math.Min(head.BaseStats, arm.BaseStats), Math.Min(chest.BaseStats, leg.BaseStats));
             long mrr = mobi + resi + reco;
@@ -212,6 +219,7 @@ namespace D2VE
             row[category.ColumnIndex("Intellect")] = inte;
             row[category.ColumnIndex("Strength")] = stre;
             row[category.ColumnIndex("Usage")] = usage;
+            row[category.ColumnIndex("Artifice")] = artifice;
             row[category.ColumnIndex("Head Type")] = head.EnergyCapacity == 10L ? head.EnergyType : "";
             row[category.ColumnIndex("Arms Type")] = arm.EnergyCapacity == 10L ? arm.EnergyType : "";
             row[category.ColumnIndex("Chest Type")] = chest.EnergyCapacity == 10L ? chest.EnergyType : "";
