@@ -1,5 +1,5 @@
 ﻿//#define TEST_OUTPUT
-#define ARMOR_ONLY
+//#define ARMOR_ONLY
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -309,13 +309,15 @@ namespace D2VE
                     data["PVE"].ColumnNames.AddRange(category.ColumnNames);
                 }
                 data["PVE"].Rows.AddRange(category.Rows.Where(row =>
-                    (long)row[category.ColumnIndex("Usage")] >= 310L &&
-                    (long)row[category.ColumnIndex("Mobility")] >= 3L &&
-                    (long)row[category.ColumnIndex("Resilience")] >= 4L &&
-                    (long)row[category.ColumnIndex("Recovery")] >= 9L &&
+                    //row[category.ColumnIndex("Artifice")] == "TRUE" &&
+                    (long)row[category.ColumnIndex("Usage")] >= 300L &&
+                    (long)row[category.ColumnIndex("Mobility")] >= 1L &&
+                    (long)row[category.ColumnIndex("Resilience")] >= 7L &&
+                    (long)row[category.ColumnIndex("Recovery")] >= 6L &&
                     (long)row[category.ColumnIndex("Discipline")] >= 7L &&
-                    (long)row[category.ColumnIndex("Intellect")] >= 6L &&
-                    (long)row[category.ColumnIndex("Strength")] >= 2L));
+                    (long)row[category.ColumnIndex("Intellect")] >= 1L &&
+                    (long)row[category.ColumnIndex("Strength")] >= 1L &&
+                    (long)row[category.ColumnIndex("RRD")] >= 22L));
                 // Make file of all perfect PVP 310s  3 4 9 2 9 4
                 if (!data.ContainsKey("PVP"))
                 {

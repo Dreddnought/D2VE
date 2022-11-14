@@ -104,6 +104,8 @@ namespace D2VE
             category.ColumnIndex("Discipline");
             category.ColumnIndex("Intellect");
             category.ColumnIndex("Strength");
+            category.ColumnIndex("Res+Dis");
+            category.ColumnIndex("RRD");
             category.ColumnIndex("Usage");
             category.ColumnIndex("Artifice");
             category.ColumnIndex("Head Type");
@@ -219,6 +221,8 @@ namespace D2VE
             row[category.ColumnIndex("Intellect")] = inte;
             row[category.ColumnIndex("Strength")] = stre;
             row[category.ColumnIndex("Usage")] = usage;
+            row[category.ColumnIndex("Res+Dis")] = resi + disc;
+            row[category.ColumnIndex("RRD")] = resi + reco + disc;
             row[category.ColumnIndex("Artifice")] = artifice;
             row[category.ColumnIndex("Head Type")] = head.EnergyCapacity == 10L ? head.EnergyType : "";
             row[category.ColumnIndex("Arms Type")] = arm.EnergyCapacity == 10L ? arm.EnergyType : "";
