@@ -1,4 +1,4 @@
-﻿//#define TEST_OUTPUT
+﻿#define TEST_OUTPUT
 //#define ARMOR_ONLY
 using System;
 using System.Collections.Generic;
@@ -120,6 +120,19 @@ namespace D2VE
                 List<ItemInstance> instances = null;
 #if TEST_OUTPUT
                 instances = Load(membership.DisplayName);
+                foreach (ItemInstance instance in instances)
+                    if (instance.ItemCategory == "Armor" && instance.TierType == "Exotic")
+                    {
+                        if (instance.ClassType == "Warlock"
+                            && !_warlockExotics.Contains(instance.Name))
+                            _warlockExotics.Add(instance.Name);
+                        else if (instance.ClassType == "Hunter"
+                            && !_hunterExotics.Contains(instance.Name))
+                            _hunterExotics.Add(instance.Name);
+                        else if (instance.ClassType == "Titan"
+                            && !_titanExotics.Contains(instance.Name))
+                            _titanExotics.Add(instance.Name);
+                    }
 #else
                 instances = GetItemInstances(membership);
 #endif
