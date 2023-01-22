@@ -1,4 +1,4 @@
-﻿#define TEST_OUTPUT
+﻿//#define TEST_OUTPUT
 //#define ARMOR_ONLY
 using System;
 using System.Collections.Generic;
@@ -542,7 +542,7 @@ namespace D2VE
                                 plugType = "Barrel/Sight";
                             // Cerberus has three barrel plugs.  Ikelos weapons also have more than one barrel plug (seems like a bug).
                             // We'll just ignore the extra barrels because they are not particularly interesting.
-                            System.Diagnostics.Debug.Assert(plugType == "Barrel/Sight" || !plugs.ContainsKey(plugType));
+                            System.Diagnostics.Debug.Assert(plugType == "Barrel/Sight" || plugType == "Perk2" || !plugs.ContainsKey(plugType));
                             if (!plugs.ContainsKey(plugType))
                                 plugs[plugType] = plug;
                         }
