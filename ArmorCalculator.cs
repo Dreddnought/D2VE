@@ -93,7 +93,6 @@ namespace D2VE
         {
             Category category = new Category(Name);
             category.ColumnIndex("Name");
-            category.ColumnIndex("Affinity");
             category.ColumnIndex("Helmet");
             category.ColumnIndex("Gauntlets");
             category.ColumnIndex("Chest Armor");
@@ -105,6 +104,8 @@ namespace D2VE
             category.ColumnIndex("Intellect");
             category.ColumnIndex("Strength");
             category.ColumnIndex("Res+Dis");
+            category.ColumnIndex("RR");
+            category.ColumnIndex("RRI");
             category.ColumnIndex("RRD");
             category.ColumnIndex("Usage");
             category.ColumnIndex("Artifice");
@@ -164,13 +165,15 @@ namespace D2VE
                                     foreach (Armor leg in legArmor)
                                         if (leg.ClassType == ClassType)
                                         {
-                                            object[] row = Calculate(category, head, arm, chest, leg, exoticType);
+                                            object[] row = Calculate(category, head, arm, chest, leg, exoticType,
+                                                Name == "Warlock - Ophidian Aspect" ? _minimumUsage - 10 : _minimumUsage);
                                             if (row != null)
                                                 category.Rows.Add(row);
                                         }
             return category;
         }
-        private object[] Calculate(Category category, Armor head, Armor arm, Armor chest, Armor leg, string exoticType)
+        private object[] Calculate(Category category, Armor head, Armor arm, Armor chest, Armor leg, string exoticType,
+            int minimumUsage)
         {
             // Calculate a result for this combination.
             long mobility = 10 + MobilityMod + head.Mobility + arm.Mobility + chest.Mobility + leg.Mobility;
@@ -187,7 +190,7 @@ namespace D2VE
             long inte = Math.Min(10L, intellect / 10);
             long stre = Math.Min(10L, strength / 10);
             long usage = (mobi + resi + reco + disc + inte + stre) * 10;
-            if (usage < _minimumUsage)
+            if (usage < minimumUsage)
                 return null;
             bool artifice = (exoticType == "Helmet" || head.Artifice)
                 && (exoticType == "Gauntlets" || arm.Artifice)
@@ -203,13 +206,8 @@ namespace D2VE
                 || exoticType == "Gauntlets" && arm.EnergyCapacity == 10L
                 || exoticType == "Chest Armor" && chest.EnergyCapacity == 10L
                 || exoticType == "Leg Armor" && leg.EnergyCapacity == 10L;
-            string affinity = (head.EnergyCapacity == 10L ? ConvertValue.EnergyTypeShort(head.EnergyType) : "_")
-                + (arm.EnergyCapacity == 10L ? ConvertValue.EnergyTypeShort(arm.EnergyType) : "_")
-                + (chest.EnergyCapacity == 10L ? ConvertValue.EnergyTypeShort(chest.EnergyType) : "_")
-                + (leg.EnergyCapacity == 10L ? ConvertValue.EnergyTypeShort(leg.EnergyType) : "_");
             object[] row = new object[category.ColumnNames.Count];
             row[category.ColumnIndex("Name")] = head.Id + "/" + arm.Id + "/" + chest.Id + "/" + leg.Id;
-            row[category.ColumnIndex("Affinity")] = affinity;
             row[category.ColumnIndex("Helmet")] = head.Id;
             row[category.ColumnIndex("Gauntlets")] = arm.Id;
             row[category.ColumnIndex("Chest Armor")] = chest.Id;
@@ -222,7 +220,9 @@ namespace D2VE
             row[category.ColumnIndex("Strength")] = stre;
             row[category.ColumnIndex("Usage")] = usage;
             row[category.ColumnIndex("Res+Dis")] = resi + disc;
+            row[category.ColumnIndex("RR")] = resi + reco;
             row[category.ColumnIndex("RRD")] = resi + reco + disc;
+            row[category.ColumnIndex("RRI")] = resi + reco + inte;
             row[category.ColumnIndex("Artifice")] = artifice;
             row[category.ColumnIndex("Head Type")] = head.EnergyCapacity == 10L ? head.EnergyType : "";
             row[category.ColumnIndex("Arms Type")] = arm.EnergyCapacity == 10L ? arm.EnergyType : "";
@@ -260,6 +260,6 @@ namespace D2VE
             row[category.ColumnIndex("Leg Rec")] = leg.Recovery;
             return row;
         }
-        private const int _minimumUsage = 300;
+        private const int _minimumUsage = 320;
     }
 }

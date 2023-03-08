@@ -136,6 +136,8 @@
                     return "Raid";
                 case 6L:
                     return "Stasis";
+                case 7L:
+                    return "Strand";
                 default:
                     return value.ToString();
             }
@@ -154,6 +156,8 @@
                     return "Void";
                 case 6L:
                     return "Stasis";
+                case 7L:
+                    return "Strand";
                 default:
                     return value.ToString();
             }
@@ -169,6 +173,8 @@
                 case "Void":
                     return "V";
                 case "Stasis":
+                    return "*";  // S already used
+                case "Strand":
                     return "$";  // S already used
                 default:
                     return value;
