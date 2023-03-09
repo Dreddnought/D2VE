@@ -31,9 +31,12 @@ namespace D2VE
             RD = recovery + discipline;
             Id = Name + " " + BaseStats.ToString() + "(" + RI.ToString() + ")="
                 + Mrr.ToString() + "+" + Dis.ToString()
-                + " (" + Mobility.ToString() + "-" + Resilience.ToString() + "-" + Recovery.ToString()
-                + "-" + Discipline.ToString() + "-" + Intellect.ToString() + "-" + Strength.ToString() + ")"
-                + (EnergyCapacity == 10L ? " " + EnergyType : "");
+                + " (" + (Name.EndsWith("(mob)") ? Mobility - 3 : Mobility).ToString()
+                + "-" + (Name.EndsWith("(res)") ? Resilience - 3 : Resilience).ToString()
+                + "-" + (Name.EndsWith("(rec)") ? Recovery - 3 : Recovery).ToString()
+                + "-" + (Name.EndsWith("(dis)") ? Discipline - 3 : Discipline).ToString()
+                + "-" + (Name.EndsWith("(int)") ? Intellect - 3 : Intellect).ToString()
+                + "-" + (Name.EndsWith("(str)") ? Strength - 3 : Strength).ToString() + ")";
         }
         public string Name { get; }
         public string ClassType { get; }
@@ -105,6 +108,8 @@ namespace D2VE
             category.ColumnIndex("Strength");
             category.ColumnIndex("Res+Dis");
             category.ColumnIndex("RR");
+            category.ColumnIndex("RD");
+            category.ColumnIndex("DI");
             category.ColumnIndex("RRI");
             category.ColumnIndex("RRD");
             category.ColumnIndex("Usage");
@@ -166,7 +171,7 @@ namespace D2VE
                                         if (leg.ClassType == ClassType)
                                         {
                                             object[] row = Calculate(category, head, arm, chest, leg, exoticType,
-                                                Name == "Warlock - Ophidian Aspect" ? _minimumUsage - 10 : _minimumUsage);
+                                                Name == "Warlock - Ophidian Aspect" ? _minimumUsage /*- 10*/ : _minimumUsage);
                                             if (row != null)
                                                 category.Rows.Add(row);
                                         }
@@ -221,6 +226,8 @@ namespace D2VE
             row[category.ColumnIndex("Usage")] = usage;
             row[category.ColumnIndex("Res+Dis")] = resi + disc;
             row[category.ColumnIndex("RR")] = resi + reco;
+            row[category.ColumnIndex("RD")] = resi + disc;
+            row[category.ColumnIndex("DI")] = disc + inte;
             row[category.ColumnIndex("RRD")] = resi + reco + disc;
             row[category.ColumnIndex("RRI")] = resi + reco + inte;
             row[category.ColumnIndex("Artifice")] = artifice;
