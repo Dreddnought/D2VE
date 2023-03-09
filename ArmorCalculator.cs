@@ -29,7 +29,7 @@ namespace D2VE
             Dis = discipline + intellect + strength;
             RI = recovery + intellect;
             RD = recovery + discipline;
-            Id = Name + " " + BaseStats.ToString() + "(" + RI.ToString() + ")="
+            Id = Name + " " + (artifice ? BaseStats - 3 : BaseStats).ToString() + "(" + RI.ToString() + ")="
                 + Mrr.ToString() + "+" + Dis.ToString()
                 + " (" + (Name.EndsWith("(mob)") ? Mobility - 3 : Mobility).ToString()
                 + "-" + (Name.EndsWith("(res)") ? Resilience - 3 : Resilience).ToString()
