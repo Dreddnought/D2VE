@@ -141,7 +141,6 @@ namespace D2VE
                 // Convert the data to spreadsheet form.
                 Dictionary<string, Category> data = new Dictionary<string, Category>();
                 WeaponsAndArmor(instances, data);
-                ArmorCalculations(instances, data);
                 // Create an output spreadsheet.     
                 OutputContext outputContext = new OutputContext()
                 {
@@ -150,6 +149,7 @@ namespace D2VE
                 };
                 IOutput output = new CsvOutput();
                 output.Create(outputContext, data);
+                ArmorCalculations(outputContext , instances, data);
             }
             ItemCache.Save();
             PlugCache.Save();
@@ -176,7 +176,6 @@ namespace D2VE
                     category.ColumnIndex("TierType");
                     category.ColumnIndex("Slot");
                     category.ColumnIndex("ClassType");
-                    category.ColumnIndex("EnergyType");
                     if (itemInstance.ItemCategory == "Armor")
                     {
                         category.ColumnIndex("Masterworked");
@@ -184,6 +183,7 @@ namespace D2VE
                     }
                     else
                     {
+                        category.ColumnIndex("EnergyType");
                         category.ColumnIndex("Intrinsic");
                         category.ColumnIndex("Barrel/Sight");
                         category.ColumnIndex("Magazine/Battery");
@@ -216,7 +216,6 @@ namespace D2VE
                 row[category.ColumnIndex("PowerCap")] = ConvertValue.PowerCap(itemInstance.PowerCap);  // Replace 999990 with ""
                 row[category.ColumnIndex("TierType")] = itemInstance.TierType;
                 row[category.ColumnIndex("Slot")] = itemInstance.Slot;
-                row[category.ColumnIndex("EnergyType")] = itemInstance.EnergyType;
                 row[category.ColumnIndex("ClassType")] = itemInstance.ClassType;
                 if (itemInstance.ItemCategory == "Armor")
                 {
@@ -225,6 +224,7 @@ namespace D2VE
                 }
                 else
                 {
+                    row[category.ColumnIndex("EnergyType")] = itemInstance.EnergyType;
                     row[category.ColumnIndex("Masterwork")] = itemInstance.Masterwork;
                     if (itemInstance.Stats.ContainsKey("Impact") && itemInstance.Stats.ContainsKey("Rounds Per Minute"))
                         row[category.ColumnIndex("Impact x RPM")] = itemInstance.Stats["Impact"] * itemInstance.Stats["Rounds Per Minute"];
@@ -240,52 +240,58 @@ namespace D2VE
                 category.Rows.Add(row);
             }
         }
-        private static void ArmorCalculations(List<ItemInstance> instances, Dictionary<string, Category> data)
+        private static void ArmorCalculations(OutputContext outputContext, List<ItemInstance> instances,
+            Dictionary<string, Category> data)
         {
             // Armor calculation.
+            // For exotic except the ones we intend to use for Iron Banner we should treat as having an artifice slot for 
+            // +3 because we can add that via the class item!
             List<Armor> armor = instances.Where(i => i.ItemCategory == "Armor" && i.TierType != "Rare" &&
                 !i.ItemType.StartsWith("Warlock") && !i.ItemType.StartsWith("Hunter") && !i.ItemType.StartsWith("Titan"))
-                .SelectMany(i => i.Artifice == "FALSE" ? new List<Armor>()
+                .SelectMany(i => i.TierType != "Exotic" && i.Artifice == "FALSE"
+                    || i.TierType == "Exotic" && i.Name == "Ophidian Aspect" ? new List<Armor>()
                 {
-                    new Armor(i.Name, i.ClassType, i.TierType, i.ItemType, i.EnergyType,
-                        false, i.EnergyCapacity,
+                    new Armor(i.Name, i.ClassType, i.TierType, i.ItemType, false, i.EnergyCapacity,
                         i.PowerCap, i.Stats["1"], i.Stats["2"], i.Stats["3"], i.Stats["4"], i.Stats["5"], i.Stats["6"])
 
                 } : new List<Armor>()
                 {
-                    new Armor(i.Name + " (mob)", i.ClassType, i.TierType, i.ItemType, i.EnergyType, true, i.EnergyCapacity, i.PowerCap,
+                    new Armor(i.Name + " (mob)", i.ClassType, i.TierType, i.ItemType, true, i.EnergyCapacity, i.PowerCap,
                         i.Stats["1"] + 3, i.Stats["2"], i.Stats["3"], i.Stats["4"], i.Stats["5"], i.Stats["6"]),
-                    new Armor(i.Name + " (res)", i.ClassType, i.TierType, i.ItemType, i.EnergyType, true, i.EnergyCapacity, i.PowerCap,
+                    new Armor(i.Name + " (res)", i.ClassType, i.TierType, i.ItemType, true, i.EnergyCapacity, i.PowerCap,
                         i.Stats["1"], i.Stats["2"] + 3, i.Stats["3"], i.Stats["4"], i.Stats["5"], i.Stats["6"]),
-                    new Armor(i.Name + " (rec)", i.ClassType, i.TierType, i.ItemType, i.EnergyType, true, i.EnergyCapacity, i.PowerCap,
+                    new Armor(i.Name + " (rec)", i.ClassType, i.TierType, i.ItemType, true, i.EnergyCapacity, i.PowerCap,
                         i.Stats["1"], i.Stats["2"], i.Stats["3"] + 3, i.Stats["4"], i.Stats["5"], i.Stats["6"]),
-                    new Armor(i.Name + " (dis)", i.ClassType, i.TierType, i.ItemType, i.EnergyType, true, i.EnergyCapacity, i.PowerCap,
+                    new Armor(i.Name + " (dis)", i.ClassType, i.TierType, i.ItemType, true, i.EnergyCapacity, i.PowerCap,
                         i.Stats["1"], i.Stats["2"], i.Stats["3"], i.Stats["4"] + 3, i.Stats["5"], i.Stats["6"]),
-                    new Armor(i.Name + " (int)", i.ClassType, i.TierType, i.ItemType, i.EnergyType, true, i.EnergyCapacity, i.PowerCap,
+                    new Armor(i.Name + " (int)", i.ClassType, i.TierType, i.ItemType, true, i.EnergyCapacity, i.PowerCap,
                         i.Stats["1"], i.Stats["2"], i.Stats["3"], i.Stats["4"], i.Stats["5"] + 3, i.Stats["6"]),
-                    new Armor(i.Name + " (str)", i.ClassType, i.TierType, i.ItemType, i.EnergyType, true, i.EnergyCapacity, i.PowerCap,
+                    new Armor(i.Name + " (str)", i.ClassType, i.TierType, i.ItemType, true, i.EnergyCapacity, i.PowerCap,
                         i.Stats["1"], i.Stats["2"], i.Stats["3"], i.Stats["4"], i.Stats["5"], i.Stats["6"] + 3)
                 }).ToList();
             foreach (string exotic in _warlockExotics)
-                AddArmorCalculation(data, armor, new ArmorCalculator("Warlock", exotic));
+                AddArmorCalculation(outputContext, armor, new ArmorCalculator("Warlock", exotic));
             foreach (string exotic in _hunterExotics)
-                AddArmorCalculation(data, armor, new ArmorCalculator("Hunter", exotic));
+                AddArmorCalculation(outputContext, armor, new ArmorCalculator("Hunter", exotic));
             foreach (string exotic in _titanExotics)
-                AddArmorCalculation(data, armor, new ArmorCalculator("Titan", exotic));
+                AddArmorCalculation(outputContext, armor, new ArmorCalculator("Titan", exotic));
         }
-        private static void AddArmorCalculation(Dictionary<string, Category> data, List<Armor> armor,
+        private static void AddArmorCalculation(OutputContext outputContext, List<Armor> armor,
             ArmorCalculator armorCalculator)
         {
             try
             {
+                GC.Collect(2);
                 Category category = armorCalculator.Calculate(armor);
-                data[category.Name] = category;
+                GC.Collect(2);
+                Dictionary<string, Category> data = new Dictionary<string, Category>() { { category.Name, category } };
+                IOutput output = new CsvOutput();
+                output.Create(outputContext, data);
             }
             catch (Exception x)
             {
-                Console.WriteLine("Exception in armor calculation: " + x.ToString());
+                Console.WriteLine("Exception in armor calculation for " + armorCalculator.Name + ": " + x.ToString());
             }
-            GC.Collect(2);
         }
         private static List<ItemInstance> GetItemInstances(Membership membership)
         {
@@ -308,28 +314,8 @@ namespace D2VE
             // Items in the vault.
             foreach (var item in inventories["profileInventory"]["data"]["items"])
                 ProcessItem(membership, instances, item);
-            // Add unclaimed season pass armor.
-            if (membership.DisplayName == "DrEdd_Nought")
-            {
-            }
             Save(membership.DisplayName, instances);  // Save result for dev purposes (testing output)
             return instances;
-        }
-        // Assume the item can be found by name because we already have one.
-        // TODO: Do this properly.  In particular we need the real itemInstanceId.
-        private static void AddSeasonPassArmor(List<ItemInstance> instances, string name, string energyType,
-            long hash, SortedDictionary<string, long> stats)
-        {
-            ItemInfo itemInfo = ItemCache.GetItemInfo(name, hash);
-            if (itemInfo == null)
-            {
-                Console.WriteLine("Could not find " + name);
-                return;
-            }
-            ItemInstance itemInstance = new ItemInstance(null, itemInfo, 0, 1410, energyType, 0, "", stats,
-                new SortedDictionary<string, Plug>());
-            instances.Add(itemInstance);
-            Console.WriteLine(itemInstance.ToString());
         }
         private static void ProcessItem(Membership membership, List<ItemInstance> instances, dynamic item)
         {
@@ -352,7 +338,7 @@ namespace D2VE
                 long powerCap = itemInfo.PowerCaps[itemInfo.PowerCaps.Count <= (int)item.versionNumber.Value ? 0
                     : (int)item.versionNumber.Value];
                 string masterwork = "";
-                string energyType = itemInfo.EnergyType;
+                string energyType = "";
                 long energyCapacity = 0L;
                 if (itemInfo.ItemCategory == "Armor")  // Armor, energyType is at instance level
                 {
@@ -367,13 +353,14 @@ namespace D2VE
                         else if (itemInfo.ClassType == "Titan" && !_titanExotics.Contains(itemInfo.Name))
                             _titanExotics.Add(itemInfo.Name);
                     }
-                    energyType = ConvertValue.EnergyType(instance.instance.data.energy.energyType.Value);
                     energyCapacity = instance.instance.data.energy.energyCapacity.Value;
                 }
 #if ARMOR_ONLY
                 else
                     return;
 #endif
+                else
+                    energyType = itemInfo.EnergyType;
                 foreach (var stat in instance["stats"]["data"]["stats"])
                 {
                     long statHash = stat.Value["statHash"].Value;

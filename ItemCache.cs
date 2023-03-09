@@ -117,7 +117,7 @@ namespace D2VE
                 string energyType = "";
                 string season = "";
                 string artifice = "FALSE";
-                if (itemType == 2L)  // Armor, energyType is at instance level
+                if (itemType == 2L)  // Armor
                 {
                     slot = D2VE.SlotCache.GetSlotName(definition.equippingBlock.equipmentSlotTypeHash.Value);
                     // Get the season.

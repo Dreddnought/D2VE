@@ -39,8 +39,8 @@ namespace D2VE
         public override string ToString()
         {
             return ItemInstanceId + " " + Name + " " + Power.ToString() + " " + PowerCap.ToString()
-                + " (" + ItemType + ") " + Slot + " " + EnergyType + " " + EnergyCapacity.ToString()
-                + " " + TierType
+                + " (" + ItemType + ") " + Slot + " " + (string.IsNullOrWhiteSpace(EnergyType) ? "" : EnergyType) + " "
+                + EnergyCapacity.ToString() + " " + TierType
                 + (string.IsNullOrWhiteSpace(ClassType) ? "" : " [" + ClassType + "]")
                 + (string.IsNullOrWhiteSpace(Season) ? "" : " [" + Season + "]")
                 + (Artifice == "FALSE" ? "" : " Artifice")

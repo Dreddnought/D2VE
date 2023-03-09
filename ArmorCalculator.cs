@@ -6,7 +6,7 @@ namespace D2VE
 {
     public class Armor
     {
-        public Armor(string name, string classType, string tierType, string itemType, string energyType,
+        public Armor(string name, string classType, string tierType, string itemType,
             bool artifice, long energyCapacity, long powerCap,
             long mobility, long resilience, long recovery, long discipline, long intellect, long strength)
         {
@@ -14,7 +14,6 @@ namespace D2VE
             ClassType = classType;
             TierType = tierType;
             ItemType = itemType;
-            EnergyType = energyType;
             Artifice = artifice;
             EnergyCapacity = energyCapacity;
             PowerCap = powerCap;
@@ -42,7 +41,6 @@ namespace D2VE
         public string ClassType { get; }
         public string TierType { get; }
         public string ItemType { get; }
-        public string EnergyType { get; }
         public bool Artifice { get; }
         public long EnergyCapacity { get; }
         public long PowerCap { get; }
@@ -114,10 +112,6 @@ namespace D2VE
             category.ColumnIndex("RRD");
             category.ColumnIndex("Usage");
             category.ColumnIndex("Artifice");
-            category.ColumnIndex("Head Type");
-            category.ColumnIndex("Arms Type");
-            category.ColumnIndex("Chest Type");
-            category.ColumnIndex("Leg Type");
             category.ColumnIndex("Wastage");
             category.ColumnIndex("LowestBaseStats");
             category.ColumnIndex("Mob");
@@ -136,20 +130,8 @@ namespace D2VE
             category.ColumnIndex("Arms Masterworked");
             category.ColumnIndex("Chest Masterworked");
             category.ColumnIndex("Leg Masterworked");
-            category.ColumnIndex("Head MMR");
-            category.ColumnIndex("Arms MMR");
-            category.ColumnIndex("Chest MMR");
-            category.ColumnIndex("Leg MMR");
-            category.ColumnIndex("Head DIS");
-            category.ColumnIndex("Arms DIS");
-            category.ColumnIndex("Chest DIS");
-            category.ColumnIndex("Leg DIS");
-            category.ColumnIndex("Head Rec");
-            category.ColumnIndex("Arms Rec");
-            category.ColumnIndex("Chest Rec");
-            category.ColumnIndex("Leg Rec");
             // First find the exotic.
-            List<Armor> exotic = armorItems.Where(a => a.Name == Exotic).ToList();
+            List<Armor> exotic = armorItems.Where(a => a.Name.StartsWith(Exotic)).ToList();
             if (exotic.Count == 0)  // we don't have one!
                 return category;
             string exoticType = exotic[0].ItemType;
@@ -171,7 +153,7 @@ namespace D2VE
                                         if (leg.ClassType == ClassType)
                                         {
                                             object[] row = Calculate(category, head, arm, chest, leg, exoticType,
-                                                Name == "Warlock - Ophidian Aspect" ? _minimumUsage /*- 10*/ : _minimumUsage);
+                                                Name == "Warlock - Chromatic Fire" ? _minimumUsage + 10 : _minimumUsage);
                                             if (row != null)
                                                 category.Rows.Add(row);
                                         }
@@ -196,6 +178,9 @@ namespace D2VE
             long stre = Math.Min(10L, strength / 10);
             long usage = (mobi + resi + reco + disc + inte + stre) * 10;
             if (usage < minimumUsage)
+                return null;
+            if (ClassType != "Hunter" && !category.Name.Contains("Wings of Sacred Dawn") && !category.Name.Contains("Lion Rampant")
+                && mobi > 3)
                 return null;
             bool artifice = (exoticType == "Helmet" || head.Artifice)
                 && (exoticType == "Gauntlets" || arm.Artifice)
@@ -231,10 +216,6 @@ namespace D2VE
             row[category.ColumnIndex("RRD")] = resi + reco + disc;
             row[category.ColumnIndex("RRI")] = resi + reco + inte;
             row[category.ColumnIndex("Artifice")] = artifice;
-            row[category.ColumnIndex("Head Type")] = head.EnergyCapacity == 10L ? head.EnergyType : "";
-            row[category.ColumnIndex("Arms Type")] = arm.EnergyCapacity == 10L ? arm.EnergyType : "";
-            row[category.ColumnIndex("Chest Type")] = chest.EnergyCapacity == 10L ? chest.EnergyType : "";
-            row[category.ColumnIndex("Leg Type")] = leg.EnergyCapacity == 10L ? leg.EnergyType : "";
             row[category.ColumnIndex("Wastage")] = wastage;
             row[category.ColumnIndex("LowestBaseStats")] = lowestBaseStats;
             row[category.ColumnIndex("Mob")] = mobility;
@@ -253,18 +234,6 @@ namespace D2VE
             row[category.ColumnIndex("Arms Masterworked")] = arm.EnergyCapacity == 10L;
             row[category.ColumnIndex("Chest Masterworked")] = chest.EnergyCapacity == 10L;
             row[category.ColumnIndex("Leg Masterworked")] = leg.EnergyCapacity == 10L;
-            row[category.ColumnIndex("Head MMR")] = head.Mrr;
-            row[category.ColumnIndex("Arms MMR")] = arm.Mrr;
-            row[category.ColumnIndex("Chest MMR")] = chest.Mrr;
-            row[category.ColumnIndex("Leg MMR")] = leg.Mrr;
-            row[category.ColumnIndex("Head DIS")] = head.Dis;
-            row[category.ColumnIndex("Arms DIS")] = arm.Dis;
-            row[category.ColumnIndex("Chest DIS")] = chest.Dis;
-            row[category.ColumnIndex("Leg DIS")] = leg.Dis;
-            row[category.ColumnIndex("Head Rec")] = head.Recovery;
-            row[category.ColumnIndex("Arms Rec")] = arm.Recovery;
-            row[category.ColumnIndex("Chest Rec")] = chest.Recovery;
-            row[category.ColumnIndex("Leg Rec")] = leg.Recovery;
             return row;
         }
         private const int _minimumUsage = 320;
