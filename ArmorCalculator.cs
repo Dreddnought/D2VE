@@ -179,6 +179,7 @@ namespace D2VE
             long usage = (mobi + resi + reco + disc + inte + stre) * 10;
             if (usage < minimumUsage)
                 return null;
+            // Skip mobility 3+ items unless it's for a hunter or mobility based exotic.
             if (ClassType != "Hunter" && !category.Name.Contains("Wings of Sacred Dawn") && !category.Name.Contains("Lion Rampant")
                 && mobi > 3)
                 return null;
