@@ -1,4 +1,4 @@
-﻿#define TEST_OUTPUT
+﻿//#define TEST_OUTPUT
 //#define ARMOR_ONLY
 using System;
 using System.Collections.Generic;
@@ -21,9 +21,9 @@ namespace D2VE
         private static List<string> _hunterExotics = new List<string>();
         private static List<string> _titanExotics = new List<string>();
         private static HttpClient _httpClient;
-        private static string _jsonMediaType = "application/json";
+        private const string _jsonMediaType = "application/json";
 #if !TEST_OUTPUT
-        private static string _formMediaType = "application/x-www-form-urlencoded";
+        private const string _formMediaType = "application/x-www-form-urlencoded";
 #endif
         private static MediaTypeWithQualityHeaderValue _jsonAcceptHeader
             = new MediaTypeWithQualityHeaderValue(_jsonMediaType);
