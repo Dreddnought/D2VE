@@ -110,6 +110,7 @@ namespace D2VE
             category.ColumnIndex("DI");
             category.ColumnIndex("RRI");
             category.ColumnIndex("RRD");
+            category.ColumnIndex("MRD");
             category.ColumnIndex("Usage");
             category.ColumnIndex("Artifice");
             category.ColumnIndex("Wastage");
@@ -215,6 +216,7 @@ namespace D2VE
             row[category.ColumnIndex("RD")] = resi + disc;
             row[category.ColumnIndex("DI")] = disc + inte;
             row[category.ColumnIndex("RRD")] = resi + reco + disc;
+            row[category.ColumnIndex("MRD")] = resi + mobi + disc;
             row[category.ColumnIndex("RRI")] = resi + reco + inte;
             row[category.ColumnIndex("Artifice")] = artifice;
             row[category.ColumnIndex("Wastage")] = wastage;
