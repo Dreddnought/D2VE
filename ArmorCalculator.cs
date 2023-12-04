@@ -123,6 +123,7 @@ namespace D2VE
             category.ColumnIndex("Str");
             category.ColumnIndex("MRR");
             category.ColumnIndex("DIS");
+            category.ColumnIndex("Solstice Rekindled");
             category.ColumnIndex("Exotic");
             category.ColumnIndex("ExoticType");
             category.ColumnIndex("Masterworked");
@@ -165,7 +166,8 @@ namespace D2VE
         {
             // Calculate a result for this combination.
             long mobility = 10 + MobilityMod + head.Mobility + arm.Mobility + chest.Mobility + leg.Mobility;
-            long resilience = 10 + ResilienceMod + head.Resilience + arm.Resilience + chest.Resilience + leg.Resilience;
+            long resilience = 10 + ResilienceMod + head.Resilience + arm.Resilience + chest.Resilience + leg.Resilience
+                + (exoticType == "Chest Armor" ? 0 : 1);  // Solstice (Rekindled) chest ornament gives +1 Resilience
             long recovery = 10 + RecoveryMod + head.Recovery + arm.Recovery + chest.Recovery + leg.Recovery;
             long discipline = 10 + DisciplineMod + head.Discipline + arm.Discipline + chest.Discipline + leg.Discipline;
             long intellect = 10 + IntellectMod + head.Intellect + arm.Intellect + chest.Intellect + leg.Intellect;
@@ -229,6 +231,7 @@ namespace D2VE
             row[category.ColumnIndex("Str")] = strength;
             row[category.ColumnIndex("MRR")] = mrr;
             row[category.ColumnIndex("DIS")] = dis;
+            row[category.ColumnIndex("Solstice Rekindled")] = exoticType != "Chest Armor" && resilience % 10 == 0;
             row[category.ColumnIndex("Exotic")] = Exotic;
             row[category.ColumnIndex("ExoticType")] = exoticType;
             row[category.ColumnIndex("Masterworked")] = masterworked;
