@@ -12,29 +12,32 @@ public class CsvOutput : IOutput
         Directory.CreateDirectory(folderName);
         foreach (Category category in data.Values)
         {
-            // Add header row.
-            StringBuilder csv = new StringBuilder();
-            csv.AppendLine(string.Join(",", category.ColumnNames));
-            foreach (object[] row in category.Rows)
-            {
-                foreach (object o in row)
-                {
-                    if (o != null)
-                        if (o.GetType() == typeof(long))
-                            csv.Append(o);
-                        else  // string
-                        {
-                            csv.Append("\"");
-                            csv.Append(o);
-                            csv.Append("\"");
-                        }
-                    csv.Append(",");
-                }
-                csv.Remove(csv.Length - 1, 1);  // Remove trailing comma
-                csv.AppendLine();
-            }
             string fileName = Path.Combine(folderName, category.Name + ".csv");
-            File.WriteAllText(fileName, csv.ToString());
+            using (StreamWriter streamWriter = new StreamWriter(fileName))
+            {
+                // Add header row.
+                streamWriter.WriteLine(string.Join(",", category.ColumnNames));
+                StringBuilder csvLine = new StringBuilder();
+                foreach (object[] row in category.Rows)
+                {
+                    foreach (object o in row)
+                    {
+                        if (o != null)
+                            if (o.GetType() == typeof(long))
+                                csvLine.Append(o);
+                            else  // string
+                            {
+                                csvLine.Append("\"");
+                                csvLine.Append(o);
+                                csvLine.Append("\"");
+                            }
+                        csvLine.Append(",");
+                    }
+                    csvLine.Remove(csvLine.Length - 1, 1);  // Remove trailing comma
+                    streamWriter.WriteLine(csvLine.ToString());
+                    csvLine.Clear();
+                }
+            }
         }
     }
 }

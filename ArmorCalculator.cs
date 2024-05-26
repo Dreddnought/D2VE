@@ -190,13 +190,13 @@ public class ArmorCalculator
         string exoticType, int minimumUsage)
     {
         // Calculate a result for this combination.
-        long mobility = 10 + MobilityMod + head.Mobility + arm.Mobility + chest.Mobility + leg.Mobility;
-        long resilience = 10 + ResilienceMod + head.Resilience + arm.Resilience + chest.Resilience + leg.Resilience
+        long mobility = 10 + MobilityMod + head.Mobility + arm.Mobility + chest.Mobility + leg.Mobility + classItem.Mobility;
+        long resilience = 10 + ResilienceMod + head.Resilience + arm.Resilience + chest.Resilience + leg.Resilience + classItem.Resilience
             + (exoticType == "Chest Armor" ? 0 : 1);  // Solstice (Rekindled) chest ornament gives +1 Resilience
-        long recovery = 10 + RecoveryMod + head.Recovery + arm.Recovery + chest.Recovery + leg.Recovery;
-        long discipline = 10 + DisciplineMod + head.Discipline + arm.Discipline + chest.Discipline + leg.Discipline;
-        long intellect = 10 + IntellectMod + head.Intellect + arm.Intellect + chest.Intellect + leg.Intellect;
-        long strength = 10 + StrengthMod + head.Strength + arm.Strength + chest.Strength + leg.Strength;
+        long recovery = 10 + RecoveryMod + head.Recovery + arm.Recovery + chest.Recovery + leg.Recovery + classItem.Recovery;
+        long discipline = 10 + DisciplineMod + head.Discipline + arm.Discipline + chest.Discipline + leg.Discipline + classItem.Discipline;
+        long intellect = 10 + IntellectMod + head.Intellect + arm.Intellect + chest.Intellect + leg.Intellect + classItem.Intellect;
+        long strength = 10 + StrengthMod + head.Strength + arm.Strength + chest.Strength + leg.Strength + classItem.Strength;
         // Calculate effective values (divide by 10).
         long mobi = Math.Min(10L, mobility / 10);
         long resi = Math.Min(10L, resilience / 10);
@@ -227,7 +227,8 @@ public class ArmorCalculator
         bool exoticMasterworked = exoticType == "Helmet" && head.EnergyCapacity == 10L
             || exoticType == "Gauntlets" && arm.EnergyCapacity == 10L
             || exoticType == "Chest Armor" && chest.EnergyCapacity == 10L
-            || exoticType == "Leg Armor" && leg.EnergyCapacity == 10L;
+            || exoticType == "Leg Armor" && leg.EnergyCapacity == 10L
+            || exoticType == "Class Item" && classItem.EnergyCapacity == 10L;
         object[] row = new object[category.ColumnNames.Count];
         row[category.ColumnIndex("DIM Query")] =
             $"id:'{head.ItemInstanceId}' or id:'{arm.ItemInstanceId}' or id:'{chest.ItemInstanceId}' or id:'{leg.ItemInstanceId}'"
@@ -277,5 +278,5 @@ public class ArmorCalculator
         row[category.ColumnIndex("Class Item Masterworked")] = leg.EnergyCapacity == 10L;
         return row;
     }
-    private const int _minimumUsage = 330;
+    private const int _minimumUsage = 320;
 }
