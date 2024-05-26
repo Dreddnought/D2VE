@@ -6,10 +6,11 @@ namespace D2VE
 {
     public class Armor
     {
-        public Armor(string name, string classType, string tierType, string itemType,
+        public Armor(string itemInstanceId, string name, string classType, string tierType, string itemType,
             bool artifice, long energyCapacity, long powerCap,
             long mobility, long resilience, long recovery, long discipline, long intellect, long strength)
         {
+            ItemInstanceId = itemInstanceId;
             Name = name;
             ClassType = classType;
             TierType = tierType;
@@ -37,6 +38,7 @@ namespace D2VE
                 + "-" + (Name.EndsWith("(int)") ? Intellect - 3 : Intellect).ToString()
                 + "-" + (Name.EndsWith("(str)") ? Strength - 3 : Strength).ToString() + ")";
         }
+        public string ItemInstanceId { get; }
         public string Name { get; }
         public string ClassType { get; }
         public string TierType { get; }
@@ -93,11 +95,13 @@ namespace D2VE
         public Category Calculate(List<Armor> armorItems)
         {
             Category category = new Category(Name);
+            category.ColumnIndex("DIM Query");
             category.ColumnIndex("Name");
             category.ColumnIndex("Helmet");
             category.ColumnIndex("Gauntlets");
             category.ColumnIndex("Chest Armor");
             category.ColumnIndex("Leg Armor");
+            category.ColumnIndex("Class Item");
             category.ColumnIndex("Mobility");
             category.ColumnIndex("Resilience");
             category.ColumnIndex("Recovery");
@@ -110,6 +114,7 @@ namespace D2VE
             category.ColumnIndex("DI");
             category.ColumnIndex("RRI");
             category.ColumnIndex("RRD");
+            category.ColumnIndex("RRS");
             category.ColumnIndex("MRD");
             category.ColumnIndex("Usage");
             category.ColumnIndex("Artifice");
@@ -145,6 +150,8 @@ namespace D2VE
                 armorItems.Where(a => a.ItemType == "Chest Armor" && a.TierType != "Exotic").ToList();
             List<Armor> legArmor = exoticType == "Leg Armor" ? exotic :
                 armorItems.Where(a => a.ItemType == "Leg Armor" && a.TierType != "Exotic").ToList();
+            List<Armor> classItem = exoticType == "Class Item" ? exotic :
+                armorItems.Where(a => a.ItemType == "Class Item" && a.TierType != "Exotic").ToList();
             foreach (Armor head in helmets)
                 if (head.ClassType == ClassType)
                     foreach (Armor arm in gauntlets)
@@ -155,14 +162,14 @@ namespace D2VE
                                         if (leg.ClassType == ClassType)
                                         {
                                             object[] row = Calculate(category, head, arm, chest, leg, exoticType,
-                                                Name == "Warlock - Chromatic Fire" ? _minimumUsage + 10 : _minimumUsage);
+                                                Name == "Hunter - Shards of Galanor" ? _minimumUsage - 10 : _minimumUsage);
                                             if (row != null)
                                                 category.Rows.Add(row);
                                         }
             return category;
         }
-        private object[] Calculate(Category category, Armor head, Armor arm, Armor chest, Armor leg, string exoticType,
-            int minimumUsage)
+        private object[] Calculate(Category category, Armor head, Armor arm, Armor chest, Armor leg, Armor classItem,
+            string exoticType, int minimumUsage)
         {
             // Calculate a result for this combination.
             long mobility = 10 + MobilityMod + head.Mobility + arm.Mobility + chest.Mobility + leg.Mobility;
@@ -183,13 +190,16 @@ namespace D2VE
             if (usage < minimumUsage)
                 return null;
             // Skip mobility 3+ items unless it's for a hunter or mobility based exotic.
-            if (ClassType != "Hunter" && !category.Name.Contains("Wings of Sacred Dawn") && !category.Name.Contains("Lion Rampant")
+            if (ClassType != "Hunter"
+                && !category.Name.Contains("Wings of Sacred Dawn")
+                && !category.Name.Contains("Lion Rampant")
                 && mobi > 3)
                 return null;
             bool artifice = (exoticType == "Helmet" || head.Artifice)
                 && (exoticType == "Gauntlets" || arm.Artifice)
                 && (exoticType == "Chest Armor" || chest.Artifice)
-                && (exoticType == "Leg Armor" || leg.Artifice);
+                && (exoticType == "Leg Armor" || leg.Artifice)
+                && (exoticType == "Class Item" || classItem.Artifice);
             long wastage = mobility + resilience + recovery + discipline + intellect + strength - usage;
             long lowestBaseStats = Math.Min(Math.Min(head.BaseStats, arm.BaseStats), Math.Min(chest.BaseStats, leg.BaseStats));
             long mrr = mobi + resi + reco;
@@ -201,11 +211,14 @@ namespace D2VE
                 || exoticType == "Chest Armor" && chest.EnergyCapacity == 10L
                 || exoticType == "Leg Armor" && leg.EnergyCapacity == 10L;
             object[] row = new object[category.ColumnNames.Count];
+            row[category.ColumnIndex("DIM Query")] =
+                $"id:'{head.ItemInstanceId}' or id:'{arm.ItemInstanceId}' or id:'{chest.ItemInstanceId}' or id:'{leg.ItemInstanceId}'";
             row[category.ColumnIndex("Name")] = head.Id + "/" + arm.Id + "/" + chest.Id + "/" + leg.Id;
             row[category.ColumnIndex("Helmet")] = head.Id;
             row[category.ColumnIndex("Gauntlets")] = arm.Id;
             row[category.ColumnIndex("Chest Armor")] = chest.Id;
             row[category.ColumnIndex("Leg Armor")] = leg.Id;
+            row[category.ColumnIndex("Class Item")] = classItem.Id;
             row[category.ColumnIndex("Mobility")] = mobi;
             row[category.ColumnIndex("Resilience")] = resi;
             row[category.ColumnIndex("Recovery")] = reco;
@@ -218,6 +231,7 @@ namespace D2VE
             row[category.ColumnIndex("RD")] = resi + disc;
             row[category.ColumnIndex("DI")] = disc + inte;
             row[category.ColumnIndex("RRD")] = resi + reco + disc;
+            row[category.ColumnIndex("RRS")] = resi + reco + stre;
             row[category.ColumnIndex("MRD")] = resi + mobi + disc;
             row[category.ColumnIndex("RRI")] = resi + reco + inte;
             row[category.ColumnIndex("Artifice")] = artifice;

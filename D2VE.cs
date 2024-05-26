@@ -1,5 +1,5 @@
 ﻿//#define TEST_OUTPUT
-//#define ARMOR_ONLY
+#define ARMOR_ONLY
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -251,22 +251,22 @@ namespace D2VE
                 .SelectMany(i => i.TierType != "Exotic" && i.Artifice == "FALSE"
                     || i.TierType == "Exotic" && i.Name == "Ophidian Aspect" ? new List<Armor>()
                 {
-                    new Armor(i.Name, i.ClassType, i.TierType, i.ItemType, false, i.EnergyCapacity,
+                    new Armor(i.ItemInstanceId, i.Name, i.ClassType, i.TierType, i.ItemType, false, i.EnergyCapacity,
                         i.PowerCap, i.Stats["1"], i.Stats["2"], i.Stats["3"], i.Stats["4"], i.Stats["5"], i.Stats["6"])
 
                 } : new List<Armor>()
                 {
-                    new Armor(i.Name + " (mob)", i.ClassType, i.TierType, i.ItemType, true, i.EnergyCapacity, i.PowerCap,
+                    new Armor(i.ItemInstanceId, i.Name + " (mob)", i.ClassType, i.TierType, i.ItemType, true, i.EnergyCapacity, i.PowerCap,
                         i.Stats["1"] + 3, i.Stats["2"], i.Stats["3"], i.Stats["4"], i.Stats["5"], i.Stats["6"]),
-                    new Armor(i.Name + " (res)", i.ClassType, i.TierType, i.ItemType, true, i.EnergyCapacity, i.PowerCap,
+                    new Armor(i.ItemInstanceId, i.Name + " (res)", i.ClassType, i.TierType, i.ItemType, true, i.EnergyCapacity, i.PowerCap,
                         i.Stats["1"], i.Stats["2"] + 3, i.Stats["3"], i.Stats["4"], i.Stats["5"], i.Stats["6"]),
-                    new Armor(i.Name + " (rec)", i.ClassType, i.TierType, i.ItemType, true, i.EnergyCapacity, i.PowerCap,
+                    new Armor(i.ItemInstanceId, i.Name + " (rec)", i.ClassType, i.TierType, i.ItemType, true, i.EnergyCapacity, i.PowerCap,
                         i.Stats["1"], i.Stats["2"], i.Stats["3"] + 3, i.Stats["4"], i.Stats["5"], i.Stats["6"]),
-                    new Armor(i.Name + " (dis)", i.ClassType, i.TierType, i.ItemType, true, i.EnergyCapacity, i.PowerCap,
+                    new Armor(i.ItemInstanceId, i.Name + " (dis)", i.ClassType, i.TierType, i.ItemType, true, i.EnergyCapacity, i.PowerCap,
                         i.Stats["1"], i.Stats["2"], i.Stats["3"], i.Stats["4"] + 3, i.Stats["5"], i.Stats["6"]),
-                    new Armor(i.Name + " (int)", i.ClassType, i.TierType, i.ItemType, true, i.EnergyCapacity, i.PowerCap,
+                    new Armor(i.ItemInstanceId, i.Name + " (int)", i.ClassType, i.TierType, i.ItemType, true, i.EnergyCapacity, i.PowerCap,
                         i.Stats["1"], i.Stats["2"], i.Stats["3"], i.Stats["4"], i.Stats["5"] + 3, i.Stats["6"]),
-                    new Armor(i.Name + " (str)", i.ClassType, i.TierType, i.ItemType, true, i.EnergyCapacity, i.PowerCap,
+                    new Armor(i.ItemInstanceId, i.Name + " (str)", i.ClassType, i.TierType, i.ItemType, true, i.EnergyCapacity, i.PowerCap,
                         i.Stats["1"], i.Stats["2"], i.Stats["3"], i.Stats["4"], i.Stats["5"], i.Stats["6"] + 3)
                 }).ToList();
             foreach (string exotic in _warlockExotics)
@@ -358,9 +358,10 @@ namespace D2VE
 #if ARMOR_ONLY
                 else
                     return;
-#endif
+#else
                 else
                     energyType = itemInfo.EnergyType;
+#endif
                 foreach (var stat in instance["stats"]["data"]["stats"])
                 {
                     long statHash = stat.Value["statHash"].Value;
