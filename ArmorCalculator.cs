@@ -132,6 +132,8 @@ public class ArmorCalculator
         category.ColumnIndex("RRD");
         category.ColumnIndex("RRS");
         category.ColumnIndex("MRD");
+        category.ColumnIndex("MRI");
+        category.ColumnIndex("MRS");
         category.ColumnIndex("Usage");
         category.ColumnIndex("Artifice");
         category.ColumnIndex("Wastage");
@@ -207,6 +209,12 @@ public class ArmorCalculator
         long usage = (mobi + resi + reco + disc + inte + stre) * 10;
         if (usage < minimumUsage)
             return null;
+        // Get the goal for the exotic.  Default to RRD23 if not defined.
+        Func<long, long, long, long, long, long, bool> exoticStatGoal = null;
+        if (!_exoticStatGoal.TryGetValue(Exotic, out exoticStatGoal))
+            exoticStatGoal = StatFunctions.RRD23;
+        if (!exoticStatGoal(mobi, resi, reco, disc, inte, stre))
+            return null;
         // Skip mobility 3+ items unless it's for a hunter or mobility based exotic.
         if (ClassType != "Hunter"
             && !category.Name.Contains("Wings of Sacred Dawn")
@@ -255,6 +263,8 @@ public class ArmorCalculator
         row[category.ColumnIndex("RRS")] = resi + reco + stre;
         row[category.ColumnIndex("MRD")] = resi + mobi + disc;
         row[category.ColumnIndex("RRI")] = resi + reco + inte;
+        row[category.ColumnIndex("MRI")] = resi + mobi + inte;
+        row[category.ColumnIndex("MRS")] = resi + mobi + stre;
         row[category.ColumnIndex("Artifice")] = artifice;
         row[category.ColumnIndex("Wastage")] = wastage;
         row[category.ColumnIndex("LowestBaseStats")] = lowestBaseStats;
@@ -278,5 +288,121 @@ public class ArmorCalculator
         row[category.ColumnIndex("Class Item Masterworked")] = leg.EnergyCapacity == 10L;
         return row;
     }
+    private static readonly Dictionary<string, Func<long, long, long, long, long, long, bool>> _exoticStatGoal = new()
+    {
+        { "Aeon Swift", StatFunctions.MRD23 },
+        { "Assassin's Cowl", StatFunctions.MRD23 },
+        { "Athrys's Embrace", StatFunctions.MRD23 },
+        { "Blight Ranger", StatFunctions.MRD23 },
+        { "Caliban's Hand", StatFunctions.MRD23 },
+        { "Celestial Nighthawk", StatFunctions.MRD23 },
+        { "Cyrtarachne's Facade", StatFunctions.MRD23 },
+        { "Foetracer", StatFunctions.MRD23 },
+        { "Fr0st-EE5", StatFunctions.MRD23 },
+        { "Graviton Forfeit", StatFunctions.MRD23 },
+        { "Gwisin Vest", StatFunctions.MRD23 },
+        { "Gyrfalcon's Hauberk", StatFunctions.MRD23 },
+        { "Khepri's Sting", StatFunctions.MRD23 },
+        { "Liar's Handshake", StatFunctions.MRD23 },
+        { "Lucky Pants", StatFunctions.MRD23 },
+        { "Lucky Raspberry", StatFunctions.MRD23 },
+        { "Mask of Bakris", StatFunctions.MRD23 },
+        { "Mechaneer's Tricksleeves", StatFunctions.MRD23 },
+        { "Mothkeeper's Wraps", StatFunctions.MRD23 },
+        { "Omnioculus", StatFunctions.MRD23 },
+        { "Ophidia Spathe", StatFunctions.MRD23 },
+        { "Orpheus Rig", StatFunctions.MRD23 },
+        { "Radiant Dance Machines", StatFunctions.MRD23 },
+        { "Raiden Flux", StatFunctions.MRD23 },
+        { "Raiju's Harness", StatFunctions.MRD23 },
+        { "Renewal Grasps", StatFunctions.MRD23 },
+        { "Shards of Galanor", StatFunctions.RRD23 },
+        { "Shinobu's Vow", StatFunctions.MRD23 },
+        { "Speedloader Slacks", StatFunctions.MRD23 },
+        { "St0mp-EE5", StatFunctions.MRD23 },
+        { "Star-Eater Scales", StatFunctions.MRD23 },
+        { "The Dragon's Shadow", StatFunctions.MRD23 },
+        { "The Sixth Coyote", StatFunctions.MRS23 },
+        { "Triton Vice", StatFunctions.MRD23 },
+        { "Wormhusk Crown", StatFunctions.RRD23 },
+        { "Abeyant Leap", StatFunctions.RRD23 },
+        { "Actium War Rig", StatFunctions.RRD23 },
+        { "Aeon Safe", StatFunctions.RRD23 },
+        { "Arbor Warden", StatFunctions.RRD23 },
+        { "Armamentarium", StatFunctions.RRD23 },
+        { "Ashen Wake", StatFunctions.RRD23 },
+        { "Cadmus Ridge Lancecap", StatFunctions.RRD23 },
+        { "Citan's Ramparts", StatFunctions.RRD23 },
+        { "Crest of Alpha Lupi", StatFunctions.RRD23 },
+        { "Cuirass of the Falling Star", StatFunctions.RRD23 },
+        { "Doom Fang Pauldron", StatFunctions.RRD23 },
+        { "Eternal Warrior", StatFunctions.RRD23 },
+        { "Hallowfire Heart", StatFunctions.RRD23 },
+        { "Heart of Inmost Light", StatFunctions.RRD23 },
+        { "Helm of Saint-14", StatFunctions.RRD23 },
+        { "Hoarfrost-Z", StatFunctions.RRD23 },
+        { "Icefall Mantle", StatFunctions.RRD23 },
+        { "Khepri's Horn", StatFunctions.RRD23 },
+        { "Lion Rampant", StatFunctions.MR16 },
+        { "Loreley Splendor Helm", StatFunctions.RRD23 },
+        { "Mask of the Quiet One", StatFunctions.RRD23 },
+        { "Mk. 44 Stand Asides", StatFunctions.RRD23 },
+        { "No Backup Plans", StatFunctions.RRD23 },
+        { "One-Eyed Mask", StatFunctions.RRD23 },
+        { "Peacekeepers", StatFunctions.RRD23 },
+        { "Peregrine Greaves", StatFunctions.RRD23 },
+        { "Phoenix Cradle", StatFunctions.RRD23 },
+        { "Point-Contact Cannon Brace", StatFunctions.RRD23 },
+        { "Precious Scars", StatFunctions.RRD23 },
+        { "Pyrogale Gauntlets", StatFunctions.RRD23 },
+        { "Second Chance", StatFunctions.RRD23 },
+        { "Severance Enclosure", StatFunctions.RRD23 },
+        { "Stronghold", StatFunctions.RRD23 },
+        { "Synthoceps", StatFunctions.RRD23 },
+        { "The Path of Burning Steps", StatFunctions.RRD23 },
+        { "Ursa Furiosa", StatFunctions.RRD23 },
+        { "Wormgod Caress", StatFunctions.RRS23 },
+        { "Aeon Soul", StatFunctions.RRD23 },
+        { "Apotheosis Veil", StatFunctions.RRD23 },
+        { "Astrocyte Verse", StatFunctions.RRD23 },
+        { "Ballidorse Wrathweavers", StatFunctions.RRD23 },
+        { "Boots of the Assembler", StatFunctions.RRD23 },
+        { "Briarbinds", StatFunctions.RRD23 },
+        { "Cenotaph Mask", StatFunctions.RRD23 },
+        { "Chromatic Fire", StatFunctions.RRD23 },
+        { "Claws of Ahamkara", StatFunctions.RRS23 },
+        { "Contraverse Hold", StatFunctions.RRD23 },
+        { "Crown of Tempests", StatFunctions.RRD23 },
+        { "Dawn Chorus", StatFunctions.RRD23 },
+        { "Eye of Another World", StatFunctions.RRD23 },
+        { "Fallen Sunstar", StatFunctions.RRD23 },
+        { "Felwinter's Helm", StatFunctions.RRS23 },
+        { "Geomag Stabilizers", StatFunctions.RRD23 },
+        { "Getaway Artist", StatFunctions.RRD23 },
+        { "Karnstein Armlets", StatFunctions.RRD23 },
+        { "Lunafaction Boots", StatFunctions.RRI23 },
+        { "Mantle of Battle Harmony", StatFunctions.RRD23 },
+        { "Necrotic Grip", StatFunctions.RRS23 },
+        { "Nezarec's Sin", StatFunctions.RRD23 },
+        { "Nothing Manacles", StatFunctions.RRD23 },
+        { "Ophidian Aspect", StatFunctions.RRI23 },
+        { "Osmiomancy Gloves", StatFunctions.RRD23 },
+        { "Phoenix Protocol", StatFunctions.RRD23 },
+        { "Promethium Spur", StatFunctions.RRD23 },
+        { "Rain of Fire", StatFunctions.RRD23 },
+        { "Sanguine Alchemy", StatFunctions.RRD23 },
+        { "Secant Filaments", StatFunctions.RRD23 },
+        { "Skull of Dire Ahamkara", StatFunctions.RRD23 },
+        { "Starfire Protocol", StatFunctions.RRD23 },
+        { "Stormdancer's Brace", StatFunctions.RRD23 },
+        { "Sunbracers", StatFunctions.RRS23 },
+        { "Swarmers", StatFunctions.RRD23 },
+        { "The Stag", StatFunctions.RRD23 },
+        { "Transversive Steps", StatFunctions.RRD23 },
+        { "Verity's Brow", StatFunctions.RRD23 },
+        { "Vesper of Radius", StatFunctions.RRD23 },
+        { "Wings of Sacred Dawn", StatFunctions.MR16 },
+        { "Winter's Guile", StatFunctions.RRS23 },
+    };
     private const int _minimumUsage = 320;
 }
